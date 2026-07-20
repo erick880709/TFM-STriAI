@@ -94,8 +94,8 @@ El proyecto consta de dos componentes principales:
 
 ```bash
 # 1. Clonar el repositorio
-git clone https://github.com/tu-usuario/striai-tfm.git
-cd striai-tfm
+git clone https://github.com/erick880709/TFM-STriAI.git
+cd TFM-STriAI
 
 # 2. Crear y activar entorno virtual
 python -m venv .venv
@@ -255,11 +255,13 @@ La brecha (-0.68 F1) se atribuye a la escasez de features clínicas (3 vs decena
 
 | Integrante | Rol | GitHub |
 |---|---|---|
-| **Medina Betancur, Diego Andrés** | Arquitecto de Datos y ML | [@dmedina]() |
-| **Rivera Villanueva, Leyniker** | Desarrollador Full-Stack | [@lrivera]() |
-| **Soto Díaz, Erick Duván** | Ingeniero de ML y QA | [@esoto]() |
+| **Medina Betancur, Diego Andrés** | Arquitecto de Datos y ML | [@dmedina](https://github.com/) |
+| **Rivera Villanueva, Leyniker** | Desarrollador Full-Stack | [@lrivera](https://github.com/) |
+| **Soto Díaz, Erick Duván** | Ingeniero de ML y QA | [@erick880709](https://github.com/erick880709) |
 
 **Directora:** Damaris Fuentes Lorenzo
+
+**Repositorio:** [github.com/erick880709/TFM-STriAI](https://github.com/erick880709/TFM-STriAI)
 
 ---
 
