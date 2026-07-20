@@ -1,0 +1,111 @@
+<mxfile host="app.diagrams.net" modified="2026-07-19T22:00:00.000Z" agent="archi-skill" version="21.0.0" type="device">
+  <diagram id="SEQ1-Triaje" name="Secuencia - Flujo Triaje">
+    <mxGraphModel dx="1400" dy="1400" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1500" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Diagrama de Secuencia — Flujo Principal de Triaje (end-to-end, 7 pasos)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontStyle=1;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="200" y="10" width="900" height="25" as="geometry"/>
+        </mxCell>
+        <!-- Lifelines -->
+        <mxCell id="ll-enf" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#ECFEFF;strokeColor=#0891B2;fontSize=12;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="80" y="60" width="100" height="1300" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-med" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#ECFEFF;strokeColor=#0891B2;fontSize=12;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="240" y="60" width="100" height="1300" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-ui" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#F0FDF4;strokeColor=#059669;fontSize=12;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="420" y="60" width="100" height="1300" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-svc" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#F0FDF4;strokeColor=#059669;fontSize=12;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="600" y="60" width="100" height="1300" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-db" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#F8FAFC;strokeColor=#64748B;fontSize=12;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="780" y="60" width="100" height="1300" as="geometry"/>
+        </mxCell>
+        <!-- Headers -->
+        <mxCell id="hdr-enf" value="Enfermera" style="text;html=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;fontColor=#0891B2;" vertex="1" parent="1">
+          <mxGeometry x="85" y="45" width="90" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="hdr-med" value="Médico" style="text;html=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;fontColor=#0891B2;" vertex="1" parent="1">
+          <mxGeometry x="255" y="45" width="70" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="hdr-ui" value="Streamlit UI" style="text;html=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;fontColor=#059669;" vertex="1" parent="1">
+          <mxGeometry x="420" y="45" width="100" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="hdr-svc" value="Services + IA" style="text;html=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;fontColor=#059669;" vertex="1" parent="1">
+          <mxGeometry x="595" y="45" width="110" height="20" as="geometry"/>
+        </mxCell>
+        <mxCell id="hdr-db" value="SQLite" style="text;html=1;strokeColor=none;fillColor=none;fontSize=11;fontStyle=1;fontColor=#64748B;" vertex="1" parent="1">
+          <mxGeometry x="800" y="45" width="60" height="20" as="geometry"/>
+        </mxCell>
+        <!-- Messages - Paso 1: Login -->
+        <mxCell id="msg1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0891B2;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-enf" target="ll-ui">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="100" as="sourcePoint"/><mxPoint y="100" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg1-label" value="1. Ingresa credenciales" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;" vertex="1" connectable="0" parent="msg1">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="80" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <!-- Paso 2: Registro -->
+        <mxCell id="msg2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0891B2;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-enf" target="ll-ui">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="180" as="sourcePoint"/><mxPoint y="180" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg2-label" value="2. Registra paciente" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;" vertex="1" connectable="0" parent="msg2">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="80" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <!-- Paso 3: Signos Vitales -->
+        <mxCell id="msg3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#DC2626;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-enf" target="ll-ui">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="280" as="sourcePoint"/><mxPoint y="280" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg3-label" value="3. Ingresa signos vitales ⚠️ SpO₂=88% crítico" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#DC2626;" vertex="1" connectable="0" parent="msg3">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="100" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <!-- Paso 4: Evaluación -->
+        <mxCell id="msg4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0891B2;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-enf" target="ll-ui">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="380" as="sourcePoint"/><mxPoint y="380" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg4-label" value="4. Evaluación clínica" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;" vertex="1" connectable="0" parent="msg4">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="60" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <!-- Paso 5: Ejecutar IA -->
+        <mxCell id="msg5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-enf" target="ll-ui">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="500" as="sourcePoint"/><mxPoint y="500" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg5-label" value="5. Click 'Ejecutar IA'" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#F59E0B;fontStyle=1;" vertex="1" connectable="0" parent="msg5">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="60" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <!-- IA processing -->
+        <mxCell id="msg5b" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-ui" target="ll-svc">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="550" as="sourcePoint"/><mxPoint y="550" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg5c" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=1;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1" source="ll-svc" target="ll-ui">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="620" as="sourcePoint"/><mxPoint y="620" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg5c-label" value="Nivel II (72%), SHAP, 2.1s" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#F59E0B;" vertex="1" connectable="0" parent="msg5c">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="80" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <!-- Paso 6: Validación -->
+        <mxCell id="msg6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-med" target="ll-ui">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="750" as="sourcePoint"/><mxPoint y="750" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg6-label" value="6. Valida Nivel II ✓ Concordancia" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#059669;fontStyle=1;" vertex="1" connectable="0" parent="msg6">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="100" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <!-- Paso 7: Cierre -->
+        <mxCell id="msg7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-med" target="ll-ui">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="880" as="sourcePoint"/><mxPoint y="880" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg7-label" value="7. Cierra evento" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;" vertex="1" connectable="0" parent="msg7">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="50" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <!-- DB writes -->
+        <mxCell id="msg-db1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="ll-svc" target="ll-db">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="400" as="sourcePoint"/><mxPoint y="400" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="msg-db1-label" value="INSERT + UPDATE" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=9;fontColor=#64748B;" vertex="1" connectable="0" parent="msg-db1">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="-30" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

@@ -1,0 +1,39 @@
+# Sistema de Triaje Multimodal IA
+# TFM - Máster en Inteligencia Artificial - UNIR
+# ================================================
+
+# Core
+streamlit>=1.31.0
+pandas>=2.2.0
+numpy>=1.26.0
+
+# Machine Learning
+scikit-learn>=1.4.0
+xgboost>=2.0.0
+
+# Deep Learning / NLP (usar solo si hay GPU o para embeddings offline)
+torch>=2.2.0
+transformers>=4.38.0
+
+# Explicabilidad
+shap>=0.44.0
+
+# Visualización
+matplotlib>=3.8.0
+seaborn>=0.13.0
+plotly>=5.18.0
+
+# Base de datos (sqlite3 viene incluido en Python — no requiere instalación)
+
+# Autenticación
+bcrypt>=4.1.0
+
+# Utilidades
+python-dotenv>=1.0.0
+pyyaml>=6.0
+joblib>=1.3.0
+
+# Pipeline ML (opcional — solo para entrenamiento offline)
+imbalanced-learn>=0.12.0
+jupyter>=1.0.0
+ipykernel>=6.29.0

@@ -1,0 +1,365 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Informe Final de TFM — STriAI</title>
+<style>
+  :root { --bg: #0d1117; --fg: #c9d1d9; --accent: #58a6ff; --border: #30363d; --code-bg: #161b22; --table-stripe: #161b22; --success: #3fb950; --warning: #d2991d; --error: #f85149; --heading: #f0f6fc; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.7; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: var(--heading); border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; margin: 2rem 0 1rem; }
+  h2 { font-size: 1.5rem; color: var(--heading); border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; margin: 2rem 0 1rem; }
+  h3 { font-size: 1.2rem; color: var(--heading); margin: 1.5rem 0 0.8rem; }
+  h4 { font-size: 1.05rem; color: var(--accent); margin: 1rem 0 0.5rem; }
+  p { margin: 0.8rem 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.85rem; }
+  th, td { padding: 0.5rem 0.7rem; border: 1px solid var(--border); text-align: left; }
+  th { background: #21262d; color: var(--heading); font-weight: 600; }
+  tr:nth-child(even) { background: var(--table-stripe); }
+  code { font-family: 'Cascadia Code', 'Consolas', monospace; background: var(--code-bg); padding: 0.12em 0.35em; border-radius: 3px; font-size: 0.88em; border: 1px solid var(--border); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 0.8rem 1rem; overflow-x: auto; margin: 1rem 0; font-size: 0.82rem; }
+  pre code { border: none; padding: 0; background: transparent; }
+  blockquote { border-left: 4px solid var(--warning); padding: 0.4rem 1rem; margin: 1rem 0; background: #161b22; border-radius: 0 6px 6px 0; color: #8b949e; font-size: 0.9rem; }
+  .toc { background: #161b22; border: 1px solid var(--border); border-radius: 8px; padding: 1rem 1.5rem; margin: 1rem 0; }
+  .toc ol { margin-left: 1.5rem; }
+  .toc li { margin: 0.3rem 0; }
+  .badge-ok { display: inline-block; background: #1a3a2a; color: var(--success); padding: 0.12em 0.55em; border-radius: 12px; font-size: 0.78em; font-weight: 600; }
+  .badge-err { display: inline-block; background: #3a1a1a; color: var(--error); padding: 0.12em 0.55em; border-radius: 12px; font-size: 0.78em; font-weight: 600; }
+  .badge-warn { display: inline-block; background: #3a2e0a; color: var(--warning); padding: 0.12em 0.55em; border-radius: 12px; font-size: 0.78em; font-weight: 600; }
+  .badge-info { display: inline-block; background: #0a2a3a; color: var(--accent); padding: 0.12em 0.55em; border-radius: 12px; font-size: 0.78em; font-weight: 600; }
+  .winner { background: #1a3a2a !important; }
+  .section-divider { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
+  .cover { text-align: center; padding: 3rem 0; border: 2px solid var(--accent); border-radius: 12px; margin-bottom: 2rem; background: linear-gradient(180deg, #1a2332 0%, #0d1117 100%); }
+  .cover h1 { border: none; font-size: 2.2rem; margin-bottom: 1rem; }
+  .cover .subtitle { color: var(--accent); font-size: 1.1rem; margin: 0.5rem 0; }
+  .authors { color: #8b949e; margin: 1rem 0; }
+  .meta { color: #6e7681; font-size: 0.9rem; }
+  .checklist { list-style: none; margin-left: 0; }
+  .checklist li { padding: 0.4rem 0; border-bottom: 1px solid var(--border); }
+  .checklist .check { color: var(--success); margin-right: 0.5rem; }
+  .checklist .pending { color: var(--warning); margin-right: 0.5rem; }
+</style>
+</head>
+<body>
+
+<div class="cover">
+<h1>🧠 Informe Final de TFM — STriAI</h1>
+<div class="subtitle">Desarrollo de un Sistema de Triaje Multimodal basado en IA<br>para la Atención en Urgencias Médicas en Colombia</div>
+<div class="authors"><strong>Autores:</strong> Medina Betancur, Diego Andrés; Rivera Villanueva, Leyniker; Soto Díaz, Erick Duván</div>
+<div class="meta"><strong>Directora:</strong> Damaris Fuentes Lorenzo<br><strong>Titulación:</strong> Máster Universitario en Inteligencia Artificial (UNIR)<br><strong>Fecha:</strong> Julio 2026 · Convocatoria Ordinaria — Predepósito</div>
+</div>
+
+<div class="toc">
+<strong>📑 Tabla de Contenido</strong>
+<ol>
+<li><a href="#s1">Resumen / Abstract</a></li>
+<li><a href="#s2">Organización del Trabajo en Grupo</a></li>
+<li><a href="#s3">Introducción y Objetivos</a></li>
+<li><a href="#s4">Contexto y Estado del Arte</a></li>
+<li><a href="#s5">Metodología</a></li>
+<li><a href="#s6">Desarrollo del Trabajo</a></li>
+<li><a href="#s7">Resultados Experimentales</a></li>
+<li><a href="#s8">Aplicación Desarrollada</a></li>
+<li><a href="#s9">Conclusiones y Trabajo Futuro</a></li>
+<li><a href="#s10">Referencias</a></li>
+<li><a href="#s11">Apéndices</a></li>
+</ol>
+</div>
+
+<hr class="section-divider">
+
+<h2 id="s1">1. Resumen / Abstract</h2>
+
+<h3>Resumen</h3>
+<p>El presente Trabajo de Fin de Máster aborda el desarrollo de un sistema de triaje multimodal basado en inteligencia artificial para la clasificación de pacientes en servicios de urgencias médicas en Colombia, conforme a la Resolución 5596/2015. El sistema, denominado <strong>STriAI</strong>, integra datos clínicos estructurados con procesamiento de lenguaje natural (NLP) sobre el motivo de consulta en texto libre, implementando una arquitectura de fusión temprana (Early Fusion) que combina ambas modalidades mediante XGBoost.</p>
+<p>El pipeline de entrenamiento procesó 176,641 registros de cuatro fuentes colombianas. Se entrenaron cinco arquitecturas: LR, RF, XGBoost unimodal, Early Fusion y Late Fusion. El modelo ganador alcanzó un <strong>F1 Macro de 0.1895</strong> y una exactitud del 79.86%. La aplicación demo se implementó sobre Streamlit con 14 pantallas, SQLite, RBAC de 5 roles y auditoría inmutable.</p>
+<p><strong>Palabras clave:</strong> triaje hospitalario, inteligencia artificial, machine learning, NLP, XGBoost, BERT, sistema de apoyo a la decisión clínica, Colombia.</p>
+
+<h3>Abstract</h3>
+<p>This Master's Thesis presents a multimodal AI-based triage system for emergency department patient classification in Colombia (Resolution 5596/2015). The system integrates structured clinical data with NLP on free-text chief complaints via an Early Fusion XGBoost architecture. Five architectures were trained on 133,047 valid cases from Colombian healthcare sources. The winning model achieved <strong>Macro F1 = 0.1895</strong> and accuracy = 79.86%. A Streamlit demo application with 14 screens, RBAC, and immutable audit was implemented.</p>
+<p><strong>Keywords:</strong> hospital triage, artificial intelligence, machine learning, NLP, XGBoost, BERT, clinical decision support, Colombia.</p>
+
+<hr class="section-divider">
+
+<h2 id="s2">2. Organización del Trabajo en Grupo</h2>
+
+<table>
+<tr><th>Integrante</th><th>Rol Principal</th><th>Responsabilidades</th></tr>
+<tr><td><strong>Medina Betancur, Diego Andrés</strong></td><td>Arquitecto de Datos y ML</td><td>Pipeline de datos, ingesta, preprocesamiento, NLP, entrenamiento y evaluación de modelos, serialización</td></tr>
+<tr><td><strong>Rivera Villanueva, Leyniker</strong></td><td>Desarrollador Full-Stack</td><td>Aplicación Streamlit, servicios backend, SQLite, 14 pantallas UI, despliegue</td></tr>
+<tr><td><strong>Soto Díaz, Erick Duván</strong></td><td>Ingeniero de ML y QA</td><td>Servicio de inferencia, integración NLP, explicabilidad SHAP, pruebas, documentación</td></tr>
+</table>
+
+<p><strong>Portavoz:</strong> Diego Andrés Medina Betancur</p>
+<p><strong>Mecanismos de coordinación:</strong> Reuniones semanales con la directora, repositorio Git compartido, Documento Maestro de Contexto Funcional, grupo WhatsApp para coordinación diaria, sesiones de integración por hito.</p>
+
+<blockquote>⚠️ <strong>Pendiente:</strong> Este capítulo debe ser avalado por la directora Damaris Fuentes Lorenzo antes del depósito.</blockquote>
+
+<hr class="section-divider">
+
+<h2 id="s3">3. Introducción y Objetivos</h2>
+
+<h3>3.1 Problema Abordado</h3>
+<p>El triaje hospitalario clasifica pacientes según gravedad. En Colombia, la Resolución 5596/2015 define 5 niveles (I: atención inmediata → V: consulta externa). La IA ofrece la oportunidad de complementar el juicio clínico con predicciones objetivas basadas en datos.</p>
+
+<h3>3.2 Objetivos</h3>
+<table>
+<tr><th>ID</th><th>Objetivo Específico</th><th>Estado</th></tr>
+<tr><td>OE-1</td><td>Pipeline de ingesta y preprocesamiento de datos clínicos colombianos</td><td><span class="badge-ok">✅</span></td></tr>
+<tr><td>OE-2</td><td>Embeddings NLP con BERT multilingüe sobre motivo de consulta</td><td><span class="badge-ok">✅</span></td></tr>
+<tr><td>OE-3</td><td>Entrenar ≥ 3 arquitecturas (unimodal, early fusion, late fusion)</td><td><span class="badge-ok">✅ (5 modelos)</span></td></tr>
+<tr><td>OE-4</td><td>Evaluar con métricas multiclase vs benchmarks internacionales</td><td><span class="badge-ok">✅</span></td></tr>
+<tr><td>OE-5</td><td>Explicabilidad SHAP para cada predicción</td><td><span class="badge-warn">✅ (con fallback)</span></td></tr>
+<tr><td>OE-6</td><td>Aplicación demo funcional con flujo clínico completo</td><td><span class="badge-ok">✅</span></td></tr>
+<tr><td>OE-7</td><td>RBAC + auditoría inmutable</td><td><span class="badge-ok">✅</span></td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s4">4. Contexto y Estado del Arte</h2>
+
+<h3>4.1 ML en Triaje Hospitalario</h3>
+<table>
+<tr><th>Estudio</th><th>Año</th><th>n</th><th>Modelo</th><th>F1</th><th>AUC-ROC</th></tr>
+<tr><td>Raita et al.</td><td>2019</td><td>67,517</td><td>XGBoost unimodal</td><td>0.870</td><td>0.92</td></tr>
+<tr><td>Levin et al.</td><td>2021</td><td>120,000</td><td>Multimodal + BERT</td><td>0.810</td><td>—</td></tr>
+<tr><td>Klug et al.</td><td>2020</td><td>42,000</td><td>Ensemble RF+XGBoost</td><td>0.765</td><td>0.83</td></tr>
+<tr><td>Hong et al.</td><td>2018</td><td>11M</td><td>Red neuronal profunda</td><td>—</td><td>0.93</td></tr>
+<tr class="winner"><td><strong>STriAI (2026)</strong></td><td><strong>2026</strong></td><td><strong>133,047</strong></td><td><strong>Early Fusion XGBoost+BERT</strong></td><td><strong>0.189</strong></td><td><strong>0.00</strong></td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s5">5. Metodología</h2>
+<table>
+<tr><th>Fase</th><th>Actividades</th></tr>
+<tr><td>1. Análisis</td><td>Requerimientos, fuentes de datos, estado del arte</td></tr>
+<tr><td>2. Diseño</td><td>Arquitectura del sistema, modelo de datos, arquitectura ML, UI</td></tr>
+<tr><td>3. Desarrollo</td><td>Pipeline ML, aplicación demo, integración modelo</td></tr>
+<tr><td>4. Evaluación</td><td>Entrenamiento, métricas, benchmarks, pruebas</td></tr>
+<tr><td>5. Documentación</td><td>Informe, manuales, diagramas de arquitectura</td></tr>
+</table>
+
+<h3>Stack Tecnológico</h3>
+<table>
+<tr><th>Capa</th><th>Tecnología</th><th>Versión</th></tr>
+<tr><td>Lenguaje</td><td>Python</td><td>3.11.7</td></tr>
+<tr><td>UI</td><td>Streamlit</td><td>1.59.2</td></tr>
+<tr><td>Base de Datos</td><td>SQLite 3</td><td>Incluido</td></tr>
+<tr><td>ML Clasificación</td><td>scikit-learn, XGBoost</td><td>1.9.0, 3.2.0</td></tr>
+<tr><td>ML NLP</td><td>PyTorch, Transformers</td><td>2.13.0, 5.14.1</td></tr>
+<tr><td>Explicabilidad</td><td>SHAP</td><td>0.51.0</td></tr>
+</table>
+
+<h3>Fuentes de Datos (4 datasets colombianos)</h3>
+<table>
+<tr><th>#</th><th>Fuente</th><th>Filas</th><th>Variables Relevantes</th></tr>
+<tr><td>1</td><td>Clasificación Triage Urgencias (datos.gov.co)</td><td>89,453</td><td>Nivel triaje, EPS, fecha</td></tr>
+<tr><td>2</td><td>Urgencias — Hospital San Juan de Dios (Armenia)</td><td>43,594</td><td>Nivel triaje, edad, diagnóstico, EPS</td></tr>
+<tr><td>3</td><td>Morbilidad Urgencias (datos.gov.co)</td><td>43,594</td><td>Sexo, edad, diagnóstico, régimen</td></tr>
+<tr><td>4</td><td>Pitalito, Huila (ESE San Antonio)</td><td>102</td><td>Datos agregados (no utilizable)</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s6">6. Desarrollo del Trabajo</h2>
+
+<h3>6.1 Pipeline de Entrenamiento (14 pasos)</h3>
+<table>
+<tr><th>Paso</th><th>Módulo</th><th>Output</th></tr>
+<tr><td>1-2. Ingesta + Anonim.</td><td><code>src/data/ingesta.py</code></td><td>176,641 × 9 cols</td></tr>
+<tr><td>3-4. Limpieza + Features</td><td><code>src/data/limpieza.py</code></td><td>133,047 × 3 features</td></tr>
+<tr><td>5. Split</td><td><code>run_pipeline.py</code></td><td>106K train / 27K test</td></tr>
+<tr><td>6. NLP Embeddings</td><td><code>src/features/nlp_embeddings.py</code></td><td>384-dim BERT</td></tr>
+<tr><td>7-9. Modelos</td><td><code>src/models/train_models.py</code></td><td>5 arquitecturas</td></tr>
+<tr><td>10. Selección</td><td><code>src/models/train_models.py</code></td><td>Early Fusion 🥇</td></tr>
+<tr><td>11-12. Eval + Threshold</td><td><code>src/evaluation/metrics.py</code></td><td>Métricas + umbrales</td></tr>
+<tr><td>13. SHAP</td><td><code>src/evaluation/shap_benchmarks.py</code></td><td>Feature importance</td></tr>
+<tr><td>14. Serialización</td><td><code>src/serving/serialize.py</code></td><td>models/*.joblib</td></tr>
+</table>
+
+<h3>6.2 Features y Embeddings</h3>
+<table>
+<tr><th>Feature</th><th>Dims</th><th>Origen</th></tr>
+<tr><td>edad_categoria</td><td>OneHot</td><td>Derivada de edad (Pediátrico/Adulto/Mayor)</td></tr>
+<tr><td>pam</td><td>1 (scaled)</td><td>Presión Arterial Media = (PAS + 2×PAD)/3</td></tr>
+<tr><td>shock_index</td><td>1 (scaled)</td><td>Índice de Shock = FC / PAS</td></tr>
+<tr><td>NLP Embeddings</td><td>384</td><td>MiniLM-L12-v2 (BERT multilingüe)</td></tr>
+<tr><td><strong>Total (Early Fusion)</strong></td><td><strong>387</strong></td><td><strong>3 estructuradas + 384 NLP</strong></td></tr>
+</table>
+
+<h3>6.3 Desbalance de Clases</h3>
+<table>
+<tr><th>Nivel</th><th>I</th><th>II</th><th>III</th><th>IV</th><th>V</th></tr>
+<tr><td>Casos</td><td>302</td><td>4,018</td><td>117,779</td><td>10,320</td><td>628</td></tr>
+<tr><td>%</td><td>0.2%</td><td>3.0%</td><td>88.5%</td><td>7.8%</td><td>0.5%</td></tr>
+</table>
+<p><strong>Técnica aplicada:</strong> <code>class_weight='balanced'</code> en LR y RF. Sin SMOTE (pendiente para trabajo futuro).</p>
+
+<h3>6.4 Explicabilidad</h3>
+<p>SHAP TreeExplainer no funcional por incompatibilidad SHAP 0.51 + XGBoost 3.2. <strong>Fallback:</strong> <code>feature_importances_</code> nativas de XGBoost enriquecidas con nombres clínicos. Las 10 features más importantes son todas dimensiones del embedding NLP.</p>
+
+<hr class="section-divider">
+
+<h2 id="s7">7. Resultados Experimentales</h2>
+
+<h3>7.1 Comparativa de Modelos</h3>
+<table>
+<tr><th>Modelo</th><th>F1 Macro</th><th>Recall I</th><th>Recall II</th><th>Recall III</th><th>Recall IV</th><th>Recall V</th><th>Tiempo</th></tr>
+<tr><td>LR</td><td>0.0122</td><td>0.15</td><td><strong>0.82</strong></td><td>0.00</td><td>0.00</td><td>0.00</td><td>0.26s</td></tr>
+<tr><td>RF</td><td>0.0347</td><td>0.07</td><td>0.68</td><td>0.03</td><td>0.05</td><td>0.08</td><td>4.46s</td></tr>
+<tr><td>XGBoost</td><td>0.1878</td><td>0.00</td><td>0.00</td><td><strong>1.00</strong></td><td>0.00</td><td>0.00</td><td>5.49s</td></tr>
+<tr class="winner"><td><strong>Early Fusion 🥇</strong></td><td><strong>0.1899</strong></td><td>0.00</td><td>0.00</td><td>0.99</td><td>0.01</td><td>0.00</td><td>108.53s</td></tr>
+<tr><td>Late Fusion</td><td>0.0997</td><td><strong>0.20</strong></td><td>0.25</td><td>0.19</td><td><strong>0.23</strong></td><td><strong>0.14</strong></td><td>2.09s</td></tr>
+</table>
+
+<h3>7.2 Evaluación Final — Early Fusion</h3>
+<table>
+<tr><th>Métrica</th><th>Valor</th><th>Meta</th><th>¿Cumple?</th></tr>
+<tr><td>F1 Macro</td><td>0.1895</td><td>≥ 0.82</td><td><span class="badge-err">✗ No</span></td></tr>
+<tr><td>Accuracy</td><td>0.7986</td><td>—</td><td>—</td></tr>
+<tr><td>AUC-ROC</td><td>0.0000</td><td>≥ 0.87</td><td><span class="badge-err">✗ No (bug)</span></td></tr>
+<tr><td>Recall I</td><td>0.0000</td><td>≥ 0.90</td><td><span class="badge-err">✗ No</span></td></tr>
+<tr><td>Recall II</td><td>0.0995</td><td>≥ 0.85</td><td><span class="badge-err">✗ No</span></td></tr>
+<tr><td>Recall III</td><td>0.8984</td><td>—</td><td><span class="badge-ok">✅</span></td></tr>
+<tr><td>Tiempo inferencia</td><td>~1.5s</td><td>&lt; 5s</td><td><span class="badge-ok">✅</span></td></tr>
+</table>
+
+<h3>7.3 Matriz de Confusión</h3>
+<pre><code>              I   II    III    IV     V   ← Predicho
+       I      0    5     55     0     0
+      II      0   80    719     5     0
+     III      1 2294  21163    91     7
+      IV      0  234   1819     9     2
+       V      0   15    110     1     0
+      ↑ Real</code></pre>
+
+<hr class="section-divider">
+
+<h2 id="s8">8. Aplicación Desarrollada</h2>
+
+<h3>8.1 Funcionalidades</h3>
+<table>
+<tr><th>Módulo</th><th>Pantallas</th><th>Funcionalidad</th></tr>
+<tr><td>Autenticación</td><td>P01</td><td>Login/logout, 5 roles, timeout, bloqueo, reset password</td></tr>
+<tr><td>Pacientes</td><td>P02, P14</td><td>Registro (21 campos), búsqueda, histórico de visitas</td></tr>
+<tr><td>Triaje</td><td>P03, P04, P07</td><td>7 estados, signos vitales, evaluación clínica, validación</td></tr>
+<tr><td>IA</td><td>P05, P06, P08</td><td>Clasificación XGBoost+BERT, explicabilidad, comparación modelos</td></tr>
+<tr><td>Dashboard</td><td>P10</td><td>KPIs, distribución triaje, tendencias</td></tr>
+<tr><td>Administración</td><td>P09, P11-P13</td><td>Gestión usuarios CRUD, modelos, control cambios, configuración</td></tr>
+</table>
+
+<h3>8.2 Base de Datos — 12 Tablas</h3>
+<table>
+<tr><th>#</th><th>Tabla</th><th>Columnas</th><th>Propósito</th></tr>
+<tr><td>1</td><td>Paciente</td><td>21</td><td>Datos demográficos y contacto</td></tr>
+<tr><td>2</td><td>EventoTriaje</td><td>16</td><td>Máquina de estados</td></tr>
+<tr><td>3</td><td>SignosVitales</td><td>10</td><td>FC, FR, T°, SpO₂, TA, IMC</td></tr>
+<tr><td>4</td><td>EvaluacionClinica</td><td>14</td><td>Glasgow, dolor, comorbilidades</td></tr>
+<tr><td>5</td><td>PrediccionIA</td><td>6</td><td>Resultado inferencia</td></tr>
+<tr><td>6-12</td><td>Usuario, Auditoria, etc.</td><td>—</td><td>Auth, auditoría, modelos, control cambios</td></tr>
+</table>
+
+<h3>8.3 Control de Acceso (RBAC)</h3>
+<table>
+<tr><th>Rol</th><th>Permisos</th></tr>
+<tr><td>Administrador</td><td>14 pantallas, gestión usuarios y modelos</td></tr>
+<tr><td>Médico</td><td>Pacientes, triaje, IA, validación, dashboard</td></tr>
+<tr><td>Enfermera</td><td>Pacientes, signos vitales, IA</td></tr>
+<tr><td>Investigador</td><td>Dashboard, comparación modelos (lectura)</td></tr>
+<tr><td>Auditor</td><td>Auditoría, dashboard (lectura)</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s9">9. Conclusiones y Trabajo Futuro</h2>
+
+<h3>9.1 Conclusiones Principales</h3>
+<ol>
+<li><strong>Viabilidad técnica demostrada:</strong> Sistema completo de triaje multimodal funcional con pipeline reproducible y demo interactiva.</li>
+<li><strong>Brecha de rendimiento:</strong> F1=0.19 vs meta 0.82. Causa principal: escasez de features clínicas (3 vs decenas en benchmarks).</li>
+<li><strong>Late Fusion clínicamente superior:</strong> Único modelo que detecta las 5 clases (incluyendo críticos I-II). La métrica F1 Macro no captura utilidad clínica.</li>
+<li><strong>Limitación de datos colombianos:</strong> Los datasets abiertos solo contienen datos administrativos.</li>
+<li><strong>Documentación exhaustiva:</strong> Manuales de usuario, técnico, modelos, instalación y arquitectura generados.</li>
+</ol>
+
+<h3>9.2 Trabajo Futuro Priorizado</h3>
+<table>
+<tr><th>Prioridad</th><th>Acción</th><th>Impacto</th></tr>
+<tr><td>🔴 P0</td><td>Integrar MIMIC-IV-ED o datos sintéticos con signos vitales reales</td><td>+0.30 F1</td></tr>
+<tr><td>🔴 P0</td><td>SMOTE/ADASYN para balancear clases I, II, IV, V</td><td>+0.15 F1</td></tr>
+<tr><td>🟡 P1</td><td>Fine-tuning de BioBERT-es en corpus colombiano</td><td>+0.05 F1</td></tr>
+<tr><td>🟡 P1</td><td>Métrica de selección ponderada por criticidad clínica</td><td>Mejor utilidad</td></tr>
+<tr><td>🟢 P2</td><td>K-Fold CV, migrar DB a PostgreSQL, resolver SHAP</td><td>Robustez + escala</td></tr>
+</table>
+
+<h3>9.3 Lecciones Aprendidas</h3>
+<ol>
+<li>La calidad de los datos es el techo del modelo — ninguna arquitectura sofisticada compensa la ausencia de features clínicas.</li>
+<li>F1 Macro no es adecuada para triaje — trata igual un error en Nivel I (muerte prevenible) que en Nivel V (consulta externa).</li>
+<li>El desbalance de clases en datos reales es la norma — diseñar asumiéndolo desde el inicio.</li>
+<li>Streamlit + SQLite + joblib fue acertado para prototipo, pero limita escalabilidad a producción.</li>
+</ol>
+
+<hr class="section-divider">
+
+<h2 id="s10">10. Referencias</h2>
+
+<ol style="font-size:0.9rem; color:#8b949e;">
+<li>Raita, Y. et al. (2019). Emergency department triage prediction using machine learning. <em>Critical Care</em>, 23(1), 64.</li>
+<li>Levin, S. et al. (2021). ML-based electronic triage vs ESI. <em>Annals of Emergency Medicine</em>, 71(5), 565-574.</li>
+<li>Klug, M. et al. (2020). Gradient boosting for early mortality prediction in ED triage. <em>JGIM</em>, 35, 220-227.</li>
+<li>Hong, W.S. et al. (2018). Predicting hospital admission at ED triage using ML. <em>PLoS ONE</em>, 13(7).</li>
+<li>Goto, T. et al. (2019). ML prediction for children during ED triage. <em>JAMA Network Open</em>, 2(1).</li>
+<li>Ministerio de Salud de Colombia. (2015). <em>Resolución 5596 de 2015</em>.</li>
+<li>Devlin, J. et al. (2019). BERT: Pre-training of Deep Bidirectional Transformers. <em>NAACL-HLT</em>.</li>
+<li>Chen, T. & Guestrin, C. (2016). XGBoost: A Scalable Tree Boosting System. <em>KDD</em>.</li>
+<li>Lundberg, S.M. & Lee, S.I. (2017). A unified approach to interpreting model predictions. <em>NeurIPS</em>.</li>
+<li>Reimers, N. & Gurevych, I. (2019). Sentence-BERT. <em>EMNLP-IJCNLP</em>.</li>
+</ol>
+
+<hr class="section-divider">
+
+<h2 id="s11">11. Apéndices</h2>
+
+<h3>A. Checklist Normativo</h3>
+<ul class="checklist">
+<li><span class="check">✅</span> Capítulo 1 "Organización del trabajo en grupo" redactado — <span class="badge-warn">Pendiente aval directora</span></li>
+<li><span class="check">✅</span> Orden alfabético de autores verificado</li>
+<li><span class="pending">🔴</span> Autorización Comité de Ética — <strong>PENDIENTE DE CONFIRMACIÓN</strong></li>
+<li><span class="pending">🔴</span> Herramienta anti-plagio UNIR — <strong>PENDIENTE DE EJECUCIÓN</strong></li>
+<li><span class="pending">🟡</span> Asignaturas aprobadas antes de defensa — <strong>PENDIENTE DE CONFIRMACIÓN</strong></li>
+<li><span class="check">✅</span> Figuras con leyendas descriptivas reales</li>
+<li><span class="check">✅</span> Resultados experimentales incorporados (Sección 7)</li>
+<li><span class="check">✅</span> Resumen/Abstract coherente con resultados reales (F1=0.19)</li>
+<li><span class="check">✅</span> Numeración de capítulos coherente</li>
+</ul>
+
+<h3>B. Puntos Pendientes para el Equipo</h3>
+<ol>
+<li>🔴 Aval de la directora para Capítulo 1</li>
+<li>🔴 Autorización del Comité de Ética (o retirar datos del Hospital)</li>
+<li>🔴 Ejecutar herramienta anti-plagio UNIR</li>
+<li>🟡 Confirmar asignaturas aprobadas</li>
+<li>🟡 Preparar defensa oral conjunta (≤ 30 min)</li>
+</ol>
+
+<h3>C. Estructura del Repositorio</h3>
+<pre><code>TFM-FINAL/
+├── sistema-triaje-ia/    # App Streamlit (14 pantallas, 8 servicios)
+├── src/                  # Pipeline ML (14 pasos, 5 modelos)
+├── models/               # Modelos serializados (.joblib + .json)
+├── datasets/             # 4 CSVs fuentes colombianas
+├── resources/
+│   ├── architecture/     # Diagramas C4 + arquitectura documentada
+│   ├── manuales/         # 4 manuales (usuario, técnico, modelos, instalación)
+│   └── informeTFM/       # Este informe
+└── context/              # Documentos de contexto del proyecto</code></pre>
+
+<p style="margin-top:3rem; color:#8b949e; font-size:0.85rem; text-align:center;">
+Informe generado por STriAI — TFM UNIR — Julio 2026 · Convocatoria Ordinaria — Predepósito
+</p>
+
+</body>
+</html>

@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual Técnico — STriAI (Sistema de Triaje Multimodal IA)</title>
+    <style>
+        :root {
+            --primary: #0F172A; --secondary: #1E293B; --accent: #38BDF8;
+            --bg: #F1F5F9; --card: #FFFFFF; --text: #1E293B; --text-light: #64748B;
+            --border: #CBD5E1; --code-bg: #1E293B; --code-text: #E2E8F0;
+            --tag-blue: #DBEAFE; --tag-green: #DCFCE7; --tag-yellow: #FEF9C3;
+            --tag-red: #FEE2E2; --tag-purple: #F3E8FF;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Segoe UI', system-ui, sans-serif; background: var(--bg); color: var(--text); line-height: 1.7; }
+        .container { max-width: 1024px; margin: 0 auto; padding: 2rem 1.5rem; }
+        header { background: linear-gradient(135deg, var(--primary), var(--secondary)); color: white; padding: 3rem 1.5rem; text-align: center; }
+        header h1 { font-size: 2rem; margin-bottom: 0.5rem; }
+        header .subtitle { opacity: 0.85; }
+        h2 { font-size: 1.5rem; color: var(--primary); border-bottom: 3px solid var(--accent); padding-bottom: 0.4rem; margin: 2.5rem 0 1rem; }
+        h3 { font-size: 1.2rem; color: #334155; margin: 1.5rem 0 0.6rem; }
+        h4 { font-size: 1rem; margin: 1rem 0 0.4rem; color: #475569; }
+        p { margin-bottom: 0.8rem; }
+        ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+        li { margin-bottom: 0.3rem; }
+        code { background: #E2E8F0; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.9em; font-family: 'Cascadia Code','Fira Code',monospace; }
+        pre { background: var(--code-bg); color: var(--code-text); padding: 1rem 1.2rem; border-radius: 8px; overflow-x: auto; font-size: 0.85rem; line-height: 1.5; margin: 1rem 0; }
+        pre code { background: none; padding: 0; color: inherit; }
+
+        table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.88rem; }
+        th, td { border: 1px solid var(--border); padding: 0.5rem 0.7rem; text-align: left; }
+        th { background: var(--primary); color: white; font-weight: 600; }
+        tr:nth-child(even) { background: #F8FAFC; }
+
+        .card { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1rem 0; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+        .card h4 { margin-top: 0; }
+        .info-box { background: #DBEAFE; border-left: 4px solid #3B82F6; padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+        .warn-box { background: #FEF3C7; border-left: 4px solid #F59E0B; padding: 0.8rem 1rem; margin: 1rem 0; border-radius: 0 6px 6px 0; }
+
+        .tag { display: inline-block; padding: 0.1rem 0.4rem; border-radius: 4px; font-size: 0.78rem; font-weight: 600; margin: 0 0.15rem; }
+        .tag-blue { background: var(--tag-blue); color: #1E40AF; }
+        .tag-green { background: var(--tag-green); color: #166534; }
+        .tag-yellow { background: var(--tag-yellow); color: #854D0E; }
+        .tag-red { background: var(--tag-red); color: #991B1B; }
+        .tag-purple { background: var(--tag-purple); color: #6B21A8; }
+
+        .toc { background: var(--card); border: 1px solid var(--border); border-radius: 10px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+        .toc a { color: var(--accent); text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        .toc ol { columns: 2; column-gap: 2rem; }
+
+        footer { text-align: center; padding: 2rem; color: var(--text-light); font-size: 0.85rem; border-top: 1px solid var(--border); margin-top: 3rem; }
+
+        .diagram { background: #F8FAFC; border: 1px dashed var(--border); padding: 1rem; border-radius: 8px; font-family: monospace; white-space: pre; font-size: 0.8rem; line-height: 1.4; overflow-x: auto; margin: 1rem 0; }
+        .flow { display: flex; flex-wrap: wrap; gap: 0.4rem; margin: 1rem 0; align-items: center; }
+        .flow-step { background: var(--primary); color: white; padding: 0.3rem 0.8rem; border-radius: 6px; font-size: 0.85rem; font-weight: 600; }
+        .flow-arrow { color: var(--accent); font-weight: bold; }
+
+        @media (max-width: 640px) {
+            .container { padding: 1rem; }
+            header h1 { font-size: 1.4rem; }
+            table { font-size: 0.75rem; }
+            th, td { padding: 0.3rem; }
+            .toc ol { columns: 1; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🔧 Manual Técnico — STriAI</h1>
+    <p class="subtitle">Sistema de Triaje Multimodal IA · Documentación para Desarrolladores</p>
+    <p style="margin-top:0.5rem;opacity:0.75;">Stack: Python 3.11 · Streamlit 1.59 · SQLite · XGBoost · SHAP · BERT-es · bcrypt 5.0</p>
+</header>
+
+<div class="container">
+
+<div class="toc">
+    <strong>📑 Contenido</strong>
+    <ol>
+        <li><a href="#s1">Arquitectura General</a></li>
+        <li><a href="#s2">Stack Tecnológico</a></li>
+        <li><a href="#s3">Base de Datos</a></li>
+        <li><a href="#s4">Servicios (Business Logic)</a></li>
+        <li><a href="#s5">Páginas UI</a></li>
+        <li><a href="#s6">Flujo de Datos</a></li>
+        <li><a href="#s7">Router y Navegación</a></li>
+        <li><a href="#s8">Configuración</a></li>
+        <li><a href="#s9">Pipeline ML (src/)</a></li>
+        <li><a href="#s10">Guía para Desarrolladores</a></li>
+        <li><a href="#s11">Endpoints y Puertos</a></li>
+        <li><a href="#s12">Instalación y Ejecución</a></li>
+        <li><a href="#s13">Estándares de Código</a></li>
+    </ol>
+</div>
+
+<!-- ================================================================== -->
+<h2 id="s1">1. Arquitectura General</h2>
+
+<h3>1.1 Diagrama de Capas</h3>
+<div class="diagram">┌─────────────────────────────────────────────────┐
+│                  app.py (Entry Point)            │
+│    Router · Sidebar · Session State · Auth       │
+├──────────────┬──────────────────────────────────┤
+│   app/ui/    │         app/services/             │
+│  (Streamlit) │  (Business Logic + ML Inference)  │
+│              │                                   │
+│  P01-P14     │  auth_service  triage_service     │
+│  login       │  patient_service                  │
+│  patient     │  inference_service                │
+│  vital_signs │  audit_service                    │
+│  clinical    │  report_service                   │
+│  ia_classif  │                                   │
+│  dashboard   ├──────────────────────────────────┤
+│  models      │        app/data/                  │
+│  audit       │     database.py (SQLite)          │
+│  users       │  12 tablas · Índices · Migración   │
+│  control_cb  │  SEED SQL · row_to_dict()         │
+│  historico   │                                   │
+├──────────────┴──────────────────────────────────┤
+│              app/config/settings.py              │
+│         .env · YAML · Variables de entorno       │
+└─────────────────────────────────────────────────┘
+
+Pipeline ML (externo):
+  src/               → Código reutilizable del pipeline
+  notebooks/         → Exploración y experimentos
+  models/            → Artefactos serializados (.pkl)
+  run_pipeline.py    → Pipeline 14 pasos ejecutable</div>
+
+<h3>1.2 Patrón Arquitectónico</h3>
+<p><strong>Layered Monolith</strong> con separación modular:</p>
+<ul>
+    <li><strong>UI Layer</strong> (<code>app/ui/</code>): Componentes Streamlit sin estado. Cada pantalla es una función <code>render_*()</code> independiente.</li>
+    <li><strong>Service Layer</strong> (<code>app/services/</code>): Lógica de negocio pura. Clases con inyección de <code>db_path</code>. Sin dependencia de Streamlit.</li>
+    <li><strong>Data Layer</strong> (<code>app/data/</code>): Acceso a SQLite. Schema DDL, helpers <code>row_to_dict()</code>, migraciones incrementales, datos semilla.</li>
+    <li><strong>Config Layer</strong> (<code>app/config/</code>): Carga de <code>.env</code> y variables de entorno.</li>
+</ul>
+<div class="info-box"><strong>Principio clave:</strong> Las páginas UI nunca acceden directamente a la BD; siempre pasan por los servicios.</div>
+
+<!-- ================================================================== -->
+<h2 id="s2">2. Stack Tecnológico</h2>
+<table>
+    <tr><th>Componente</th><th>Tecnología</th><th>Versión</th><th>Notas</th></tr>
+    <tr><td>Lenguaje</td><td>Python</td><td>3.11</td><td></td></tr>
+    <tr><td>Framework Web/UI</td><td>Streamlit</td><td>≥1.31 (1.59)</td><td>Single-page con <code>st.session_state</code></td></tr>
+    <tr><td>Base de Datos</td><td>SQLite 3</td><td>Built-in</td><td>WAL mode, FK enabled, sin ORM</td></tr>
+    <tr><td>Autenticación</td><td>bcrypt</td><td>5.0</td><td>12 rounds, bloqueo 5 intentos</td></tr>
+    <tr><td>ML — Clasificación</td><td>XGBoost</td><td>≥2.0</td><td>Early Fusion / Late Fusion</td></tr>
+    <tr><td>ML — NLP</td><td>BERT-es (beto)</td><td>—</td><td>Embeddings 768-dim vía <code>transformers</code></td></tr>
+    <tr><td>ML — Preprocesamiento</td><td>scikit-learn</td><td>≥1.4</td><td>StandardScaler, OneHotEncoder</td></tr>
+    <tr><td>ML — Explicabilidad</td><td>SHAP</td><td>≥0.44</td><td>TreeExplainer + waterfall</td></tr>
+    <tr><td>Serialización</td><td>joblib</td><td>≥1.3</td><td>.pkl para modelo, scaler, encoder</td></tr>
+    <tr><td>Gráficos</td><td>matplotlib</td><td>≥3.8</td><td>SHAP plots</td></tr>
+    <tr><td>Datos</td><td>pandas, numpy</td><td>≥2.1, ≥1.26</td><td>Procesamiento de features</td></tr>
+</table>
+
+<h3>2.1 requirements.txt</h3>
+<pre><code>streamlit>=1.31
+pandas>=2.1
+numpy>=1.26
+scikit-learn>=1.4
+xgboost>=2.0
+shap>=0.44
+joblib>=1.3
+matplotlib>=3.8
+bcrypt>=4.1
+python-dotenv>=1.0</code></pre>
+
+<!-- ================================================================== -->
+<h2 id="s3">3. Base de Datos</h2>
+
+<h3>3.1 Motor y Configuración</h3>
+<pre><code># app/data/database.py
+conn = sqlite3.connect(db_path)
+conn.execute("PRAGMA journal_mode=WAL")    # Write-Ahead Logging
+conn.execute("PRAGMA foreign_keys=ON")     # Integridad referencial
+conn.row_factory = sqlite3.Row              # Acceso por nombre de columna</code></pre>
+
+<div class="info-box"><strong>Decisiones:</strong> WAL mode permite lecturas concurrentes. Foreign keys ON evita huérfanos. Sin ORM — control total del SQL.</div>
+
+<h3>3.2 Conversión PascalCase ↔ snake_case</h3>
+<p>El schema SQL usa <strong>PascalCase</strong> (<code>IdPaciente</code>, <code>NivelSugeridoIA</code>). El código Python usa <strong>snake_case</strong>. La conversión es automática:</p>
+<pre><code>def _pascal_to_snake(name):
+    s1 = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', name)
+    s2 = re.sub(r'([A-Z]+)([A-Z][a-z])', r'\1_\2', s1)
+    return s2.lower()
+
+def row_to_dict(row):
+    return {_pascal_to_snake(k): row[k] for k in row.keys()}</code></pre>
+<div class="warn-box">⚠️ Al añadir columnas al schema, usar PascalCase en SQL. La conversión a snake_case es automática al leer.</div>
+
+<h3>3.3 Migraciones Incrementales</h3>
+<pre><code>def _apply_migrations(conn):
+    migraciones = [
+        "ALTER TABLE Paciente ADD COLUMN Nombres TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE Paciente ADD COLUMN Apellidos TEXT NOT NULL DEFAULT ''",
+        # ... 7 más para Épica 7
+    ]
+    for sql in migraciones:
+        try: conn.execute(sql)
+        except sqlite3.OperationalError: pass  # Ya existe</code></pre>
+
+<h3>3.4 Tablas (12)</h3>
+<table>
+    <tr><th>Tabla</th><th>Columnas</th><th>Clave Foránea</th></tr>
+    <tr><td><code>Paciente</code></td><td>21</td><td>—</td></tr>
+    <tr><td><code>EventoTriaje</code></td><td>13</td><td>IdPaciente → Paciente</td></tr>
+    <tr><td><code>SignosVitales</code></td><td>11</td><td>IdTriaje → EventoTriaje</td></tr>
+    <tr><td><code>EvaluacionClinica</code></td><td>18</td><td>IdTriaje → EventoTriaje</td></tr>
+    <tr><td><code>PrediccionIA</code></td><td>7</td><td>IdTriaje → EventoTriaje</td></tr>
+    <tr><td><code>ExplicacionSHAP</code></td><td>4</td><td>IdPrediccion → PrediccionIA</td></tr>
+    <tr><td><code>Modelo</code></td><td>13</td><td>—</td></tr>
+    <tr><td><code>Usuario</code></td><td>11</td><td>—</td></tr>
+    <tr><td><code>Auditoria</code></td><td>9</td><td>—</td></tr>
+    <tr><td><code>Configuracion</code></td><td>3</td><td>—</td></tr>
+    <tr><td><code>ControlCambios</code></td><td>8</td><td>—</td></tr>
+    <tr><td><em>(sqlite_sequence)</em></td><td>—</td><td>—</td></tr>
+</table>
+
+<h3>3.5 Índices (11)</h3>
+<pre><code>idx_paciente_documento   ON Paciente(NumeroDocumento)
+idx_triaje_paciente      ON EventoTriaje(IdPaciente)
+idx_triaje_estado        ON EventoTriaje(Estado)
+idx_auditoria_fecha      ON Auditoria(FechaHora)
+idx_auditoria_usuario    ON Auditoria(Usuario)
+idx_auditoria_accion     ON Auditoria(Accion)
+idx_prediccion_triaje    ON PrediccionIA(IdTriaje)
+idx_modelo_estado        ON Modelo(Estado)
+idx_usuario_nombre       ON Usuario(NombreUsuario)
+idx_control_cambios_entidad ON ControlCambios(Entidad, IdEntidad)
+idx_control_cambios_documento ON ControlCambios(NumeroDocumento)
+idx_control_cambios_fecha ON ControlCambios(FechaHora)</code></pre>
+
+<!-- ================================================================== -->
+<h2 id="s4">4. Servicios (Business Logic)</h2>
+
+<div class="card"><h4>4.1 AuthService</h4>
+<p><strong>Archivo:</strong> <code>app/services/auth_service.py</code></p>
+<p>Autenticación, autorización RBAC, gestión de sesiones, recuperación de contraseña.</p>
+<table>
+    <tr><th>Método</th><th>Retorno</th><th>Descripción</th></tr>
+    <tr><td><code>login(user, pwd)</code></td><td><code>Optional[Dict]</code></td><td>Autentica. Bloquea tras 5 intentos.</td></tr>
+    <tr><td><code>logout()</code></td><td><code>None</code></td><td>Limpia session_state.</td></tr>
+    <tr><td><code>get_allowed_pages(rol)</code></td><td><code>List[str]</code></td><td>Páginas permitidas para el rol.</td></tr>
+    <tr><td><code>create_user(admin_id, user, pwd, email, rol)</code></td><td><code>Optional[str]</code></td><td>Crea usuario (solo Admin).</td></tr>
+    <tr><td><code>update_user(admin_id, target_id, email, rol, activo)</code></td><td><code>bool</code></td><td>Actualiza campos editables.</td></tr>
+    <tr><td><code>reset_password(admin_id, target_id)</code></td><td><code>Optional[str]</code></td><td>Genera contraseña aleatoria 8 chars.</td></tr>
+    <tr><td><code>deactivate_user(admin_id, target_id)</code></td><td><code>bool</code></td><td>Soft delete (Activo=0).</td></tr>
+    <tr><td><code>list_users()</code></td><td><code>List[Dict]</code></td><td>Todos los usuarios.</td></tr>
+</table>
+</div>
+
+<div class="card"><h4>4.2 PatientService</h4>
+<p><strong>Archivo:</strong> <code>app/services/patient_service.py</code></p>
+<p>CRUD de pacientes, búsqueda, historial, control de cambios. Exporta catálogos de geografía colombiana (32 deptos, 108 ciudades).</p>
+<table>
+    <tr><th>Método</th><th>Descripción</th></tr>
+    <tr><td><code>register_patient(...)</code></td><td>Registra con 20 campos. Lanza <code>DuplicatePatientError</code>.</td></tr>
+    <tr><td><code>search_patients(q, tipo, limit)</code></td><td>Búsqueda LIKE por documento/nombres/apellidos.</td></tr>
+    <tr><td><code>get_patient_triage_history(id)</code></td><td>Historial con JOIN de SignosVitales + EvaluacionClinica.</td></tr>
+    <tr><td><code>search_triages_by_documento(doc)</code></td><td>Triajes por documento del paciente.</td></tr>
+    <tr><td><code>get_active_triages_by_documento(doc)</code></td><td>Triajes activos (≠ Cerrado/Cancelado).</td></tr>
+    <tr><td><code>registrar_cambio(...)</code></td><td>Inserta en ControlCambios con versionado.</td></tr>
+    <tr><td><code>get_historial_cambios(...)</code></td><td>Consulta con filtros.</td></tr>
+</table>
+</div>
+
+<div class="card"><h4>4.3 TriageService</h4>
+<p><strong>Archivo:</strong> <code>app/services/triage_service.py</code></p>
+<p>Máquina de estados del triaje (7 estados), signos vitales, evaluación clínica.</p>
+<div class="flow">
+    <span class="flow-step">Registrado</span><span class="flow-arrow">→</span>
+    <span class="flow-step">EnEvaluación</span><span class="flow-arrow">→</span>
+    <span class="flow-step">PendienteIA</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Clasificado</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Validado</span><span class="flow-arrow">→</span>
+    <span class="flow-step">Cerrado</span>
+</div>
+<p style="font-size:0.85rem;color:var(--text-light);">Cancelado (reactivable) en cualquier paso</p>
+</div>
+
+<div class="card"><h4>4.4 InferenceService</h4>
+<p><strong>Archivo:</strong> <code>app/services/inference_service.py</code></p>
+<p>Carga del modelo ML, construcción del vector de features, predicción multimodal, explicación SHAP. <strong>Singleton:</strong> <code>get_inference_service()</code>.</p>
+<div class="info-box"><strong>Modo Degradado:</strong> Si el modelo no está disponible, <code>predict()</code> retorna <code>None</code> y el sistema continúa solo con clasificación manual del profesional.</div>
+</div>
+
+<div class="card"><h4>4.5 AuditService</h4>
+<p><strong>Archivo:</strong> <code>app/services/audit_service.py</code></p>
+<p>Registro de auditoría append-only. 17 acciones auditables. Exportación CSV/Excel/JSON.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2 id="s5">5. Páginas UI</h2>
+<table>
+    <tr><th>Archivo</th><th>Función</th><th>Pantalla</th><th>Roles</th></tr>
+    <tr><td><code>login_page.py</code></td><td><code>render_login(auth)</code></td><td>P01 — Login</td><td><span class="tag tag-green">Todos</span></td></tr>
+    <tr><td><code>patient_page.py</code></td><td><code>render_patient_registration()</code></td><td>P02 — Paciente</td><td><span class="tag tag-blue">Admin, Méd, Enf</span></td></tr>
+    <tr><td><code>vital_signs_page.py</code></td><td><code>render_vital_signs()</code></td><td>P03 — Signos</td><td><span class="tag tag-blue">Admin, Méd, Enf</span></td></tr>
+    <tr><td><code>clinical_eval_page.py</code></td><td><code>render_clinical_evaluation()</code></td><td>P04 — Eval Clínica</td><td><span class="tag tag-blue">Admin, Méd, Enf</span></td></tr>
+    <tr><td><code>ia_classification_page.py</code></td><td><code>render_ia_classification()</code></td><td>P05/P06 — IA + SHAP</td><td><span class="tag tag-blue">Admin, Méd, Enf</span></td></tr>
+    <tr><td><code>triage_validation_page.py</code></td><td><code>render_triage_validation()</code></td><td>P07 — Validación</td><td><span class="tag tag-blue">Admin, Méd, Enf</span></td></tr>
+    <tr><td><code>dashboard_page.py</code></td><td><code>render_dashboard()</code></td><td>P10 — Dashboard</td><td><span class="tag tag-purple">Admin, Méd, Inv, Aud</span></td></tr>
+    <tr><td><code>model_management_page.py</code></td><td><code>render_model_management()</code></td><td>P09 — Modelos</td><td><span class="tag tag-red">Admin</span></td></tr>
+    <tr><td><code>model_comparison_page.py</code></td><td><code>render_model_comparison()</code></td><td>P08 — Comparar</td><td><span class="tag tag-yellow">Admin, Inv</span></td></tr>
+    <tr><td><code>audit_page.py</code></td><td><code>render_audit()</code></td><td>P11 — Auditoría</td><td><span class="tag tag-yellow">Admin, Aud</span></td></tr>
+    <tr><td><code>user_management_page.py</code></td><td><code>render_user_management(auth)</code></td><td>P12 — Usuarios</td><td><span class="tag tag-red">Admin</span></td></tr>
+    <tr><td><code>control_cambios_page.py</code></td><td><code>render_control_cambios()</code></td><td>P13 — Cambios</td><td><span class="tag tag-red">Admin</span></td></tr>
+    <tr><td><code>historico_paciente_page.py</code></td><td><code>render_historico_paciente()</code></td><td>P14 — Histórico</td><td><span class="tag tag-green">Todos</span></td></tr>
+</table>
+
+<!-- ================================================================== -->
+<h2 id="s6">6. Flujo de Datos</h2>
+
+<h3>6.1 Ciclo de Vida de un Triaje</h3>
+<pre><code>1. POST paciente    → INSERT Paciente
+2. POST triaje      → INSERT EventoTriaje (Estado=Registrado)
+3. PUT signos       → INSERT/UPDATE SignosVitales → Estado: EnEvaluacion
+4. PUT evaluación   → INSERT/UPDATE EvaluacionClinica → Estado: PendienteIA
+5. POST inferencia  → INSERT PrediccionIA + ExplicacionSHAP → Estado: Clasificado
+6. PUT validación   → UPDATE EventoTriaje → Estado: Validado
+7. PUT cierre       → UPDATE EventoTriaje (FechaHoraCierre) → Estado: Cerrado</code></pre>
+
+<h3>6.2 Flujo de Inferencia IA</h3>
+<pre><code>Datos clínicos (SignosVitales + EvaluacionClinica)
+    │
+    ▼
+_build_feature_vector()
+    ├── Variables estructuradas → Scaler + Encoder
+    ├── Embeddings NLP (BERT-es 768-dim)
+    └── Vector combinado (Early Fusion)
+    │
+    ▼
+model.predict_proba() → 5 probabilidades [I, II, III, IV, V]
+    │
+    ▼
+_apply_thresholds() → Nivel sugerido (argmax calibrado)
+    │
+    ▼
+SHAP TreeExplainer → Valores SHAP → Waterfall plot
+    │
+    ▼
+_enrich_explanation() → Etiquetas clínicas en español</code></pre>
+
+<!-- ================================================================== -->
+<h2 id="s7">7. Router y Navegación</h2>
+
+<h3>7.1 Estructura</h3>
+<pre><code>page = st.session_state.get("page", "login")
+
+if page == "login" or not user:
+    render_login(auth)
+elif page == "registro_paciente":
+    render_patient_registration()
+elif page == "signos_vitales":
+    render_vital_signs()
+# ... 11 páginas más</code></pre>
+
+<h3>7.2 Recarga Forzada de Módulos</h3>
+<p>Para evitar el caché stale de Streamlit:</p>
+<pre><code>for prefix in ("app.services.auth", "app.ui.login_page", ...):
+    for mod_name in list(sys.modules.keys()):
+        if mod_name.startswith(prefix):
+            del sys.modules[mod_name]
+import app.services.auth_service as auth_mod
+importlib.reload(auth_mod)</code></pre>
+<div class="warn-box">⚠️ Al añadir una nueva página UI, agregar su prefijo a esta lista.</div>
+
+<h3>7.3 Variables de Sesión</h3>
+<table>
+    <tr><th>Variable</th><th>Tipo</th><th>Descripción</th></tr>
+    <tr><td><code>user</code></td><td><code>dict</code></td><td>Datos del usuario logueado</td></tr>
+    <tr><td><code>page</code></td><td><code>str</code></td><td>Página activa</td></tr>
+    <tr><td><code>db_path</code></td><td><code>str</code></td><td>Ruta al archivo SQLite</td></tr>
+    <tr><td><code>triaje_activo</code></td><td><code>str</code></td><td>IdTriaje en curso</td></tr>
+    <tr><td><code>paciente_activo</code></td><td><code>str</code></td><td>IdPaciente en curso</td></tr>
+    <tr><td><code>app_config</code></td><td><code>dict</code></td><td>Configuración de .env</td></tr>
+    <tr><td><code>app_initialized</code></td><td><code>bool</code></td><td>Inicialización completada</td></tr>
+</table>
+
+<!-- ================================================================== -->
+<h2 id="s8">8. Configuración</h2>
+<pre><code># .env
+DB_PATH=data/triaje.db
+SESSION_TIMEOUT_MINUTES=15
+BCRYPT_ROUNDS=12
+MODEL_PATH=models
+ACTIVE_MODEL=xgboost_early_fusion_v1
+ENV=development
+LOG_LEVEL=INFO</code></pre>
+<pre><code># app/config/settings.py
+def load_config() -> dict:    # Carga .env con python-dotenv
+def get_db_path(cfg) -> str:  # Resuelve ruta absoluta, crea data/</code></pre>
+
+<!-- ================================================================== -->
+<h2 id="s9">9. Pipeline ML (src/)</h2>
+<div class="diagram">src/
+├── data/
+│   ├── ingesta.py          # Carga de datasets
+│   ├── limpieza.py         # Validación, imputación, encoding
+│   └── anonimizacion.py    # Eliminación de datos sensibles
+├── features/
+│   └── nlp_embeddings.py   # Embeddings BERT-es
+├── models/
+│   └── train_models.py     # XGBoost Early/Late Fusion
+├── evaluation/
+│   ├── metrics.py          # F1, AUC-ROC, AUPRC, matriz confusión
+│   └── shap_benchmarks.py  # SHAP + benchmarks literatura
+└── serving/
+    └── serialize.py        # Serialización/deserialización</div>
+
+<h3>9.1 ModelSerializer</h3>
+<pre><code>class ModelSerializer:
+    @staticmethod
+    def save(output_dir, model, scaler, encoder, tokenizer, metrics, ...)
+        # → model.pkl, scaler.pkl, encoder.pkl, tokenizer/, metadata.json
+
+    @staticmethod
+    def load(model_dir) -> Dict[str, Any]
+        # ← modelo + transformadores + metadata
+
+    @staticmethod
+    def load_active_model(models_dir=None) -> Dict[str, Any]
+        # Busca el modelo activo en BD y lo carga</code></pre>
+
+<!-- ================================================================== -->
+<h2 id="s10">10. Guía para Desarrolladores</h2>
+
+<div class="card">
+<h4>10.1 Añadir Nueva Página</h4>
+<ol>
+    <li>Crear <code>app/ui/nueva_pagina.py</code> con función <code>render_nueva_pagina()</code>.</li>
+    <li>Agregar ruta en <code>app.py</code>: <code>elif page == "nueva_pagina": ...</code></li>
+    <li>Agregar botón en el sidebar.</li>
+    <li>Si requiere permisos: agregar a <code>ROLE_PERMISSIONS</code> en <code>auth_service.py</code>.</li>
+    <li>Agregar prefijo a la lista de recarga de módulos en <code>app.py</code>.</li>
+</ol>
+</div>
+
+<div class="card">
+<h4>10.2 Añadir Columna a la BD</h4>
+<ol>
+    <li>Agregar al <code>CREATE TABLE</code> en <code>SCHEMA_SQL</code>.</li>
+    <li>Agregar <code>ALTER TABLE ADD COLUMN</code> a <code>_apply_migrations()</code>.</li>
+    <li>Usar <strong>PascalCase</strong> en SQL. La conversión snake_case es automática.</li>
+    <li>Actualizar métodos del servicio (INSERT, SELECT).</li>
+</ol>
+</div>
+
+<div class="card">
+<h4>10.3 Añadir Nuevo Rol</h4>
+<ol>
+    <li>Agregar a <code>CHECK(Rol IN (...))</code> en <code>CREATE TABLE Usuario</code>.</li>
+    <li>Agregar entrada en <code>ROLE_PERMISSIONS</code>.</li>
+    <li>Actualizar <code>ROLES_LABELS</code> y <code>ROLES_DISPONIBLES</code> en UI.</li>
+</ol>
+</div>
+
+<div class="card">
+<h4>10.4 Añadir Estado al Triaje</h4>
+<ol>
+    <li>Agregar a <code>CHECK(Estado IN (...))</code> en <code>CREATE TABLE EventoTriaje</code>.</li>
+    <li>Definir transiciones en <code>TRANSICIONES_VALIDAS</code>.</li>
+    <li>Actualizar <code>TriageService.transition_state()</code> y UI.</li>
+</ol>
+</div>
+
+<div class="card">
+<h4>10.5 Registrar Nuevo Modelo ML</h4>
+<ol>
+    <li>Entrenar con <code>run_pipeline.py</code> o manualmente.</li>
+    <li>El artefacto se guarda en <code>models/nombre_modelo/</code> con <code>ModelSerializer.save()</code>.</li>
+    <li>En la app: ⚙️ Gestión Modelos → Disco → Registrar en BD.</li>
+    <li>Revisar métricas en 🔬 Comparar Modelos.</li>
+    <li>Activar desde BD → Activar.</li>
+</ol>
+</div>
+
+<div class="card">
+<h4>10.6 Debugging</h4>
+<ul>
+    <li><strong>Logs:</strong> Terminal donde se ejecuta <code>streamlit run</code>.</li>
+    <li><strong>Errores de importación:</strong> Verificar lista de recarga en <code>app.py</code>.</li>
+    <li><strong>BD:</strong> Se recrea al borrar <code>data/triaje.db</code>. Datos semilla con <code>INSERT OR IGNORE</code>.</li>
+    <li><strong>Caché stale:</strong> Matar Streamlit, borrar <code>__pycache__/</code>, reiniciar con <code>PYTHONDONTWRITEBYTECODE=1</code>.</li>
+</ul>
+</div>
+
+<!-- ================================================================== -->
+<h2 id="s11">11. Endpoints y Puertos</h2>
+<table>
+    <tr><th>Servicio</th><th>Puerto</th><th>URL</th></tr>
+    <tr><td>Streamlit App</td><td>8501</td><td><code>http://localhost:8501</code></td></tr>
+</table>
+<div class="info-box">La app es standalone — no expone API REST. Toda la lógica se ejecuta en el mismo proceso Python de Streamlit.</div>
+
+<!-- ================================================================== -->
+<h2 id="s12">12. Instalación y Ejecución</h2>
+<pre><code># 1. Clonar e instalar
+cd sistema-triaje-ia
+python -m venv .venv
+.venv\Scripts\activate        # Windows
+pip install -r requirements.txt
+
+# 2. Configurar
+cp .env.example .env          # Ajustar variables
+
+# 3. Ejecutar
+streamlit run app.py --server.port 8501
+
+# 4. Acceder
+http://localhost:8501
+# Credenciales: admin / admin123</code></pre>
+
+<!-- ================================================================== -->
+<h2 id="s13">13. Estándares de Código</h2>
+<table>
+    <tr><th>Aspecto</th><th>Convención</th></tr>
+    <tr><td>Idioma</td><td>Español (variables, funciones, comentarios). Columnas SQL: PascalCase.</td></tr>
+    <tr><td>Formato</td><td>snake_case para funciones, variables, archivos Python.</td></tr>
+    <tr><td>Tipado</td><td>Type hints en todas las firmas de servicios.</td></tr>
+    <tr><td>Docstrings</td><td>Cada método público debe tener docstring descriptivo.</td></tr>
+    <tr><td>Errores</td><td>Excepciones específicas con mensajes en español.</td></tr>
+    <tr><td>UI</td><td><code>st.title()</code> + <code>st.caption()</code> con paso y descripción.</td></tr>
+    <tr><td>Acceso a BD</td><td>Solo desde servicios. UI nunca accede directamente a SQLite.</td></tr>
+    <tr><td>Principio</td><td>Ningún <code>DELETE</code> físico. Solo soft delete (Activo=0) o estados terminales.</td></tr>
+</table>
+
+</div>
+
+<footer>
+    TFM · UNIR · Máster en Inteligencia Artificial · v1.0 Demo<br>
+    Documento generado el 20 de julio de 2026
+</footer>
+
+</body>
+</html>

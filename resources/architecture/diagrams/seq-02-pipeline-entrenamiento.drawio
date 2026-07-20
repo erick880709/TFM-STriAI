@@ -1,0 +1,68 @@
+<mxfile host="app.diagrams.net" modified="2026-07-19T22:00:00.000Z" agent="archi-skill" version="21.0.0" type="device">
+  <diagram id="SEQ2-Entrenamiento" name="Secuencia - Pipeline Entrenamiento">
+    <mxGraphModel dx="1200" dy="1200" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="1300" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Diagrama de Secuencia — Pipeline de Entrenamiento (13 pasos, offline)" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=16;fontStyle=1;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="150" y="10" width="800" height="25" as="geometry"/>
+        </mxCell>
+        <!-- Lifelines -->
+        <mxCell id="ll-ds" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#FFF7ED;strokeColor=#EA580C;" vertex="1" parent="1">
+          <mxGeometry x="80" y="60" width="100" height="1100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-ing" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#ECFEFF;strokeColor=#0891B2;" vertex="1" parent="1">
+          <mxGeometry x="240" y="60" width="100" height="1100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-limp" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#ECFEFF;strokeColor=#0891B2;" vertex="1" parent="1">
+          <mxGeometry x="400" y="60" width="100" height="1100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-train" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#F0FDF4;strokeColor=#059669;" vertex="1" parent="1">
+          <mxGeometry x="560" y="60" width="100" height="1100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-eval" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#F0FDF4;strokeColor=#059669;" vertex="1" parent="1">
+          <mxGeometry x="720" y="60" width="100" height="1100" as="geometry"/>
+        </mxCell>
+        <mxCell id="ll-reg" value="" style="shape=umlLifeline;perimeter=lifelinePerimeter;whiteSpace=wrap;html=1;container=1;collapsible=0;recursiveResize=0;outlineConnect=0;fillColor=#FFF7ED;strokeColor=#EA580C;" vertex="1" parent="1">
+          <mxGeometry x="880" y="60" width="100" height="1100" as="geometry"/>
+        </mxCell>
+        <!-- Headers -->
+        <mxCell id="hd1" value="Científico&lt;br&gt;Datos" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=1;fontColor=#EA580C;align=center;" vertex="1" parent="1"><mxGeometry x="85" y="40" width="90" height="25" as="geometry"/></mxCell>
+        <mxCell id="hd2" value="Pipeline&lt;br&gt;Ingesta" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=1;fontColor=#0891B2;align=center;" vertex="1" parent="1"><mxGeometry x="245" y="40" width="90" height="25" as="geometry"/></mxCell>
+        <mxCell id="hd3" value="Pipeline&lt;br&gt;Limpieza" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=1;fontColor=#0891B2;align=center;" vertex="1" parent="1"><mxGeometry x="405" y="40" width="90" height="25" as="geometry"/></mxCell>
+        <mxCell id="hd4" value="Entrenador&lt;br&gt;XGBoost/BERT" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=1;fontColor=#059669;align=center;" vertex="1" parent="1"><mxGeometry x="560" y="40" width="100" height="25" as="geometry"/></mxCell>
+        <mxCell id="hd5" value="Evaluador&lt;br&gt;+ SHAP" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=1;fontColor=#059669;align=center;" vertex="1" parent="1"><mxGeometry x="730" y="40" width="80" height="25" as="geometry"/></mxCell>
+        <mxCell id="hd6" value="Model&lt;br&gt;Registry" style="text;html=1;strokeColor=none;fillColor=none;fontSize=10;fontStyle=1;fontColor=#EA580C;align=center;" vertex="1" parent="1"><mxGeometry x="890" y="40" width="80" height="25" as="geometry"/></mxCell>
+        <!-- Messages -->
+        <mxCell id="m1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#EA580C;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-ds" target="ll-ing">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="100" as="sourcePoint"/><mxPoint y="100" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m1l" value="P1-2: Ingesta 5 fuentes + Anonimizar" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#EA580C;" vertex="1" connectable="0" parent="m1"><mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="40" y="-8" as="offset"/></mxGeometry></mxCell>
+        <mxCell id="m2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0891B2;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-ds" target="ll-limp">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="220" as="sourcePoint"/><mxPoint y="220" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m2l" value="P3-4: Limpiar + Normalizar + OneHot" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#0891B2;" vertex="1" connectable="0" parent="m2"><mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="60" y="-8" as="offset"/></mxGeometry></mxCell>
+        <mxCell id="m3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0891B2;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-ds" target="ll-train">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="360" as="sourcePoint"/><mxPoint y="360" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m3l" value="P5: Embeddings BERT + P6-7: Baselines LR/RF/XGB" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#059669;fontStyle=1;" vertex="1" connectable="0" parent="m3"><mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="60" y="-8" as="offset"/></mxGeometry></mxCell>
+        <mxCell id="m4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-ds" target="ll-train">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="500" as="sourcePoint"/><mxPoint y="500" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m4l" value="P8: Early Fusion + Late Fusion en paralelo ⚡" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#F59E0B;fontStyle=1;" vertex="1" connectable="0" parent="m4"><mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="60" y="-8" as="offset"/></mxGeometry></mxCell>
+        <mxCell id="m5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-ds" target="ll-eval">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="640" as="sourcePoint"/><mxPoint y="640" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m5l" value="P9-10: Threshold tuning + Evaluación final + SHAP + Benchmarks" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#059669;fontStyle=1;" vertex="1" connectable="0" parent="m5"><mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="60" y="-8" as="offset"/></mxGeometry></mxCell>
+        <mxCell id="m6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="ll-ds" target="ll-reg">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="800" as="sourcePoint"/><mxPoint y="800" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m6l" value="P13: Serializar modelo + scalers + encoders + tokenizer + metadata.json" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#059669;fontStyle=1;" vertex="1" connectable="0" parent="m6"><mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="60" y="-8" as="offset"/></mxGeometry></mxCell>
+        <mxCell id="m7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=open;endFill=0;dashed=1;" edge="1" parent="1" source="ll-reg" target="ll-ds">
+          <mxGeometry relative="1" as="geometry"><mxPoint y="940" as="sourcePoint"/><mxPoint y="940" as="targetPoint"/></mxGeometry>
+        </mxCell>
+        <mxCell id="m7l" value="✓ Modelo listo para demo" style="edgeLabel;html=1;align=center;verticalAlign=middle;fontSize=10;fontColor=#059669;fontStyle=1;" vertex="1" connectable="0" parent="m7"><mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="50" y="-8" as="offset"/></mxGeometry></mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

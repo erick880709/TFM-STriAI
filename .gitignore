@@ -1,0 +1,101 @@
+# ============================================================
+# STriAI — Sistema de Triaje Multimodal IA
+# TFM UNIR — Máster en Inteligencia Artificial
+# ============================================================
+
+# ---- Python ----
+*.pyc
+*.pyo
+__pycache__/
+*.egg-info/
+dist/
+build/
+*.egg
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+
+# ---- Entorno Virtual ----
+.venv/
+venv/
+env/
+.env
+*.env.local
+*.env.production
+
+# ---- Base de Datos ----
+*.db
+*.db-journal
+*.db-wal
+*.db-shm
+*.sqlite3
+
+# ---- Modelos Serializados (archivos grandes) ----
+models/**/*.joblib
+models/**/*.pkl
+models/**/*.h5
+models/**/*.pt
+models/**/*.bin
+models/**/*.safetensors
+!models/active_version.txt
+!models/**/*.json
+
+# ---- Notebooks ----
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+notebooks/.ipynb_checkpoints/
+
+# ---- Datasets ----
+datasets/*.csv
+datasets/*.xlsx
+datasets/*.parquet
+
+# ---- IDE y Editores ----
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+.project
+.classpath
+.settings/
+
+# ---- Sistema Operativo ----
+.DS_Store
+.DS_Store?
+._*
+.Spotlight-V100
+.Trashes
+ehthumbs.db
+Thumbs.db
+Desktop.ini
+
+# ---- Streamlit ----
+.streamlit/secrets.toml
+
+# ---- Logs ----
+*.log
+logs/
+
+# ---- Archivos Temporales ----
+*.tmp
+*.temp
+*.bak
+*.orig
+tmp/
+temp/
+
+# ---- Hugging Face Cache ----
+.cache/huggingface/
+
+# ---- Copilot / Chat ----
+.copilot/
+.github/copilot/
+
+# ---- Artefactos de Build ----
+*.zip
+*.tar.gz
+*.7z
+
+# ---- Skills (referencias de desarrollo, no parte del TFM) ----
+.github/skills/

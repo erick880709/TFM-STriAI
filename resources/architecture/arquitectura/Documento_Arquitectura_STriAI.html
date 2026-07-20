@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documento de Arquitectura — STriAI</title>
+<style>
+  :root { --bg: #0d1117; --fg: #c9d1d9; --accent: #58a6ff; --border: #30363d; --code-bg: #161b22; --table-stripe: #161b22; --success: #3fb950; --warning: #d2991d; --error: #f85149; --heading: #f0f6fc; }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.7; padding: 2rem; max-width: 1200px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: var(--heading); border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; margin: 2rem 0 1rem; }
+  h2 { font-size: 1.5rem; color: var(--heading); border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; margin: 2rem 0 1rem; }
+  h3 { font-size: 1.2rem; color: var(--heading); margin: 1.5rem 0 0.8rem; }
+  h4 { font-size: 1.05rem; color: var(--accent); margin: 1rem 0 0.5rem; }
+  p { margin: 0.8rem 0; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.55rem 0.8rem; border: 1px solid var(--border); text-align: left; }
+  th { background: #21262d; color: var(--heading); font-weight: 600; }
+  tr:nth-child(even) { background: var(--table-stripe); }
+  code { font-family: 'Cascadia Code', 'Consolas', monospace; background: var(--code-bg); padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; border: 1px solid var(--border); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; margin: 1rem 0; font-size: 0.85rem; }
+  pre code { border: none; padding: 0; background: transparent; }
+  blockquote { border-left: 4px solid var(--accent); padding: 0.5rem 1rem; margin: 1rem 0; background: #161b22; border-radius: 0 6px 6px 0; }
+  .toc { background: #161b22; border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+  .toc ol { margin-left: 1.5rem; }
+  .badge-ok { background: #1a3a2a; color: var(--success); padding: 0.15em 0.6em; border-radius: 12px; font-size: 0.78em; font-weight: 600; }
+  .badge-err { background: #3a1a1a; color: var(--error); padding: 0.15em 0.6em; border-radius: 12px; font-size: 0.78em; font-weight: 600; }
+  .mermaid-placeholder { background: #161b22; border: 2px dashed var(--border); border-radius: 8px; padding: 2rem; margin: 1rem 0; text-align: center; color: #8b949e; }
+  .section-divider { border: none; border-top: 2px solid var(--border); margin: 2.5rem 0; }
+</style>
+</head>
+<body>
+
+<h1>📐 Documento de Arquitectura — STriAI</h1>
+<p><strong>Sistema de Triaje Multimodal IA</strong><br>
+TFM UNIR — Máster en Inteligencia Artificial<br>
+Versión 1.0 — Julio 2026 | Tipo: Documentación AS-IS (Caso B)</p>
+
+<div class="toc"><strong>📑 Tabla de Contenido</strong>
+<ol>
+<li><a href="#s1">Introducción y Objetivos</a></li>
+<li><a href="#s2">Restricciones y Decisiones Arquitectónicas</a></li>
+<li><a href="#s3">Contexto del Sistema (C4 Nivel 1)</a></li>
+<li><a href="#s4">Contenedores (C4 Nivel 2)</a></li>
+<li><a href="#s5">Componentes (C4 Nivel 3)</a></li>
+<li><a href="#s6">Código — Nivel de Clases (C4 Nivel 4)</a></li>
+<li><a href="#s7">Diagramas de Secuencia</a></li>
+<li><a href="#s8">Modelo de Datos</a></li>
+<li><a href="#s9">Arquitectura de Machine Learning</a></li>
+<li><a href="#s10">Arquitectura de Despliegue</a></li>
+<li><a href="#s11">Seguridad y Autenticación</a></li>
+<li><a href="#s12">Deuda Técnica y Hallazgos</a></li>
+<li><a href="#s13">ADRs</a></li>
+<li><a href="#s14">Supuestos</a></li>
+</ol></div>
+
+<hr class="section-divider">
+
+<h2 id="s1">1. Introducción y Objetivos</h2>
+<p>STriAI (Sistema de Triaje Multimodal IA) es una aplicación diseñada como Trabajo de Fin de Máster (TFM) para la UNIR. Su objetivo es asistir a profesionales de la salud en la clasificación de pacientes en servicios de urgencias mediante niveles de triaje I-V (Resolución 5596/2015 de Colombia), combinando <strong>datos clínicos estructurados</strong> con <strong>procesamiento de lenguaje natural (NLP)</strong> sobre el motivo de consulta.</p>
+
+<h3>Objetivos de Arquitectura</h3>
+<table>
+<tr><th>Atributo</th><th>Prioridad</th><th>Meta</th></tr>
+<tr><td>Funcionalidad</td><td>Crítica</td><td>Registrar pacientes, capturar signos vitales, clasificar con IA, validar por profesional</td></tr>
+<tr><td>Trazabilidad</td><td>Alta</td><td>Auditoría inmutable de todas las acciones clínicas</td></tr>
+<tr><td>Portabilidad</td><td>Alta</td><td>Ejecutable en una laptop sin infraestructura cloud</td></tr>
+<tr><td>Explicabilidad</td><td>Alta</td><td>Cada predicción de IA debe ser explicable (SHAP)</td></tr>
+<tr><td>Seguridad</td><td>Media</td><td>Autenticación con roles, contraseñas hasheadas</td></tr>
+<tr><td>Rendimiento</td><td>Baja</td><td>Inferencia &lt; 5 segundos en CPU</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s2">2. Restricciones y Decisiones Arquitectónicas</h2>
+
+<h3>Restricciones Técnicas</h3>
+<table>
+<tr><th>ID</th><th>Restricción</th><th>Impacto</th></tr>
+<tr><td>RT-001</td><td>Python 3.11 como único lenguaje</td><td>Stack uniforme pero sin tipado fuerte</td></tr>
+<tr><td>RT-002</td><td>Streamlit como framework UI</td><td>Single-page app, sin SPA ni SSR tradicional</td></tr>
+<tr><td>RT-003</td><td>SQLite como base de datos</td><td>Sin concurrencia real, sin cliente-servidor</td></tr>
+<tr><td>RT-004</td><td>Ejecución en CPU (sin GPU obligatoria)</td><td>Inferencia NLP lenta (~1-2s por texto)</td></tr>
+<tr><td>RT-005</td><td>Datasets del sistema de salud colombiano</td><td>Pocas features clínicas, datasets no balanceados</td></tr>
+<tr><td>RT-006</td><td>Sin ORM — SQL directo</td><td>Acoplamiento a SQLite, sin migraciones automáticas</td></tr>
+</table>
+
+<h3>Decisiones Arquitectónicas Clave</h3>
+<table>
+<tr><th>ID</th><th>Decisión</th><th>Justificación</th></tr>
+<tr><td>ADR-001</td><td><strong>Monolito en capas</strong> sobre Streamlit</td><td>Adecuado para prototipo/demo; microservicios sería sobrediseño</td></tr>
+<tr><td>ADR-002</td><td><strong>SQLite con WAL + FK ON</strong></td><td>Portátil, cero configuración, suficiente para monousuario</td></tr>
+<tr><td>ADR-003</td><td><strong>PascalCase → snake_case</strong></td><td>Convención SQL vs. PEP 8; conversión automática</td></tr>
+<tr><td>ADR-004</td><td><strong>Modelo ML serializado en joblib</strong></td><td>Carga rápida, sin servidor de modelos separado</td></tr>
+<tr><td>ADR-005</td><td><strong>5 roles RBAC hardcodeados</strong></td><td>Suficiente para demo; roles dinámicos sería sobrediseño</td></tr>
+<tr><td>ADR-006</td><td><strong>Pipeline ML como script offline</strong></td><td>Separación clara entrenamiento/inferencia; no requiere MLOps</td></tr>
+<tr><td>ADR-007</td><td><strong>Early Fusion como arquitectura ML</strong></td><td>Mejor F1 Macro; simplicidad sobre Late Fusion</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s3">3. Contexto del Sistema (C4 Nivel 1)</h2>
+<p>El sistema STriAI interactúa con dos tipos de usuarios (profesionales de salud y auditores) y dos sistemas externos (HuggingFace Hub para modelos NLP y datos.gov.co para datasets de entrenamiento).</p>
+
+<h3>Actores del Sistema</h3>
+<table>
+<tr><th>Actor</th><th>Descripción</th><th>Interacciones</th></tr>
+<tr><td><strong>Profesional de Salud</strong></td><td>Médico, enfermero o administrador</td><td>Registro de pacientes, signos vitales, clasificación IA, validación de triaje</td></tr>
+<tr><td><strong>Auditor</strong></td><td>Personal de control y calidad</td><td>Consulta de logs de auditoría, exportación CSV/Excel</td></tr>
+<tr><td><strong>HuggingFace Hub</strong> (externo)</td><td>Repositorio de modelos NLP</td><td>Descarga de BERT multilingüe (solo en entrenamiento)</td></tr>
+<tr><td><strong>datos.gov.co</strong> (externo)</td><td>Portal de datos abiertos Colombia</td><td>Fuente de datasets CSV para entrenamiento</td></tr>
+</table>
+
+<p><em>Nota: Los diagramas Mermaid completos (C1-C4, secuencia, ER, ML) están en el documento Markdown. Este HTML contiene las tablas y descripciones de arquitectura. Para ver los diagramas renderizados, abra el archivo .md en VS Code con soporte Mermaid o en GitHub.</em></p>
+
+<hr class="section-divider">
+
+<h2 id="s4">4. Contenedores (C4 Nivel 2)</h2>
+<table>
+<tr><th>Contenedor</th><th>Tecnología</th><th>Responsabilidad</th></tr>
+<tr><td><strong>Aplicación Streamlit</strong></td><td>Python 3.11, Streamlit 1.59</td><td>UI, ruteo (14 pantallas), autenticación, orquestación de flujos clínicos</td></tr>
+<tr><td><strong>Base de Datos SQLite</strong></td><td>SQLite 3 (WAL, FK ON)</td><td>Persistencia de pacientes, triajes, usuarios, auditoría (12 tablas)</td></tr>
+<tr><td><strong>Servicio de Inferencia ML</strong></td><td>Python, XGBoost, SHAP, joblib</td><td>Carga de modelo serializado, predicción de nivel de triaje, explicabilidad</td></tr>
+<tr><td><strong>Pipeline de Entrenamiento</strong></td><td>Python CLI, sklearn, XGBoost, PyTorch</td><td>Entrenamiento offline de modelos (14 pasos, ~17 min CPU)</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s5">5. Componentes (C4 Nivel 3)</h2>
+<h3>Aplicación Streamlit — 14 Páginas, 8 Servicios</h3>
+<table>
+<tr><th>Componente</th><th>Archivo</th><th>Responsabilidad</th></tr>
+<tr><td>Router de Páginas</td><td><code>app.py</code></td><td>Navegación entre 14 pantallas vía st.session_state.page</td></tr>
+<tr><td>AuthService</td><td><code>app/services/auth_service.py</code></td><td>Login/logout, RBAC (5 roles), gestión usuarios, reset password</td></tr>
+<tr><td>PatientService</td><td><code>app/services/patient_service.py</code></td><td>Registro pacientes (21 campos), búsqueda, histórico</td></tr>
+<tr><td>TriageService</td><td><code>app/services/triage_service.py</code></td><td>Máquina estados (7 estados), signos vitales, evaluación clínica</td></tr>
+<tr><td>InferenceService</td><td><code>app/services/inference_service.py</code></td><td>Predict() y explain() con XGBoost. Singleton</td></tr>
+<tr><td>AuditService</td><td><code>app/services/audit_service.py</code></td><td>Registro inmutable (17 acciones), consultas, exportación</td></tr>
+<tr><td>ReportService</td><td><code>app/services/report_service.py</code></td><td>Generación HTML de reporte de triaje</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s6">6. Código — Nivel de Clases (C4 Nivel 4)</h2>
+<p>El patrón de clases sigue una arquitectura de servicios planos: cada servicio es una clase con un constructor que recibe <code>db_path</code> y métodos públicos que ejecutan SQL directo contra SQLite. No hay herencia entre servicios ni uso de interfaces/ABCs. La inyección de dependencias es manual vía <code>st.session_state</code>.</p>
+
+<p><em>Ver diagrama de clases completo en el documento Markdown.</em></p>
+
+<hr class="section-divider">
+
+<h2 id="s7">7. Diagramas de Secuencia</h2>
+<h3>Flujo Principal — Registro y Triaje de Paciente (8 fases)</h3>
+<ol>
+<li><strong>Login</strong> → AuthService.authenticate() → SQLite</li>
+<li><strong>Registro Paciente</strong> → PatientService.register_patient() → INSERT + Auditoría</li>
+<li><strong>Iniciar Triaje</strong> → TriageService.create_triage_event() → Estado='Registrado'</li>
+<li><strong>Signos Vitales</strong> → TriageService.save_vital_signs() → Estado='EnEvaluacion'</li>
+<li><strong>Evaluación Clínica</strong> → TriageService.save_clinical_evaluation() → Estado='PendienteIA'</li>
+<li><strong>Clasificación IA</strong> → InferenceService.predict() → XGBoost → Estado='Clasificado'</li>
+<li><strong>Validación Profesional</strong> → TriageService.validate_classification() → Estado='Validado'</li>
+<li><strong>Cierre</strong> → TriageService.close_event() → Estado='Cerrado'</li>
+</ol>
+
+<h3>Máquina de Estados del Triaje</h3>
+<p>7 estados con 14 transiciones válidas. Los estados terminales son Cerrado (éxito) y Cancelado (reactivable). Todas las transiciones quedan registradas en Auditoria.</p>
+
+<hr class="section-divider">
+
+<h2 id="s8">8. Modelo de Datos</h2>
+<p>12 tablas con integridad referencial (FK), checks constraints, y 11 índices. La conversión PascalCase (SQL) → snake_case (Python) se hace vía <code>row_to_dict()</code>.</p>
+
+<h3>Tablas Principales</h3>
+<table>
+<tr><th>Tabla</th><th>Filas típicas</th><th>Propósito</th></tr>
+<tr><td>Paciente</td><td>21 columnas</td><td>Datos demográficos y de contacto</td></tr>
+<tr><td>EventoTriaje</td><td>16 columnas</td><td>Máquina de estados, niveles IA/profesional</td></tr>
+<tr><td>SignosVitales</td><td>10 columnas</td><td>FC, FR, T°, SpO₂, TA, IMC</td></tr>
+<tr><td>EvaluacionClinica</td><td>14 columnas</td><td>Glasgow, dolor, conciencia, comorbilidades</td></tr>
+<tr><td>PrediccionIA</td><td>6 columnas</td><td>Resultado de inferencia del modelo</td></tr>
+<tr><td>Usuario</td><td>11 columnas</td><td>Autenticación, roles, bloqueo</td></tr>
+<tr><td>Auditoria</td><td>11 columnas</td><td>Registro inmutable de acciones</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s9">9. Arquitectura de Machine Learning</h2>
+
+<h3>Pipeline de Entrenamiento (14 pasos)</h3>
+<table>
+<tr><th>#</th><th>Paso</th><th>Módulo</th><th>Output</th></tr>
+<tr><td>1-2</td><td>Ingesta + Anonimización</td><td><code>src/data/ingesta.py</code></td><td>176,641 filas × 9 cols</td></tr>
+<tr><td>3-4</td><td>Limpieza + Features</td><td><code>src/data/limpieza.py</code></td><td>133,047 filas × 3 features</td></tr>
+<tr><td>5</td><td>Split Train/Test</td><td><code>run_pipeline.py</code></td><td>106K train / 27K test</td></tr>
+<tr><td>6</td><td>Embeddings NLP (BERT)</td><td><code>src/features/nlp_embeddings.py</code></td><td>384-dim embeddings</td></tr>
+<tr><td>7-9</td><td>Modelos (LR, RF, XGBoost, Fusion)</td><td><code>src/models/train_models.py</code></td><td>5 modelos entrenados</td></tr>
+<tr><td>10</td><td>Selección Mejor Modelo</td><td><code>src/models/train_models.py</code></td><td>Early Fusion 🥇</td></tr>
+<tr><td>11-12</td><td>Threshold Tuning + Evaluación</td><td><code>src/evaluation/metrics.py</code></td><td>Umbrales + matriz</td></tr>
+<tr><td>13</td><td>SHAP + Benchmarks</td><td><code>src/evaluation/shap_benchmarks.py</code></td><td>Feature importance</td></tr>
+<tr><td>14</td><td>Serialización</td><td><code>src/serving/serialize.py</code></td><td>model.joblib + metadata</td></tr>
+</table>
+
+<h3>Comparativa de Modelos</h3>
+<table>
+<tr><th>Modelo</th><th>F1 Macro</th><th>Recall I</th><th>Recall II</th><th>Recall III</th><th>Tiempo</th></tr>
+<tr><td>LR</td><td>0.0122</td><td>0.15</td><td>0.82</td><td>0.00</td><td>0.26s</td></tr>
+<tr><td>RF</td><td>0.0347</td><td>0.07</td><td>0.68</td><td>0.03</td><td>4.46s</td></tr>
+<tr><td>XGBoost</td><td>0.1878</td><td>0.00</td><td>0.00</td><td>1.00</td><td>5.49s</td></tr>
+<tr style="background:#1a3a2a"><td><strong>Early Fusion 🥇</strong></td><td><strong>0.1899</strong></td><td>0.00</td><td>0.00</td><td>0.99</td><td>108.53s</td></tr>
+<tr><td>Late Fusion</td><td>0.0997</td><td>0.20</td><td>0.25</td><td>0.19</td><td>2.09s</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s10">10. Arquitectura de Despliegue</h2>
+<p>La aplicación se despliega como un <strong>proceso único de Python</strong> en una máquina local (Windows/macOS/Linux), sin contenedores, sin orquestación, sin balanceo de carga. El pipeline ML se ejecuta como script CLI independiente.</p>
+
+<table>
+<tr><th>Componente</th><th>Ubicación</th><th>Puerto</th></tr>
+<tr><td>Streamlit App</td><td>Proceso Python local</td><td>:8501</td></tr>
+<tr><td>SQLite DB</td><td><code>sistema-triaje-ia/data/triaje.db</code></td><td>N/A (archivo)</td></tr>
+<tr><td>Modelos ML</td><td><code>models/*.joblib</code></td><td>N/A (archivo)</td></tr>
+<tr><td>NLP Cache</td><td><code>~/.cache/huggingface/</code></td><td>N/A</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s11">11. Seguridad y Autenticación</h2>
+<h3>Matriz RBAC</h3>
+<table>
+<tr><th>Página</th><th>Admin</th><th>Médico</th><th>Enfermera</th><th>Investigador</th><th>Auditor</th></tr>
+<tr><td>Login</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td><td>✅</td></tr>
+<tr><td>Registro Paciente</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+<tr><td>Signos Vitales</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+<tr><td>Evaluación Clínica</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+<tr><td>Clasificación IA</td><td>✅</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td></tr>
+<tr><td>Validación Triaje</td><td>✅</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td></tr>
+<tr><td>Dashboard</td><td>✅</td><td>✅</td><td>❌</td><td>✅</td><td>✅</td></tr>
+<tr><td>Auditoría</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>✅</td></tr>
+<tr><td>Gestión Usuarios</td><td>✅</td><td>❌</td><td>❌</td><td>❌</td><td>❌</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s12">12. Deuda Técnica y Hallazgos</h2>
+<h3>Hallazgos Críticos</h3>
+<table>
+<tr><th>#</th><th>Hallazgo</th><th>Impacto</th></tr>
+<tr><td>H-001</td><td><strong>Sin tests automatizados</strong></td><td>Riesgo de regresión</td></tr>
+<tr><td>H-002</td><td><strong>Bypass bcrypt hardcodeado</strong></td><td>Vulnerabilidad seguridad</td></tr>
+<tr><td>H-003</td><td><strong>@auditar decorator es stub</strong></td><td>Auditoría incompleta</td></tr>
+<tr><td>H-004</td><td><strong>F1 Macro = 0.19 vs meta ≥ 0.82</strong></td><td>Modelo no cumple objetivo</td></tr>
+<tr><td>H-005</td><td><strong>AUC-ROC = 0.00</strong></td><td>Posible bug sklearn 1.9+</td></tr>
+</table>
+
+<h3>Violaciones Arquitectónicas</h3>
+<table>
+<tr><th>#</th><th>Violación</th></tr>
+<tr><td>V-001</td><td>UI llama a get_connection() directamente</td></tr>
+<tr><td>V-002</td><td>InferenceService importa src.data.limpieza (capa pipeline)</td></tr>
+<tr><td>V-003</td><td>st.session_state usado como base de datos de estado</td></tr>
+<tr><td>V-004</td><td>sys.path.insert hack para imports cross-package</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s13">13. ADRs (Architecture Decision Records)</h2>
+<table>
+<tr><th>ADR</th><th>Decisión</th><th>Estado</th></tr>
+<tr><td>ADR-001</td><td>Monolito en Capas sobre Streamlit</td><td><span class="badge-ok">Aceptado</span></td></tr>
+<tr><td>ADR-002</td><td>SQLite con SQL Directo</td><td><span class="badge-ok">Aceptado</span></td></tr>
+<tr><td>ADR-003</td><td>Pipeline ML como Script Offline</td><td><span class="badge-ok">Aceptado</span></td></tr>
+<tr><td>ADR-004</td><td>Early Fusion sobre Late Fusion</td><td><span class="badge-ok">Aceptado (con salvedades)</span></td></tr>
+<tr><td>ADR-005</td><td>SHAP con Fallback a feature_importances_</td><td><span class="badge-ok">Aceptado (workaround)</span></td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2 id="s14">14. Supuestos</h2>
+<table>
+<tr><th>#</th><th>Supuesto</th><th>Riesgo si incorrecto</th></tr>
+<tr><td>S-001</td><td>App siempre monousuario, un solo proceso</td><td>Corrupción SQLite con concurrencia</td></tr>
+<tr><td>S-002</td><td>Datasets no contienen PII</td><td>Violación Ley 1581/2012</td></tr>
+<tr><td>S-003</td><td>Modelo NLP cabe en 1.5 GB RAM</td><td>OOM en equipos &lt;4 GB</td></tr>
+<tr><td>S-004</td><td>Contraseñas demo solo en desarrollo</td><td>Exposición credenciales en producción</td></tr>
+<tr><td>S-005</td><td>Bypass bcrypt aceptable para tribunal</td><td>No aceptable en producción</td></tr>
+</table>
+
+<hr class="section-divider">
+
+<h2>Apéndice: Stack Tecnológico</h2>
+<table>
+<tr><th>Capa</th><th>Tecnología</th><th>Versión</th></tr>
+<tr><td>Lenguaje</td><td>Python</td><td>3.11.7</td></tr>
+<tr><td>Framework UI</td><td>Streamlit</td><td>1.59.2</td></tr>
+<tr><td>Base de Datos</td><td>SQLite 3</td><td>Incluido</td></tr>
+<tr><td>Autenticación</td><td>bcrypt</td><td>5.0.0</td></tr>
+<tr><td>ML — Clasificación</td><td>scikit-learn, XGBoost</td><td>1.9.0, 3.2.0</td></tr>
+<tr><td>ML — NLP</td><td>PyTorch, Transformers</td><td>2.13.0, 5.14.1</td></tr>
+<tr><td>ML — Explicabilidad</td><td>SHAP</td><td>0.51.0</td></tr>
+<tr><td>Serialización</td><td>joblib</td><td>1.5.3</td></tr>
+</table>
+
+<p style="margin-top:3rem; color:#8b949e; font-size:0.85rem; text-align:center;">
+Documento generado por STriAI — TFM UNIR — Julio 2026 | Caso B: Documentación AS-IS
+</p>
+
+</body>
+</html>

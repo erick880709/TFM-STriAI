@@ -1,0 +1,82 @@
+<mxfile host="app.diagrams.net" modified="2026-07-19T22:00:00.000Z" agent="archi-skill" version="21.0.0" type="device">
+  <diagram id="C2-Containers" name="C4 N2 - Contenedores">
+    <mxGraphModel dx="1400" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1400" pageHeight="1000" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Diagrama de Contenedores (C4 N2) — Sistema de Triaje Multimodal IA" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontStyle=1;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="200" y="20" width="1000" height="30" as="geometry"/>
+        </mxCell>
+        <!-- System Boundary - Demo -->
+        <mxCell id="boundary-demo" value="Sistema de Triaje Multimodal IA (Demo)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFEFF;strokeColor=#0891B2;fontSize=14;fontStyle=1;fontColor=#0891B2;dashed=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="680" height="520" as="geometry"/>
+        </mxCell>
+        <!-- Containers -->
+        <mxCell id="webapp" value="&lt;b&gt;📱 Aplicación Web Demo&lt;/b&gt;&lt;br&gt;Python/Streamlit&lt;br&gt;&lt;br&gt;12 pantallas: flujo clínico,&lt;br&gt;dashboard, SHAP, auditoría" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0891B2;strokeColor=#0E7490;fontSize=11;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="120" width="280" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="db" value="&lt;b&gt;🗄️ Base de Datos&lt;/b&gt;&lt;br&gt;SQLite&lt;br&gt;&lt;br&gt;Pacientes, triajes, signos,&lt;br&gt;predicciones, auditoría" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#F8FAFC;strokeColor=#0891B2;fontSize=11;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="80" y="280" width="280" height="110" as="geometry"/>
+        </mxCell>
+        <mxCell id="inference" value="&lt;b&gt;🧠 Servicio Inferencia IA&lt;/b&gt;&lt;br&gt;Python/scikit-learn/XGBoost&lt;br&gt;&lt;br&gt;Carga modelo serializado,&lt;br&gt;preprocesa, predice, SHAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0891B2;strokeColor=#0E7490;fontSize=11;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="120" width="260" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="audit-mod" value="&lt;b&gt;📝 Módulo Auditoría&lt;/b&gt;&lt;br&gt;Python (decorator)&lt;br&gt;&lt;br&gt;Registro automático&lt;br&gt;append-only @auditar" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0891B2;strokeColor=#0E7490;fontSize=11;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="280" width="260" height="90" as="geometry"/>
+        </mxCell>
+        <!-- Pipeline Boundary -->
+        <mxCell id="boundary-pipeline" value="Pipeline de Entrenamiento (Offline)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#FFF7ED;strokeColor=#EA580C;fontSize=14;fontStyle=1;fontColor=#EA580C;dashed=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+          <mxGeometry x="760" y="70" width="340" height="520" as="geometry"/>
+        </mxCell>
+        <mxCell id="notebooks" value="&lt;b&gt;📓 Jupyter Notebooks&lt;/b&gt;&lt;br&gt;Python/pandas/sklearn&lt;br&gt;&lt;br&gt;Pipeline 13 pasos:&lt;br&gt;ingesta → limpieza →&lt;br&gt;embeddings → baselines →&lt;br&gt;early/late fusion →&lt;br&gt;evaluación → SHAP →&lt;br&gt;serialización" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EA580C;strokeColor=#C2410C;fontSize=10;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="120" width="280" height="140" as="geometry"/>
+        </mxCell>
+        <mxCell id="registry" value="&lt;b&gt;📦 Registro de Modelos&lt;/b&gt;&lt;br&gt;Archivos joblib + JSON&lt;br&gt;&lt;br&gt;Modelo + scalers + encoders&lt;br&gt;+ tokenizer + metadata" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EA580C;strokeColor=#C2410C;fontSize=11;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="790" y="310" width="280" height="100" as="geometry"/>
+        </mxCell>
+        <!-- External Systems -->
+        <mxCell id="hce-ext" value="&lt;b&gt;Historia Clínica&lt;br&gt;Electrónica&lt;/b&gt;&lt;br&gt;(Futuro)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#64748B;strokeColor=#475569;fontSize=10;fontColor=#FFFFFF;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="660" width="130" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="mimic-ext" value="&lt;b&gt;MIMIC-IV-ED&lt;/b&gt;&lt;br&gt;(PhysioNet)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#64748B;strokeColor=#475569;fontSize=10;fontColor=#FFFFFF;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="250" y="660" width="130" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="datos-ext" value="&lt;b&gt;datos.gov.co&lt;br&gt;BDUA / Supersalud&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#64748B;strokeColor=#475569;fontSize=10;fontColor=#FFFFFF;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="420" y="660" width="150" height="55" as="geometry"/>
+        </mxCell>
+        <mxCell id="hospital-ext" value="&lt;b&gt;Hospital&lt;br&gt;San Juan de Dios&lt;/b&gt;" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#64748B;strokeColor=#475569;fontSize=10;fontColor=#FFFFFF;dashed=1;" vertex="1" parent="1">
+          <mxGeometry x="610" y="660" width="130" height="55" as="geometry"/>
+        </mxCell>
+        <!-- Relations -->
+        <mxCell id="rel-w-d" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0891B2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="webapp" target="db">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel-w-i" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0891B2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="webapp" target="inference">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel-w-a" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="webapp" target="audit-mod">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel-i-r" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=1.5;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="inference" target="registry">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel-n-r" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=1.5;endArrow=block;endFill=1;" edge="1" parent="1" source="notebooks" target="registry">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel-mimic" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=1;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="notebooks" target="mimic-ext">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel-hosp" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=1;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="notebooks" target="hospital-ext">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Person -->
+        <mxCell id="user" value="&lt;b&gt;🧑‍⚕️ Profesional&lt;br&gt;Sanitario&lt;/b&gt;" style="shape=umlActor;verticalLabelPosition=bottom;verticalAlignment=top;html=1;outlineConnect=0;fillColor=#ECFEFF;strokeColor=#0891B2;fontSize=11;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="180" y="770" width="60" height="100" as="geometry"/>
+        </mxCell>
+        <mxCell id="rel-user" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#0891B2;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="user" target="webapp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

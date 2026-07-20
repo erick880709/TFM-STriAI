@@ -1,0 +1,74 @@
+<mxfile host="app.diagrams.net" modified="2026-07-19T22:00:00.000Z" agent="archi-skill" version="21.0.0" type="device">
+  <diagram id="C4-Code" name="C4 N4 - Código Inferencia">
+    <mxGraphModel dx="1200" dy="900" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1200" pageHeight="800" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Diagrama de Código (C4 N4) — Servicio de Inferencia IA" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontStyle=1;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="200" y="20" width="800" height="30" as="geometry"/>
+        </mxCell>
+        <!-- Boundary -->
+        <mxCell id="boundary" value="Servicio de Inferencia IA (InferenceService)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#059669;fontSize=14;fontStyle=1;fontColor=#059669;dashed=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+          <mxGeometry x="40" y="70" width="750" height="450" as="geometry"/>
+        </mxCell>
+        <!-- Components -->
+        <mxCell id="predictor" value="&lt;b&gt;Predictor&lt;/b&gt;&lt;br&gt;Orquesta el pipeline&lt;br&gt;end-to-end" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=#047857;fontSize=11;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="320" y="120" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="preprocessor" value="&lt;b&gt;Preprocessor&lt;/b&gt;&lt;br&gt;StandardScaler&lt;br&gt;+ OneHotEncoder" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0891B2;strokeColor=#0E7490;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="80" y="260" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="nlp" value="&lt;b&gt;NLP Processor&lt;/b&gt;&lt;br&gt;BERT tokenizer&lt;br&gt;→ embeddings 768d" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0891B2;strokeColor=#0E7490;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="280" y="260" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="classifier" value="&lt;b&gt;Classifier&lt;/b&gt;&lt;br&gt;XGBoost / RF&lt;br&gt;predict_proba() → 5 clases" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0891B2;strokeColor=#0E7490;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="480" y="260" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="threshold" value="&lt;b&gt;ThresholdOptimizer&lt;/b&gt;&lt;br&gt;Umbrales I-II&lt;br&gt;Maximizar Recall" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#EA580C;strokeColor=#C2410C;fontSize=10;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="80" y="390" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="shap-expl" value="&lt;b&gt;SHAP Explainer&lt;/b&gt;&lt;br&gt;TreeExplainer&lt;br&gt;shap_values()" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0891B2;strokeColor=#0E7490;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="280" y="390" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="shap-trans" value="&lt;b&gt;SHAP Translator&lt;/b&gt;&lt;br&gt;Nombre técnico →&lt;br&gt;lenguaje clínico" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#0891B2;strokeColor=#0E7490;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="480" y="390" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <!-- Arrows with numbered steps -->
+        <mxCell id="arrow1" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="predictor" target="preprocessor">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="label1" value="1. Normaliza + codifica" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#059669;fontStyle=1;" vertex="1" connectable="0" parent="arrow1">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="-20" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="arrow2" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="predictor" target="nlp">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="label2" value="2. Genera embeddings" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#059669;fontStyle=1;" vertex="1" connectable="0" parent="arrow2">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="-20" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+        <mxCell id="arrow3" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="preprocessor" target="classifier">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow4" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="nlp" target="classifier">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow5" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="classifier" target="threshold">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow6" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="threshold" target="shap-expl">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="arrow7" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;" edge="1" parent="1" source="shap-expl" target="shap-trans">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <!-- Return -->
+        <mxCell id="arrow8" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#059669;strokeWidth=2;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="shap-trans" target="predictor">
+          <mxGeometry relative="1" as="geometry"><Array as="points"><mxPoint x="560" y="500"/><mxPoint x="400" y="500"/></Array></mxGeometry>
+        </mxCell>
+        <mxCell id="label8" value="8. Retorna: nivel + probs + SHAP + metadatos" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=9;fontColor=#059669;fontStyle=1;" vertex="1" connectable="0" parent="arrow8">
+          <mxGeometry x="-0.2" y="1" relative="1" as="geometry"><mxPoint x="100" y="-8" as="offset"/></mxGeometry>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

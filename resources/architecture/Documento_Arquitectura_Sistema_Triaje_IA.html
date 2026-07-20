@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Documento de Arquitectura — Sistema de Triaje Multimodal IA</title>
+<script src="https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.min.js"></script>
+<style>
+:root { --primary: #0891B2; --fg: #164E63; --bg: #F8FAFC; --border: #E2E8F0; }
+* { margin:0; padding:0; box-sizing:border-box; }
+body { font-family: system-ui, -apple-system, sans-serif; background: var(--bg); color: var(--fg); line-height:1.7; }
+.container { max-width: 960px; margin: 0 auto; padding: 24px; }
+h1 { font-size: 28px; color: var(--primary); border-bottom: 3px solid var(--primary); padding-bottom: 12px; margin: 32px 0 16px; }
+h2 { font-size: 22px; color: var(--primary); margin: 28px 0 12px; border-bottom: 1px solid var(--border); padding-bottom: 8px; }
+h3 { font-size: 18px; color: var(--fg); margin: 20px 0 8px; }
+h4 { font-size: 15px; color: var(--fg); margin: 16px 0 6px; }
+p { margin: 8px 0; }
+code { background: #E8F1F6; padding: 2px 6px; border-radius: 4px; font-size: 13px; }
+pre { background: #1E293B; color: #E2E8F0; padding: 16px; border-radius: 8px; overflow-x: auto; margin: 12px 0; }
+pre code { background: none; padding: 0; }
+table { width: 100%; border-collapse: collapse; margin: 12px 0; font-size: 13px; }
+th { background: var(--primary); color: white; padding: 10px 12px; text-align: left; }
+td { padding: 8px 12px; border-bottom: 1px solid var(--border); }
+tr:nth-child(even) { background: #F8FAFC; }
+ul, ol { margin: 8px 0 8px 24px; }
+li { margin: 4px 0; }
+hr { border: none; border-top: 1px solid var(--border); margin: 24px 0; }
+.mermaid { background: #fff; border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin: 16px 0; text-align: center; }
+strong { color: var(--primary); }
+@media print { body { font-size: 11px; } .mermaid { break-inside: avoid; } }
+@media (max-width: 600px) { .container { padding: 12px; } table { font-size: 11px; } }
+</style>
+</head>
+<body>
+<div class="container">
+# Documento de Arquitectura de Software: Sistema de Triaje Multimodal IA
+
+**Versión:** 1.0 · **Fecha:** 2026-07-19 · **Proyecto:** TFM UNIR · **Tipología:** Tipo 2 (Desarrollo) + Tipo 3 (Experimental)
+
+**Autores:** Medina Betancur, Diego Andrés · Rivera Villanueva, Leyniker · Soto Díaz, Erick Duván
+**Directora:** Damaris Fuentes Lorenzo
+
+---
+
+## Tabla de Contenidos
+
+1. [Introducción y Objetivos](#1-introducción-y-objetivos)
+2. [Restricciones y Línea Base](#2-restricciones-y-línea-base)
+3. [Alcance y Contexto](#3-alcance-y-contexto)
+4. [Estrategia de Solución](#4-estrategia-de-solución)
+5. [Vista de Contenedores (C4 N2)](#5-vista-de-contenedores-c4-nivel-2)
+6. [Vista de Componentes (C4 N3)](#6-vista-de-componentes-c4-nivel-3)
+7. [Vista de Código (C4 N4)](#7-vista-de-código-c4-nivel-4)
+8. [Vistas de Ejecución: Diagramas de Secuencia](#8-vistas-de-ejecución-diagramas-de-secuencia)
+9. [Modelo de Datos](#9-modelo-de-datos)
+10. [Arquitectura de Datos (ML)](#10-arquitectura-de-datos-ml)
+11. [Arquitectura de Entrenamiento (ML)](#11-arquitectura-de-entrenamiento-ml)
+12. [Evaluación y Métricas (ML)](#12-evaluación-y-métricas-ml)
+13. [Explicabilidad — XAI](#13-explicabilidad--xai)
+14. [Arquitectura de Inferencia / Servicio del Modelo](#14-arquitectura-de-inferencia--servicio-del-modelo)
+15. [ADR — Decisiones de Arquitectura](#15-adr--decisiones-de-arquitectura)
+16. [Riesgos y Deuda Técnica](#16-riesgos-y-deuda-técnica)
+17. [Supuestos](#17-supuestos)
+18. [Referencias](#18-referencias)
+
+---
+
+## 1. Introducción y Objetivos
+
+### 1.1 Propósito del documento
+
+Este documento describe la arquitectura de software del **Sistema de Triaje Multimodal basado en IA para servicios de urgencias en Colombia**. Está dirigido al equipo de desarrollo, a la directora del TFM y al tribunal evaluador de UNIR. Establece las decisiones arquitectónicas fundamentales, los diagramas de estructura (C4), los flujos de ejecución críticos y las consideraciones específicas del componente de Machine Learning.
+
+### 1.2 Objetivo funcional
+
+Dado un conjunto de datos clínicos de un paciente que llega a urgencias (signos vitales, demográficos, antecedentes, texto libre de motivo de consulta), el sistema predice el nivel de triaje (I-V según Resolución 5596 de 2015 del Ministerio de Salud de Colombia), con salida explicable (SHAP), como **apoyo** — nunca reemplazo — al profesional sanitario que valida la clasificación.
+
+### 1.3 Atributos de calidad (requerimientos no funcionales)
+
+| Atributo | Meta | Fuente |
+|---|---|---|
+| **Rendimiento** — Latencia de inferencia | < 3 segundos | RNP-001 |
+| **Disponibilidad** — Modo degradado | Clasificación manual si IA no disponible | RNO-006 |
+| **Seguridad** — Protección de datos | Ley 1581/2012, anonimización, TLS, RBAC | RNS-001 a 010 |
+| **Usabilidad** — Flujo de triaje | < 5 minutos para completar | OC-007, RNF-004 |
+| **Explicabilidad** — Cobertura XAI | 100% de predicciones con SHAP | RNX-001 |
+| **Trazabilidad** — Auditoría | Registro inmutable de cada acción | RNAU-001 a 006 |
+| **Mantenibilidad** — Arquitectura modular | Componentes desacoplados, configuración externalizada | RNF-007 |
+| **Desempeño del modelo** — F1-Score | ≥ 0.82 (macro-promedio) | RNF-006 |
+| **Desempeño del modelo** — AUC-ROC | ≥ 0.87 (macro-promedio) | RNF-006 |
+| **Desempeño del modelo** — Recall Niveles I-II | Priorizado sobre Precisión | RT-004 |
+
+---
+
+## 2. Restricciones y Línea Base
+
+### 2.1 Línea base validada
+
+La línea base de desarrollo se construyó a partir de 14 definiciones de arquitectura (`resources/architecture/definitions/`) y 3 modelos de diseño (`resources/design/models/`) generados por Janus, más 36 historias de usuario y tareas técnicas de Specter, y 4 datasets en `datasets/`.
+
+| Bloque | Estado | Fuente(s) |
+|---|---|---|
+| **Stack tecnológico** | ✅ Definido | RT-002: Python 3.10+, scikit-learn, XGBoost, TensorFlow/PyTorch, BERT, SHAP, Streamlit, SQLite |
+| **Arquitectura de fusión** | ✅ Definido | RT-001: Early Fusion + Late Fusion, se comparan y elige la de mejor Recall I-II |
+| **Fuentes de datos** | ✅ Definido | RT-003: MIMIC-IV-ED, Hospital San Juan de Dios, BDUA, datos.gov.co, Supersalud |
+| **Modelo de dominio** | ✅ Definido | RD-002: ENT-001 a 012 extendido con ViaLlegada, EpisodiosPrevios, campos de concordancia |
+| **Flujo de clasificación** | ✅ Definido | RD-003: 6 pasos con campo independiente del profesional |
+| **Pantallas** | ✅ Definido | RD-001: 12 pantallas (7 flujo clínico + 5 soporte) |
+| **Framework UI** | ⚠️ Pendiente | Streamlit (recomendado) vs Flask — ver ADR-002 |
+| **Método late fusion** | ⚠️ Experimental | Promedio ponderado, stacking o meta-clasificador — a determinar en Fase 3 |
+
+### 2.2 Restricciones regulatorias
+
+- **Ley 1581 de 2012** (Protección de Datos Personales, Colombia): anonimización obligatoria antes de cualquier procesamiento.
+- **Resolución 5596 de 2015** (Triaje): 5 niveles, tiempos máximos de atención por nivel.
+- **Autorización ética** del Comité de Ética del Hospital San Juan de Dios: aprobada (según CONTEXTO_TRIAJE.txt v2.0, 16 jul 2026).
+- **PhysioNet:** MIMIC-IV-ED requiere acuerdo de uso de datos con acceso acreditado.
+
+### 2.3 Restricciones técnicas
+
+- **Alcance TFM:** prototipo/demo funcional, no sistema productivo. No se despliega en servidor hospitalario.
+- **Entorno de ejecución:** máquina local (Windows/Mac/Linux), sin GPU requerida para la demo.
+- **Idioma:** español colombiano para textos clínicos (modelo NLP debe estar optimizado).
+- **Framework:** Streamlit (recomendado, pendiente de confirmación por la directora).
+
+---
+
+## 3. Alcance y Contexto
+
+### 3.1 Diagrama de Contexto (C4 Nivel 1)
+
+<div class="mermaid">
+C4Context
+    title Diagrama de Contexto — Sistema de Triaje Multimodal IA
+
+    Person(enfermera, "Enfermera de Triaje", "Captura signos vitales, evaluación clínica, ejecuta IA")
+    Person(medico, "Médico de Urgencias", "Valida clasificación, revisa SHAP, reclasifica")
+    Person(admin, "Personal Administrativo", "Registra pacientes, gestiona admisión")
+    Person(investigador, "Investigador / Científico de Datos", "Compara modelos, analiza desempeño")
+    Person(auditor, "Auditor", "Consulta y exporta registros de auditoría")
+
+    System(triajeIA, "Sistema de Triaje Multimodal IA", "Predice nivel de triaje (I-V) con explicabilidad SHAP como apoyo al profesional sanitario")
+
+    System_Ext(hce, "Historia Clínica Electrónica", "Sistema institucional de registro clínico (futuro)")
+    System_Ext(mimic, "MIMIC-IV-ED (PhysioNet)", "Base internacional de admisiones a urgencias para preentrenamiento")
+    System_Ext(hospital, "Hospital San Juan de Dios", "Registro clínico para fine-tuning al contexto colombiano")
+    System_Ext(datosGov, "datos.gov.co / BDUA / Supersalud", "CSVs públicos con distribución de triaje y variables demográficas")
+
+    Rel(enfermera, triajeIA, "Captura signos vitales, ejecuta IA", "HTTPS (UI Streamlit)")
+    Rel(medico, triajeIA, "Valida clasificación, revisa SHAP", "HTTPS (UI Streamlit)")
+    Rel(admin, triajeIA, "Registra pacientes", "HTTPS (UI Streamlit)")
+    Rel(investigador, triajeIA, "Compara modelos, analiza métricas", "HTTPS (UI Streamlit)")
+    Rel(auditor, triajeIA, "Consulta auditoría", "HTTPS (UI Streamlit)")
+    Rel(triajeIA, hce, "Exporta clasificación validada (futuro)", "API REST / HL7 FHIR")
+    Rel(triajeIA, mimic, "Ingesta batch para preentrenamiento (offline)", "CSV / PhysioNet")
+    Rel(triajeIA, hospital, "Ingesta batch para fine-tuning (offline)", "CSV anonimizado")
+    Rel(triajeIA, datosGov, "Ingesta batch de datos poblacionales (offline)", "CSV público")
+</div>
+
+### 3.2 Actores y sus responsabilidades
+
+| Actor | Tipo | Interacciones principales |
+|---|---|---|
+| Personal Administrativo | Humano | Registro de pacientes, búsqueda de duplicados, admisión |
+| Enfermera de Triaje | Humano | Captura de signos vitales, evaluación clínica, ejecución de IA |
+| Médico de Urgencias | Humano | Validación de clasificación, revisión de SHAP, reclasificación, cierre de evento |
+| Investigador | Humano | Comparación de modelos (early vs. late fusion), análisis de métricas |
+| Auditor | Humano | Consulta de registros de auditoría, exportación CSV/Excel/PDF |
+| Administrador IA | Humano | Gestión de modelos (registro, versionado, activación, rollback), gestión de usuarios |
+| Historia Clínica Electrónica | Sistema externo | Integración futura para consulta de antecedentes y sincronización |
+| MIMIC-IV-ED | Sistema externo | Fuente de datos batch para preentrenamiento del modelo |
+| Hospital San Juan de Dios | Sistema externo | Fuente de datos batch para fine-tuning al contexto colombiano |
+| datos.gov.co / BDUA / Supersalud | Sistema externo | Fuentes de datos batch para distribución poblacional de referencia |
+
+---
+
+## 4. Estrategia de Solución
+
+### 4.1 ¿Por qué Machine Learning?
+
+El triaje es un problema de clasificación multiclase (5 niveles ordinales) donde la relación entre variables predictoras (signos vitales, síntomas, demográficos) y el nivel de gravedad es no lineal, con interacciones complejas y patrones que no se prestan a un conjunto exhaustivo de reglas deterministas. Los sistemas de triaje estructurados existentes (MTS, CTAS, ESI) muestran variabilidad entre evaluadores humanos (Kappa ~0.43 reportado en Lidal et al. 2017).
+
+Un modelo de ML entrenado sobre grandes volúmenes de datos clínicos puede capturar estos patrones y proporcionar una recomendación objetiva, reproducible y explicable.
+
+### 4.2 ¿Por qué multimodal?
+
+Los datos estructurados (signos vitales) y el texto libre (motivo de consulta) capturan información complementaria: los signos vitales cuantifican el estado fisiológico, mientras que el texto libre aporta el contexto narrativo que el paciente o el profesional expresan. La literatura muestra que la combinación de ambas modalidades supera consistentemente a los modelos unimodales (Levin et al. 2021: F1 0.81, +12% vs. unimodal).
+
+### 4.3 División de responsabilidades: reglas vs. modelo
+
+| Responsabilidad | A cargo de | Ejemplo |
+|---|---|---|
+| **Predicción de nivel** | Modelo ML (XGBoost Early/Late Fusion) | SpO₂=88% + dolor torácico → sugiere Nivel II |
+| **Validación de rangos fisiológicos** | Reglas deterministas (frontend + backend) | Temperatura > 45°C → alerta antes de inferencia |
+| **Umbral de decisión clínica** | Reglas de post-procesamiento | Recall prioritario sobre Precision en Niveles I-II |
+| **Decisión final** | Profesional sanitario | Siempre prevalece sobre la sugerencia de IA |
+| **Seguridad y auditoría** | Reglas de negocio (RBAC, append-only) | No aplica IA |
+
+### 4.4 Estilo arquitectónico
+
+**Monolito modular** con separación clara de capas (UI / Servicios / Datos / IA). Justificación:
+- El alcance es una demo/prototipo para TFM, no un sistema productivo con requerimientos de escalado independiente.
+- Streamlit unifica frontend y backend en un solo proceso, lo que simplifica el desarrollo y despliegue.
+- La separación en módulos Python independientes (`app/ui/`, `app/services/`, `app/data/`, `app/ia/`) garantiza que la migración a microservicios sea posible en el futuro sin reescribir la lógica de negocio.
+- El pipeline de entrenamiento es offline y completamente independiente de la aplicación demo.
+
+---
+
+## 5. Vista de Contenedores (C4 Nivel 2)
+
+<div class="mermaid">
+C4Container
+    title Diagrama de Contenedores — Sistema de Triaje Multimodal IA
+
+    Person(profesional, "Profesional Sanitario", "Enfermera, Médico, Administrativo")
+
+    System_Boundary(triajeIA, "Sistema de Triaje Multimodal IA") {
+        Container(webApp, "Aplicación Web Demo", "Python/Streamlit", "Interfaz de usuario: 12 pantallas de flujo clínico + soporte. Renderiza formularios, gráficos SHAP y dashboard.")
+        Container(db, "Base de Datos", "SQLite", "Almacena pacientes, eventos de triaje, signos vitales, evaluaciones, predicciones, modelos y auditoría. Archivo local, sin servidor separado.")
+        Container(modelServing, "Servicio de Inferencia IA", "Python/scikit-learn/XGBoost", "Carga el modelo serializado + transformadores. Ejecuta predicciones vía función local (sin API separada en la demo).")
+        Container(auditModule, "Módulo de Auditoría", "Python (decorator)", "Registra automáticamente todas las acciones en tabla append-only vía decorador @auditar.")
+    }
+
+    System_Boundary(pipeline, "Pipeline de Entrenamiento (Offline)") {
+        Container(notebooks, "Notebooks de Entrenamiento", "Jupyter/Python", "Pipeline de 13 pasos: ingesta → anonimización → limpieza → embeddings → baselines → early/late fusion → evaluación → SHAP → serialización.")
+        Container(modelRegistry, "Registro de Modelos", "Archivos joblib + JSON", "Modelos serializados + scalers + encoders + tokenizadores + metadata.json con métricas y umbrales.")
+    }
+
+    System_Ext(hce, "Historia Clínica Electrónica", "Futuro")
+    System_Ext(mimic, "MIMIC-IV-ED", "PhysioNet")
+
+    Rel(profesional, webApp, "Interactúa con la UI", "HTTPS (local)")
+    Rel(webApp, db, "Lee/escribe datos clínicos y auditoría", "SQLite (local)")
+    Rel(webApp, modelServing, "Solicita predicción", "Llamada a función Python (mismo proceso)")
+    Rel(modelServing, modelRegistry, "Carga modelo al iniciar", "Archivo joblib/h5")
+    Rel(webApp, auditModule, "Dispara eventos de auditoría", "Decorator @auditar")
+    Rel(notebooks, mimic, "Ingesta batch para preentrenamiento", "CSV")
+    Rel(notebooks, modelRegistry, "Serializa modelo entrenado", "joblib/JSON")
+</div>
+
+---
+
+## 6. Vista de Componentes (C4 Nivel 3)
+
+<div class="mermaid">
+C4Component
+    title Diagrama de Componentes — Aplicación Web Demo (Contenedor: Streamlit)
+
+    Container_Boundary(webApp, "Aplicación Web Demo") {
+        Component(loginUI, "Login UI", "Streamlit", "Pantalla de autenticación con usuario/contraseña, bloqueo por intentos y recuperación")
+        Component(patientMgmt, "Gestión de Pacientes", "Streamlit", "Pantallas de registro, búsqueda y consulta de historial")
+        Component(vitalSigns, "Captura Signos Vitales", "Streamlit", "Formulario de 8 signos vitales con validación de rangos y alertas visuales")
+        Component(clinicalEval, "Evaluación Clínica", "Streamlit", "Motivo consulta, dolor, conciencia, antecedentes, alergias, texto libre")
+        Component(iaClassification, "Clasificación IA + SHAP", "Streamlit", "Resultados de inferencia: nivel sugerido, probabilidades, SHAP, campo del profesional")
+        Component(triageValidation, "Validación de Triaje", "Streamlit", "Concordancia/discrepancia, cierre de evento, descarga de registro")
+        Component(modelComparison, "Comparación de Modelos", "Streamlit", "Early vs. Late Fusion lado a lado con métricas")
+        Component(modelMgmt, "Gestión de Modelos", "Streamlit", "CRUD de modelos, versionado, activación/rollback, historial")
+        Component(dashboard, "Dashboard Operativo", "Streamlit", "KPIs, distribución I-V, desempeño IA, concordancia")
+        Component(auditUI, "Auditoría UI", "Streamlit", "Consulta con filtros, resultados paginados, exportación")
+        Component(sessionMgmt, "Gestión de Sesión", "Streamlit", "Manejo de sesión, roles RBAC, cierre por inactividad")
+    }
+
+    Container_Boundary(services, "Capa de Servicios") {
+        Component(authService, "Servicio de Autenticación", "Python", "Valida credenciales, gestiona sesiones, RBAC")
+        Component(patientService, "Servicio de Pacientes", "Python", "CRUD de pacientes, búsqueda, detección de duplicados")
+        Component(triageService, "Servicio de Triaje", "Python", "Máquina de estados, creación/cierre de eventos, reclasificación")
+        Component(clinicalService, "Servicio Clínico", "Python", "Validación de signos vitales, cálculo de IMC, alertas")
+        Component(inferenceService, "Servicio de Inferencia", "Python", "Orquesta: carga modelo → preprocesa → predice → SHAP")
+        Component(modelMgmtService, "Servicio de Gestión de Modelos", "Python", "Registro, versionado, activación/rollback")
+        Component(auditService, "Servicio de Auditoría", "Python", "Decorador @auditar, consulta con filtros, exportación")
+        Component(reportService, "Servicio de Reportes", "Python", "Agregaciones para dashboard, exportación PDF")
+    }
+
+    Container_Boundary(data, "Capa de Datos") {
+        ComponentDb(db, "Base de Datos SQLite", "SQLite", "12 tablas del modelo de dominio + auditoría + usuarios + modelos")
+        Component(modelLoader, "Cargador de Modelo", "Python", "Carga joblib/h5 + scalers + encoders + tokenizador al iniciar")
+    }
+
+    Rel(loginUI, authService, "Autentica", "Función Python")
+    Rel(patientMgmt, patientService, "CRUD pacientes", "Función Python")
+    Rel(vitalSigns, clinicalService, "Valida signos", "Función Python")
+    Rel(clinicalEval, clinicalService, "Guarda evaluación", "Función Python")
+    Rel(iaClassification, inferenceService, "Ejecuta inferencia", "Función Python (async)")
+    Rel(triageValidation, triageService, "Cierra evento", "Función Python")
+    Rel(dashboard, reportService, "Consulta agregados", "Función Python")
+    Rel(auditUI, auditService, "Consulta auditoría", "Función Python")
+    Rel(auditService, db, "Escribe/lee", "SQLite")
+    Rel(patientService, db, "CRUD", "SQLite")
+    Rel(triageService, db, "CRUD", "SQLite")
+    Rel(inferenceService, modelLoader, "Carga modelo", "joblib")
+    Rel(modelLoader, db, "Lee metadatos", "SQLite")
+</div>
+
+---
+
+## 7. Vista de Código (C4 Nivel 4) — Componente Inferencia IA
+
+<div class="mermaid">
+C4Component
+    title Diagrama de Código — Servicio de Inferencia IA
+
+    Container_Boundary(inference, "Servicio de Inferencia IA") {
+        Component(predictor, "Predictor", "Python class", "Orquesta el pipeline de inferencia end-to-end")
+        Component(preprocessor, "Preprocessor", "Python class", "Aplica StandardScaler + OneHotEncoder guardados durante entrenamiento")
+        Component(nlpProcessor, "NLP Processor", "Python class", "Tokeniza texto y genera embeddings con BERT clínico")
+        Component(classifier, "Classifier", "XGBoost/RF model", "Modelo serializado que produce probabilidades por clase")
+        Component(thresholdOptimizer, "Threshold Optimizer", "Python class", "Aplica umbrales por clase (Recall I-II) antes de seleccionar nivel")
+        Component(shapExplainer, "SHAP Explainer", "TreeExplainer", "Calcula valores SHAP para la predicción actual")
+        Component(shapTranslator, "SHAP Translator", "Python class", "Traduce nombres técnicos de variables a lenguaje clínico")
+    }
+
+    Rel(predictor, preprocessor, "1. Normaliza y codifica features estructuradas", "Llamada síncrona")
+    Rel(predictor, nlpProcessor, "2. Genera embeddings si hay texto", "Llamada síncrona")
+    Rel(predictor, classifier, "3. Predice probabilidades (5 clases)", "model.predict_proba()")
+    Rel(classifier, thresholdOptimizer, "4. Ajusta umbrales I-II", "Post-procesamiento")
+    Rel(thresholdOptimizer, predictor, "5. Nivel final + confianza", "Retorno")
+    Rel(predictor, shapExplainer, "6. Calcula SHAP", "shap.TreeExplainer.shap_values()")
+    Rel(shapExplainer, shapTranslator, "7. Traduce a lenguaje clínico", "Diccionario de mapeo")
+</div>
+
+---
+
+## 8. Vistas de Ejecución: Diagramas de Secuencia
+
+### 8.1 Flujo Principal de Triaje (end-to-end)
+
+<div class="mermaid">
+sequenceDiagram
+    actor Enfermera
+    actor Medico
+    participant UI as Streamlit UI
+    participant Auth as AuthService
+    participant Patient as PatientService
+    participant Clinical as ClinicalService
+    participant Inference as InferenceService
+    participant SHAP as SHAPExplainer
+    participant Triage as TriageService
+    participant Audit as AuditService
+    participant DB as SQLite
+
+    Note over Enfermera,DB: Flujo principal de triaje — 7 pasos
+
+    %% Paso 1: Login
+    Enfermera->>UI: Ingresa credenciales
+    UI->>Auth: autenticar(usuario, password)
+    Auth->>DB: SELECT usuario WHERE hash
+    DB-->>Auth: usuario válido
+    Auth-->>UI: sesión iniciada, rol=Enfermera
+
+    %% Paso 2: Registro Paciente
+    Admin->>UI: Registra nuevo paciente
+    UI->>Patient: registrar(datos_paciente)
+    Patient->>DB: INSERT INTO Paciente
+    Patient->>DB: SELECT duplicados
+    DB-->>Patient: OK, no duplicados
+    Patient->>Triage: crearEvento(paciente_id)
+    Triage->>DB: INSERT INTO EventoTriaje (estado=Registrado)
+    Triage-->>UI: evento TRI-0042 creado
+    Audit->>DB: INSERT INTO Auditoria (PACIENTE_CREADO)
+
+    %% Paso 3: Signos Vitales
+    Enfermera->>UI: Ingresa signos vitales
+    UI->>Clinical: validarSignosVitales(datos)
+    Clinical->>Clinical: Validar rangos fisiológicos
+    Clinical-->>UI: SpO₂=88% ⚠️ crítico, FR=28 ⚠️ elevada
+    Enfermera->>UI: Confirma valores
+    UI->>Clinical: guardarSignosVitales(datos)
+    Clinical->>DB: INSERT INTO SignosVitales
+    Triage->>DB: UPDATE EventoTriaje SET estado='En evaluación'
+
+    %% Paso 4: Evaluación Clínica
+    Enfermera->>UI: Motivo consulta + dolor + antecedentes
+    UI->>Clinical: guardarEvaluacion(datos)
+    Clinical->>DB: INSERT INTO EvaluacionClinica
+    Audit->>DB: INSERT INTO Auditoria (EVALUACION_REGISTRADA)
+
+    %% Paso 5: Ejecutar IA
+    Enfermera->>UI: Click "Ejecutar IA"
+    UI->>Triage: actualizarEstado('Pendiente IA')
+    UI->>Inference: predecir(evento_id)
+    Inference->>DB: SELECT signos_vitales, evaluacion, paciente
+    Inference->>Inference: Preprocesar (scaler + encoder)
+    Inference->>Inference: Generar embeddings NLP (si hay texto)
+    Inference->>Inference: XGBoost.predict_proba()
+    Inference->>Inference: Aplicar umbral optimizado I-II
+    Inference->>SHAP: explain(prediccion)
+    SHAP-->>Inference: valores SHAP
+    Inference->>DB: INSERT INTO PrediccionIA
+    Inference-->>UI: Nivel II (72%), probabilidades, SHAP, tiempo=2.1s
+    UI-->>Enfermera: Muestra resultados + gráficos
+
+    %% Paso 6: Validación Profesional
+    Medico->>UI: Revisa SHAP, selecciona Nivel II
+    UI->>Triage: registrarClasificacionProfesional(Nivel II)
+    Triage->>Triage: Calcular Concordancia = (IA==Profesional) → Sí
+    Triage->>DB: UPDATE EventoTriaje SET NivelAsignadoProfesional='II', Concordancia=true
+    Audit->>DB: INSERT INTO Auditoria (CLASIFICACION_VALIDADA, Concordancia=Sí)
+
+    %% Paso 7: Cierre
+    Medico->>UI: Click "Cerrar Evento"
+    UI->>Triage: cerrarEvento(evento_id)
+    Triage->>DB: UPDATE EventoTriaje SET estado='Cerrado', fecha_cierre=NOW()
+    Audit->>DB: INSERT INTO Auditoria (EVENTO_CERRADO)
+    Triage-->>UI: Evento TRI-0042 cerrado ✓
+</div>
+
+### 8.2 Flujo de Entrenamiento del Modelo (offline)
+
+<div class="mermaid">
+sequenceDiagram
+    actor Cientifico as Científico de Datos
+    participant Notebook as Jupyter Notebook
+    participant Ingesta as Pipeline Ingesta
+    participant Limpieza as Pipeline Limpieza
+    participant NLP as NLP Processor (BERT)
+    participant Trainer as Entrenador (scikit-learn/XGBoost)
+    participant Evaluator as Evaluador
+    participant SHAP as SHAP Explainer
+    participant Registry as Model Registry (joblib/JSON)
+
+    Note over Cientifico,Registry: Pipeline offline — 13 pasos
+
+    Cientifico->>Notebook: Ejecuta pipeline de entrenamiento
+
+    %% Pasos 1-2: Ingesta y Anonimización
+    Notebook->>Ingesta: ingest_data(sources)
+    Ingesta->>Ingesta: Leer MIMIC-IV-ED (CSV)
+    Ingesta->>Ingesta: Leer Hospital San Juan de Dios (CSV)
+    Ingesta->>Ingesta: Leer BDUA, datos.gov.co, Supersalud (CSV)
+    Ingesta->>Ingesta: Unificar esquemas → DataFrame unificado
+    Ingesta->>Ingesta: Anonimizar: eliminar nombres, documentos, direcciones
+    Ingesta->>Ingesta: Transformar: fecha_nac → edad, municipio → departamento
+    Ingesta-->>Notebook: Dataset anonimizado (N registros, M features)
+
+    %% Pasos 3-4: Limpieza y Normalización
+    Notebook->>Limpieza: clean_and_normalize(df)
+    Limpieza->>Limpieza: Imputar nulos (mediana/moda)
+    Limpieza->>Limpieza: Detectar outliers (IQR × 1.5)
+    Limpieza->>Limpieza: StandardScaler.fit_transform()
+    Limpieza->>Limpieza: OneHotEncoder.fit_transform()
+    Limpieza-->>Notebook: Features listas (X_train, X_test, y_train, y_test)
+
+    %% Paso 5: Embeddings NLP
+    Notebook->>NLP: generate_embeddings(texto_clinico)
+    NLP->>NLP: Tokenizar (BERT tokenizer)
+    NLP->>NLP: Inferir embeddings (BioBERT-es)
+    NLP-->>Notebook: Matriz de embeddings (768 dims)
+
+    %% Pasos 6-7: Baselines
+    Notebook->>Trainer: train_baselines(X_train_struct, y_train)
+    Trainer->>Trainer: LogisticRegression.fit() → eval
+    Trainer->>Trainer: RandomForest.fit() → eval
+    Trainer->>Trainer: XGBoost.fit() → eval
+    Trainer-->>Notebook: Baseline metrics (F1, Precision, Recall, AUC)
+
+    %% Paso 8: Early + Late Fusion
+    Notebook->>Trainer: train_early_fusion(X_struct + embeddings, y)
+    Trainer->>Trainer: XGBoost sobre vector concatenado
+    Trainer-->>Notebook: Early Fusion model + metrics
+
+    Notebook->>Trainer: train_late_fusion(X_struct, embeddings, y)
+    Trainer->>Trainer: Submodelo A: XGBoost(struct)
+    Trainer->>Trainer: Submodelo B: BERT+classifier(text)
+    Trainer->>Trainer: Combinar: stacking con LogisticRegression
+    Trainer-->>Notebook: Late Fusion model + metrics
+
+    %% Pasos 9-10: Threshold + Evaluación
+    Notebook->>Evaluator: evaluate_and_tune(ganador, X_test, y_test)
+    Evaluator->>Evaluator: Threshold tuning I-II (maximizar Recall)
+    Evaluator->>Evaluator: Métricas por clase + macro-promedio + AUPRC
+    Evaluator->>Evaluator: Matriz de confusión 5×5
+    Evaluator-->>Notebook: Evaluación final completa
+
+    %% Paso 11: SHAP
+    Notebook->>SHAP: explain(ganador, X_test)
+    SHAP->>SHAP: TreeExplainer.shap_values()
+    SHAP-->>Notebook: Summary plot, waterfall, dependence
+
+    %% Paso 12: Benchmarks
+    Evaluator->>Evaluator: Comparar vs. CTAS (0.882), Raita (0.87), Hong (0.93)
+
+    %% Paso 13: Serialización
+    Notebook->>Registry: serialize(ganador, scalers, encoders, tokenizer, metadata)
+    Registry-->>Cientifico: Modelo listo para demo ✓
+</div>
+
+### 8.3 Flujo de Auditoría y Trazabilidad
+
+<div class="mermaid">
+sequenceDiagram
+    actor Auditor
+    participant UI as Audit UI
+    participant AuditSvc as AuditService
+    participant DB as SQLite
+
+    Note over Auditor,DB: Flujo de consulta y exportación de auditoría
+
+    Auditor->>UI: Accede a pantalla Auditoría
+    UI->>UI: Verifica rol = Auditor ✓
+
+    Auditor->>UI: Aplica filtros: fecha=Jul 2026, acción=RECLASIFICACION
+    UI->>AuditSvc: consultar(filtros)
+    AuditSvc->>DB: SELECT * FROM Auditoria WHERE fecha BETWEEN '2026-07-01' AND '2026-07-19' AND accion='RECLASIFICACION'
+    DB-->>AuditSvc: 47 resultados
+    AuditSvc-->>UI: Resultados paginados (1-20 de 47)
+
+    Auditor->>UI: Click "Exportar Excel"
+    UI->>AuditSvc: exportar(formato='excel', filtros)
+    AuditSvc->>DB: SELECT * FROM Auditoria (mismos filtros, sin paginación)
+    DB-->>AuditSvc: 47 registros completos
+    AuditSvc->>AuditSvc: Anonimizar datos de pacientes (eliminar NumeroDocumento)
+    AuditSvc->>AuditSvc: Generar archivo .xlsx con formato
+    AuditSvc-->>UI: Descarga auditoria_jul2026.xlsx
+
+    Note over Auditor,DB: Registro inmutable — no se permite DELETE ni UPDATE en tabla Auditoria
+</div>
+
+---
+
+## 9. Modelo de Datos
+
+### 9.1 Diagrama Entidad-Relación
+
+<div class="mermaid">
+erDiagram
+    Paciente ||--o{ EventoTriaje : "tiene (1:N)"
+    EventoTriaje ||--|| SignosVitales : "contiene (1:1)"
+    EventoTriaje ||--|| EvaluacionClinica : "contiene (1:1)"
+    EventoTriaje ||--|| TextoClinico : "contiene (1:1)"
+    EventoTriaje ||--o{ PrediccionIA : "genera (1:N)"
+    PrediccionIA ||--|| ExplicacionSHAP : "genera (1:1)"
+    ProfesionalSalud ||--o{ EventoTriaje : "valida (1:N)"
+    Modelo ||--o{ PrediccionIA : "versiona (1:N)"
+    EventoTriaje ||--o{ Auditoria : "registra (1:N)"
+
+    Paciente {
+        uuid IdPaciente PK
+        string TipoDocumento
+        string NumeroDocumento
+        date FechaNacimiento
+        int Edad
+        string Sexo
+        string RegimenSalud
+        string EPS
+        string Municipio
+        string ViaLlegada "Ambulancia|Particular|Remisión"
+        int EpisodiosPreviosUrgencias
+    }
+
+    EventoTriaje {
+        uuid IdTriaje PK
+        uuid IdPaciente FK
+        datetime FechaHoraIngreso
+        datetime FechaHoraClasificacion
+        string Estado "Registrado|EnEvaluacion|PendienteIA|Clasificado|Validado|Cerrado|Cancelado"
+        string NivelSugeridoIA "I|II|III|IV|V"
+        json ProbabilidadesIA
+        string NivelAsignadoProfesional "I|II|III|IV|V"
+        boolean Concordancia "calculado: NivelIA == NivelProfesional"
+        string MotivoDiscrepancia
+        string VersionModeloUsado FK
+        uuid ProfesionalResponsable FK
+    }
+
+    SignosVitales {
+        uuid IdSignosVitales PK
+        uuid IdTriaje FK
+        decimal Temperatura
+        int FrecuenciaCardiaca
+        int FrecuenciaRespiratoria
+        int SaturacionO2
+        int PresionSistolica
+        int PresionDiastolica
+        decimal Peso
+        decimal Talla
+        decimal IMC "calculado"
+    }
+
+    EvaluacionClinica {
+        uuid IdEvaluacion PK
+        uuid IdTriaje FK
+        string MotivoTextoLibre
+        string MotivoCategoria
+        int EscalaDolor "0-10"
+        int Glasgow "3-15"
+        string NivelConciencia
+        json Antecedentes
+        int EpisodiosPrevios
+        string Alergias
+        string Observaciones
+    }
+
+    PrediccionIA {
+        uuid IdPrediccion PK
+        uuid IdTriaje FK
+        uuid IdModelo FK
+        string NivelPredicho
+        json Probabilidades
+        decimal Confianza
+        decimal TiempoInferencia
+        datetime FechaHora
+    }
+
+    ExplicacionSHAP {
+        uuid IdExplicacion PK
+        uuid IdPrediccion FK
+        json VariablesSHAP
+        decimal ValorBase
+    }
+
+    Modelo {
+        uuid IdModelo PK
+        string Nombre
+        string Version
+        string Arquitectura
+        string Algoritmo
+        json Hiperparametros
+        string DatasetEntrenamiento
+        decimal F1Score
+        decimal Precision
+        decimal Recall
+        decimal AUCROC
+        string Estado "Activo|Inactivo|EnValidacion"
+        datetime FechaRegistro
+    }
+
+    ProfesionalSalud {
+        uuid IdProfesional PK
+        string NombreUsuario
+        string PasswordHash
+        string Rol "Administrador|Medico|Enfermera|Investigador|Auditor"
+        boolean Activo
+    }
+
+    Auditoria {
+        uuid IdAuditoria PK
+        string Usuario
+        datetime FechaHora
+        string Accion
+        string EntidadAfectada
+        uuid IdEntidad
+        json ValorAnterior
+        json ValorNuevo
+        string IP
+        string Dispositivo
+    }
+</div>
+
+### 9.2 Validación con Specter
+
+Los recursos de datos definidos en las HU/TT de Specter fueron revisados y son consistentes con este modelo. Las entidades principales (Paciente, EventoTriaje, SignosVitales, EvaluacionClinica, PrediccionIA) coinciden en campos y tipos con lo definido en HU-E2-01, HU-E2-04, HU-E2-05, HU-E4-01 y HU-E4-03. Donde Specter marcó campos como "No especificado en la épica", se usó el modelo de dominio extendido de RD-002 como fuente autoritativa.
+
+---
+
+## 10. Arquitectura de Datos (ML)
+
+### 10.1 Fuentes de datos
+
+| Fuente | Tipo | Volumen | Rol | Sensibilidad |
+|---|---|---|---|---|
+| MIMIC-IV-ED v2.2 (PhysioNet) | Estructurado + texto libre (inglés) | ~422,500 admisiones | Preentrenamiento / baseline | Datos de salud anonimizados — requiere acuerdo de uso |
+| Registro Hospital San Juan de Dios | Estructurado + texto libre (español) | A determinar | Fine-tuning al contexto colombiano | Datos de salud — requiere anonimización (Ley 1581/2012) y autorización ética ✓ |
+| Clasificación en Triaje Urgencias (datos.gov.co) | Estructurado (CSV) | Nacional | Distribución de referencia de niveles I-V | Datos públicos agregados |
+| BDUA (ADRES) | Estructurado (CSV) | Nacional | Variables demográficas, régimen de afiliación | Datos públicos con información personal — usar solo agregados |
+| Datos abiertos Supersalud | Estructurado (CSV) | Nacional | Desempeño operativo EPS/IPS (contexto, no features) | Datos públicos |
+
+### 10.2 Pipeline de Datos
+
+<div class="mermaid">
+flowchart LR
+    A[MIMIC-IV-ED] --> E[Ingesta]
+    B[Hospital San Juan de Dios] --> E
+    C[datos.gov.co] --> E
+    D[BDUA + Supersalud] --> E
+    E --> F[Anonimización]
+    F --> G[Unificación de esquemas]
+    G --> H[Limpieza: imputación + outliers]
+    H --> I[Normalización: Scaler + OneHot]
+    I --> J[Split: Train 80% / Test 20% estratificado]
+    J --> K[Features listas para entrenamiento]
+</div>
+
+### 10.3 Decisiones de Feature Engineering
+
+- **Variables numéricas:** StandardScaler (media=0, std=1) ajustado sobre train, aplicado a test.
+- **Variables categóricas:** OneHotEncoder para Sexo, ViaLlegada, RegimenSalud, NivelConciencia, MotivoCategoria.
+- **Texto libre:** Embeddings de 768 dimensiones vía BERT clínico (BioBERT-es). Texto vacío → vector de ceros.
+- **Features derivadas:** IMC (peso/talla²), edad_categorizada (pediátrico/adulto/adulto mayor).
+- **Validación de calidad pre-inferencia:** RNQ-001 a 006 (campos obligatorios, rangos fisiológicos, catálogos controlados, formatos de fecha, detección de duplicados).
+
+---
+
+## 11. Arquitectura de Entrenamiento (ML)
+
+### 11.1 Pipeline de Entrenamiento
+
+<div class="mermaid">
+flowchart TB
+    subgraph "Fase 1: Preparación"
+        A[Ingesta 5 fuentes] --> B[Anonimización]
+        B --> C[Limpieza + Normalización]
+        C --> D[Embeddings NLP - BERT]
+        D --> E[Split Train/Test 80/20]
+    end
+
+    subgraph "Fase 2: Baselines"
+        E --> F1[Regresión Logística]
+        E --> F2[Random Forest]
+        E --> F3[XGBoost]
+        F1 --> G[Comparativa Baselines]
+        F2 --> G
+        F3 --> G
+    end
+
+    subgraph "Fase 3: Modelos Multimodales"
+        E --> H1[Early Fusion: XGBoost sobre vector combinado]
+        E --> H2[Late Fusion: Submodelo A (XGBoost) + Submodelo B (BERT+classifier) → Stacking]
+        H1 --> I[Comparativa Early vs Late]
+        H2 --> I
+    end
+
+    subgraph "Fase 4: Optimización y Evaluación"
+        I --> J[Threshold Tuning I-II: maximizar Recall]
+        J --> K[Evaluación final: métricas por clase + AUPRC]
+        K --> L[SHAP: TreeExplainer sobre modelo ganador]
+    end
+
+    subgraph "Fase 5: Entrega"
+        L --> M[Comparación contra benchmarks]
+        M --> N[Serialización: modelo + scalers + encoders + tokenizer + metadata.json]
+    end
+</div>
+
+### 11.2 Framework y cómputo
+
+- **Framework:** Python 3.10+ con scikit-learn (preprocesamiento, baselines), XGBoost (modelos principales), TensorFlow/Keras o PyTorch (redes neuronales y BERT), SHAP (explicabilidad).
+- **Cómputo:** CPU local para baselines y XGBoost. GPU recomendada (no obligatoria) para BERT — si no hay GPU disponible, usar modelos más ligeros (distilBERT) o precomputar embeddings offline.
+- **Tracking de experimentos:** Manual vía Jupyter notebooks con registro de métricas en `model_metadata.json`. Para un entorno productivo futuro: MLflow.
+
+### 11.3 Versionado
+
+- **Modelo:** `{nombre}_v{major}.{minor}.joblib` + `model_metadata.json` con: algoritmo, arquitectura, hiperparámetros, dataset usado, métricas (F1, Precision, Recall, AUC-ROC, AUPRC), umbrales por clase, fecha de entrenamiento.
+- **Datos:** Convención de nomenclatura en `datasets/` con fecha de ingesta (`dataset_urgencias_san_juan_de_dios_custom.csv`).
+- **Código:** Git + requirements.txt con versiones exactas (reproducibilidad).
+
+### 11.4 ADR para modelo ganador
+
+Ver ADR-003 en Sección 15.
+
+---
+
+## 12. Evaluación y Métricas (ML)
+
+### 12.1 Métricas objetivo vs. esperadas
+
+| Métrica | Meta | Evaluación | Notas |
+|---|---|---|---|
+| F1-Score (macro) | ≥ 0.82 | 10-fold CV + test set | Media armónica de precisión y recall |
+| Precision (macro) | ≥ 0.85 | 10-fold CV + test set | Fracción de predicciones correctas |
+| Recall (macro) | ≥ 0.80 | 10-fold CV + test set | Cobertura de casos reales |
+| AUC-ROC (macro) | ≥ 0.87 | Test set | Capacidad discriminativa global |
+| Recall Nivel I | Máximo posible sin degradar F1 global > 10% | Test set | Prioridad clínica: no subclasificar críticos |
+| Recall Nivel II | Máximo posible sin degradar F1 global > 10% | Test set | Prioridad clínica |
+| AUPRC (I, II) | Reportar (sin meta numérica) | Test set | Más informativo que AUC-ROC para clases raras |
+
+### 12.2 Métricas por clase (obligatorio)
+
+Se reportan Precision, Recall, F1 y AUC-ROC para cada nivel (I, II, III, IV, V) individualmente. Un F1 global alto puede esconder mal desempeño en Nivel I.
+
+### 12.3 Matriz de confusión
+
+Se genera matriz 5×5 (valores absolutos y normalizada por fila) para el modelo ganador sobre el conjunto de test.
+
+### 12.4 Comparación contra benchmarks
+
+| Estudio | Modelo | Métrica | Meta del proyecto |
+|---|---|---|---|
+| CTAS (estándar canadiense) | — | AUROC 0.882 | Superar |
+| Raita et al. 2019 | RF / LR | AUC-ROC 0.87 | Superar |
+| Hong, Haimovich & Taylor 2018 | DNN (972K casos) | AUC-ROC 0.93 | Aspiracional |
+| Ueareekul et al. 2024 | XGBoost multimodal | AUROC 0.917, AUPRC 0.629 | Comparar |
+| Levin et al. 2021 | Estructurado + BERT | F1 0.81 | Superar |
+
+### 12.5 Estrategia de manejo de desbalance
+
+- **Técnica primaria:** Class weights inversamente proporcionales a la frecuencia (disponible en scikit-learn y XGBoost).
+- **Técnicas a evaluar:** SMOTE (con validación de plausibilidad clínica), focal loss (si se usa red neuronal).
+- **Threshold tuning:** Optimización de umbral de decisión para Niveles I-II (maximizar Recall) — ver ADR-003.
+
+---
+
+## 13. Explicabilidad — XAI
+
+### 13.1 Técnica
+
+**SHAP (SHapley Additive exPlanations)** con TreeExplainer para modelos basados en árboles (XGBoost, Random Forest). Si el modelo ganador es una red neuronal, se usa KernelExplainer con submuestreo.
+
+### 13.2 Contrato de salida por predicción
+
+Cada predicción entrega al profesional 4 elementos (definidos en `02-ESPECIFICACION-TECNICA-MODELOS-IA.md` §6):
+
+1. **Nivel predicho (I-V)** + probabilidad + confianza + versión del modelo + tiempo de inferencia.
+2. **Top 5-10 variables SHAP** con mayor influencia, en lenguaje clínico comprensible (ej. "Saturación de O₂ baja (88%) fue el factor de mayor peso para clasificar como Nivel II").
+3. **Comparación implícita con criterios MTS/Manchester** cuando las variables coincidan (FR, SpO₂, temperatura, nivel de conciencia).
+4. **Visualizaciones:** gráfico de barras horizontales (ranking SHAP), waterfall plot (contribución acumulada), force plot.
+
+### 13.3 Alcance
+
+- **Local:** explicación por cada predicción individual (lo que ve el profesional en la UI).
+- **Global:** summary plot con importancia promedio de variables sobre el conjunto de test (para investigadores en el dashboard).
+
+---
+
+## 14. Arquitectura de Inferencia / Servicio del Modelo
+
+### 14.1 Modo de inferencia
+
+**Tiempo real síncrono** dentro del mismo proceso Python de Streamlit. El modelo se carga en memoria al iniciar la aplicación y se reutiliza en cada predicción.
+
+### 14.2 Diagrama de inferencia
+
+<div class="mermaid">
+flowchart LR
+    A[Profesional click 'Ejecutar IA'] --> B[Streamlit UI: spinner]
+    B --> C[InferenceService.predict]
+    C --> D[Preprocessor: Scaler + OneHot]
+    C --> E[NLP Processor: BERT embeddings]
+    D --> F[Concatenar features + embeddings]
+    E --> F
+    F --> G[Classifier: XGBoost.predict_proba]
+    G --> H[Threshold Optimizer: ajustar I-II]
+    H --> I[SHAP Explainer: TreeExplainer]
+    I --> J[SHAP Translator: lenguaje clínico]
+    J --> K[Respuesta: nivel + probs + SHAP + metadatos]
+    K --> L[Streamlit UI: mostrar resultados]
+</div>
+
+### 14.3 Latencia
+
+- **Objetivo:** < 3 segundos end-to-end (desde clic hasta resultados completos, incluyendo SHAP).
+- **Estrategia:** TreeExplainer (rápido para XGBoost/RF), modelo precargado en memoria, embeddings NLP precomputables si el costo de BERT es demasiado alto.
+
+### 14.4 Modo degradado
+
+Si el modelo no está disponible (error de carga, timeout > 5s), el sistema:
+1. Muestra mensaje "Modelo no disponible — continúe con clasificación manual".
+2. Permite al profesional registrar su clasificación sin la sugerencia de IA.
+3. Registra la indisponibilidad en auditoría.
+
+### 14.5 Reentrenamiento
+
+**Manual bajo demanda.** El científico de datos ejecuta el pipeline de entrenamiento (Jupyter notebooks), evalúa el nuevo modelo, y si supera las métricas del modelo activo, lo serializa y registra en el sistema vía la pantalla de Gestión de Modelos.
+
+---
+
+## 15. ADR — Decisiones de Arquitectura
+
+### ADR-001: Arquitectura monolítica modular para la demo
+
+**Contexto:** El sistema es un prototipo para TFM, no un producto productivo. Se necesita minimizar el esfuerzo de desarrollo y despliegue.
+
+**Decisión:** Monolito modular con Streamlit (UI + backend en un solo proceso Python), separación lógica por capas (UI / Services / Data / IA).
+
+**Alternativas consideradas:**
+- Microservicios: sobre-diseñado para el alcance. Agregaría complejidad de orquestación sin beneficio real.
+- Flask + frontend separado: más control pero duplica el esfuerzo de desarrollo de UI.
+
+**Consecuencias:**
+- Desarrollo más rápido (un solo archivo/deploy).
+- Migración futura a arquitectura distribuida posible gracias a la separación en módulos.
+- Limitación: Streamlit no soporta múltiples usuarios concurrentes de forma nativa — aceptable para demo.
+
+### ADR-002: Streamlit como framework UI
+
+**Contexto:** El documento de contexto menciona Streamlit y Flask como alternativas, sin decisión firme. Ver `05-PENDIENTES-PARA-DIRECTORA.md`.
+
+**Decisión:** Streamlit (pendiente de confirmación por la directora).
+
+**Justificación:**
+- Integración nativa con visualizaciones Python (SHAP, matplotlib, plotly).
+- Menor esfuerzo para formularios + gráficos.
+- Un solo comando de arranque (`streamlit run app.py`).
+
+**Si se elige Flask:** Replanificar TT-E1-01 (inicializar proyecto) y las 12 pantallas (HU-E2-* y HU-E4-*).
+
+### ADR-003: Priorizar Recall sobre Precisión en Niveles I-II
+
+**Contexto:** `RF-IA-003` originalmente describía argmax puro (seleccionar la clase con mayor probabilidad). La decisión técnica cerrada en `CONTEXTO_TRIAJE.txt` v2.0 y `02-ESPECIFICACION-TECNICA-MODELOS-IA.md` establece umbral optimizado.
+
+**Decisión:** Aplicar threshold tuning para maximizar Recall en Niveles I-II, usando argmax estándar para Niveles III-V.
+
+**Justificación clínica:** El costo de un falso negativo en Nivel I-II (subclasificar a un paciente crítico) es un riesgo vital inasumible. Un falso positivo (sobreclasificar) genera sobrecarga operativa pero no pone en peligro la vida del paciente.
+
+**Consecuencias:** Ligera caída de Precisión en Niveles I-II. Se documenta el punto de equilibrio elegido en el capítulo de resultados del TFM.
+
+### ADR-004: SQLite como base de datos para la demo
+
+**Contexto:** La demo no requiere un motor de base de datos separado ni concurrencia multiusuario real.
+
+**Decisión:** SQLite (archivo local, sin servidor).
+
+**Alternativas:**
+- PostgreSQL: motor robusto pero requiere instalación y configuración separada — rompe el principio de "un solo comando de arranque".
+- MySQL: igual que PostgreSQL.
+
+**Consecuencias:** Migrar a PostgreSQL en producción requeriría cambiar el driver de conexión pero no el esquema.
+
+### ADR-005: Late Fusion con Stacking
+
+**Contexto:** El método de combinación en late fusion está abierto (`05-PENDIENTES-PARA-DIRECTORA.md` #4).
+
+**Decisión tentativa:** Evaluar stacking con Regresión Logística como meta-clasificador (primera opción), y promedio ponderado como alternativa simple.
+
+**Justificación:** Stacking aprende pesos óptimos para cada submodelo a partir de los datos, en lugar de asumir pesos fijos. Es el enfoque más riguroso para un TFM.
+
+---
+
+## 16. Riesgos y Deuda Técnica
+
+| Riesgo | Probabilidad | Impacto | Mitigación |
+|---|---|---|---|
+| **Sesgo geográfico:** Modelo entrenado solo con MIMIC-IV-ED (EE.UU.) no generaliza a población colombiana | Alta | Alto | Fine-tuning obligatorio con datos del Hospital San Juan de Dios. Documentar como limitación en Cap. 6 del TFM. |
+| **Sesgo de anclaje:** El profesional ve primero la sugerencia de IA antes de clasificar, lo que vicia la concordancia como medida de acuerdo independiente | Alta | Medio | Documentar como limitación metodológica. La métrica mide utilidad clínica real, no acuerdo interobservador puro. |
+| **Tiempo de inferencia > 3s:** BERT + SHAP pueden exceder el objetivo | Media | Medio | Evaluar TreeExplainer (rápido), modelos NLP más ligeros (distilBERT), precomputar embeddings. |
+| **Desbalance extremo Nivel I:** Pocos casos positivos → métricas inestables | Alta | Alto | Reportar AUPRC, usar class weights, threshold tuning. Documentar si las métricas en Nivel I tienen intervalos de confianza amplios. |
+| **Datos del Hospital San Juan de Dios no disponibles a tiempo** | Media | Alto | Tener plan B: entrenar solo con MIMIC + datos públicos, y documentar como limitación mayor. |
+| **Streamlit no confirmado por la directora** | Media | Medio | Mantener la arquitectura modular para que el cambio a Flask sea solo de capa UI. |
+
+---
+
+## 17. Supuestos
+
+- **[SUP-001]** Streamlit es el framework UI elegido para la demo (ADR-002 pendiente de confirmación).
+- **[SUP-002]** La autorización ética del Hospital San Juan de Dios está aprobada y los datos estarán disponibles para fine-tuning (según `CONTEXTO_TRIAJE.txt` v2.0).
+- **[SUP-003]** El idioma predominante de los textos clínicos es español colombiano; el modelo NLP (BioBERT-es o BETO) es adecuado.
+- **[SUP-004]** La demo se ejecuta en una máquina local con CPU; no se requiere GPU para la inferencia.
+- **[SUP-005]** La integración con Historia Clínica Electrónica no se implementa en la demo — solo se dejan puntos de extensión documentados.
+- **[SUP-006]** Los datasets en `datasets/` corresponden a datos reales o sintéticos adecuados para el entrenamiento y la demo.
+- **[SUP-007]** La latencia de inferencia de 3 segundos es aceptable para el flujo clínico simulado en la demo.
+- **[SUP-008]** El método de combinación en late fusion (stacking con Regresión Logística) es la primera opción, sujeto a validación experimental.
+
+---
+
+## 18. Referencias
+
+### Documentos del proyecto
+
+| Documento | Ubicación |
+|---|---|
+| Contexto Maestro Consolidado | `context/01-CONTEXTO-MAESTRO-CONSOLIDADO.md` |
+| Especificación Técnica Modelos IA | `context/02-ESPECIFICACION-TECNICA-MODELOS-IA.md` |
+| Catálogo de Datos y Variables | `context/03-CATALOGO-DATOS-Y-VARIABLES.md` |
+| Especificación Aplicación Demo | `context/04-ESPECIFICACION-APLICACION-DEMO.md` |
+| Documento Maestro Funcional | `context/CONTEXT TRIA.txt` |
+| Contexto TFM | `context/contexto-tfm.md` |
+| Requerimientos Funcionales (Janus) | `resources/functional/requests/` (19 archivos) |
+| Definiciones de Arquitectura (Janus) | `resources/architecture/definitions/` (14 archivos) |
+| Modelos de Diseño (Janus) | `resources/design/models/` (3 archivos) |
+| Historias de Usuario (Specter) | `resources/functional/hu/` (36 archivos) |
+| Épicas (Epicureo) | `resources/functional/reqs/` (6 archivos) |
+| Mockups UX/UI | `resources/diseno/mockups/` (12 archivos) |
+| Design System | `resources/diseno/design-system.md` |
+| Datasets | `datasets/` (4 archivos CSV) |
+
+### Benchmarks externos
+
+- Raita et al. 2019 — AUC-ROC 0.87 (RF/LR)
+- Hong, Haimovich & Taylor 2018 — AUC-ROC 0.93 (DNN)
+- Ueareekul et al. 2024 — AUROC 0.917, AUPRC 0.629 (XGBoost multimodal)
+- Levin et al. 2021 — F1 0.81 (Estructurado + BERT)
+- CTAS — AUROC 0.882 (estándar canadiense)
+- Lee, Lee & Shin 2022 — SHAP sobre modelo de triaje
+
+### Normativa
+
+- Resolución 5596 de 2015 — Ministerio de Salud y Protección Social de Colombia
+- Ley 1581 de 2012 — Protección de Datos Personales (Colombia)
+
+</div>
+<script>mermaid.initialize({ startOnLoad: true, theme: "default" });</script>
+</body>
+</html>

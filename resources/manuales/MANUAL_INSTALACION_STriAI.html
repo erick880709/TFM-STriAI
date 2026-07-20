@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Manual de Instalación — STriAI (Sistema de Triaje Multimodal IA)</title>
+<style>
+  :root {
+    --bg: #0d1117; --fg: #c9d1d9; --accent: #58a6ff; --border: #30363d;
+    --code-bg: #161b22; --table-stripe: #161b22; --success: #3fb950;
+    --warning: #d2991d; --error: #f85149; --heading: #f0f6fc;
+    --step-bg: #1a2332;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, sans-serif; background: var(--bg); color: var(--fg); line-height: 1.7; padding: 2rem; max-width: 1100px; margin: 0 auto; }
+  h1 { font-size: 2rem; color: var(--heading); border-bottom: 2px solid var(--accent); padding-bottom: 0.5rem; margin: 2rem 0 1rem; }
+  h2 { font-size: 1.5rem; color: var(--heading); border-bottom: 1px solid var(--border); padding-bottom: 0.3rem; margin: 2rem 0 1rem; }
+  h3 { font-size: 1.2rem; color: var(--heading); margin: 1.5rem 0 0.8rem; }
+  h4 { font-size: 1.05rem; color: var(--accent); margin: 1rem 0 0.5rem; }
+  p { margin: 0.8rem 0; }
+  a { color: var(--accent); text-decoration: none; }
+  a:hover { text-decoration: underline; }
+  table { width: 100%; border-collapse: collapse; margin: 1rem 0; font-size: 0.9rem; }
+  th, td { padding: 0.55rem 0.8rem; border: 1px solid var(--border); text-align: left; }
+  th { background: #21262d; color: var(--heading); font-weight: 600; white-space: nowrap; }
+  tr:nth-child(even) { background: var(--table-stripe); }
+  code { font-family: 'Cascadia Code', 'Fira Code', 'Consolas', monospace; background: var(--code-bg); padding: 0.15em 0.4em; border-radius: 4px; font-size: 0.9em; border: 1px solid var(--border); }
+  pre { background: var(--code-bg); border: 1px solid var(--border); border-radius: 6px; padding: 1rem; overflow-x: auto; margin: 1rem 0; font-size: 0.85rem; }
+  pre code { border: none; padding: 0; background: transparent; }
+  blockquote { border-left: 4px solid var(--accent); padding: 0.5rem 1rem; margin: 1rem 0; background: #161b22; border-radius: 0 6px 6px 0; color: #8b949e; }
+  blockquote.warning { border-left-color: var(--warning); }
+  blockquote.tip { border-left-color: var(--success); }
+  blockquote.error { border-left-color: var(--error); }
+  ul, ol { margin: 0.8rem 0 0.8rem 2rem; }
+  li { margin: 0.3rem 0; }
+  hr { border: none; border-top: 1px solid var(--border); margin: 2rem 0; }
+  .toc { background: #161b22; border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+  .toc ol { margin-left: 1.5rem; }
+  .toc a { font-weight: 500; }
+  .badge { display: inline-block; padding: 0.15em 0.6em; border-radius: 12px; font-size: 0.78em; font-weight: 600; margin: 0 0.2em; }
+  .badge-ok { background: #1a3a2a; color: var(--success); }
+  .badge-warn { background: #3a2e0a; color: var(--warning); }
+  .badge-err { background: #3a1a1a; color: var(--error); }
+  .badge-info { background: #0a2a3a; color: var(--accent); }
+  .step { background: var(--step-bg); border: 1px solid var(--border); border-radius: 8px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+  .step .num { display: inline-block; background: var(--accent); color: #fff; border-radius: 50%; width: 28px; height: 28px; text-align: center; line-height: 28px; font-weight: 700; font-size: 0.9rem; margin-right: 0.5rem; }
+  .step h4 { display: inline; }
+  .cmd { background: #0d1117; border: 1px solid #30363d; border-radius: 6px; padding: 0.8rem 1rem; margin: 0.5rem 0; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.85rem; position: relative; }
+  .cmd .prompt { color: var(--success); user-select: none; }
+  .cmd .comment { color: #6e7681; }
+  .checklist { list-style: none; margin-left: 0; }
+  .checklist li { padding: 0.5rem 0; border-bottom: 1px solid var(--border); }
+  .checklist li:last-child { border-bottom: none; }
+  .checklist .check { color: var(--success); margin-right: 0.5rem; }
+  .checklist .cross { color: var(--error); margin-right: 0.5rem; }
+  .file-tree { background: #161b22; border: 1px solid var(--border); border-radius: 8px; padding: 1rem; margin: 1rem 0; font-family: 'Cascadia Code', 'Consolas', monospace; font-size: 0.82rem; line-height: 1.5; color: #8b949e; }
+  .file-tree .dir { color: var(--accent); }
+  .file-tree .file { color: #c9d1d9; }
+  .file-tree .comment { color: #6e7681; }
+</style>
+</head>
+<body>
+
+<h1>📦 Manual de Instalación — STriAI</h1>
+<p><strong>Sistema de Triaje Multimodal IA</strong><br>
+TFM UNIR — Máster en Inteligencia Artificial<br>
+Versión 1.0 — Julio 2026</p>
+
+<div class="toc">
+<strong>📑 Tabla de Contenido</strong>
+<ol>
+  <li><a href="#s1">Requisitos del Sistema</a></li>
+  <li><a href="#s2">Estructura del Proyecto</a></li>
+  <li><a href="#s3">Instalación Paso a Paso</a></li>
+  <li><a href="#s4">Configuración del Entorno</a></li>
+  <li><a href="#s5">Base de Datos</a></li>
+  <li><a href="#s6">Modelos de Machine Learning</a></li>
+  <li><a href="#s7">Ejecución de la Aplicación</a></li>
+  <li><a href="#s8">Verificación de la Instalación</a></li>
+  <li><a href="#s9">Instalación en Producción</a></li>
+  <li><a href="#s10">Solución de Problemas</a></li>
+</ol>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="s1">1. Requisitos del Sistema</h2>
+
+<h3>1.1 Hardware</h3>
+<table>
+<tr><th>Componente</th><th>Mínimo</th><th>Recomendado</th></tr>
+<tr><td><strong>RAM</strong></td><td>4 GB</td><td>8 GB o más</td></tr>
+<tr><td><strong>Disco</strong></td><td>1 GB libre</td><td>3 GB libre (incluye modelo NLP ~420 MB)</td></tr>
+<tr><td><strong>CPU</strong></td><td>2 núcleos</td><td>4+ núcleos (Intel i5 / AMD Ryzen 5)</td></tr>
+<tr><td><strong>GPU</strong></td><td>No requerida</td><td>NVIDIA con CUDA (opcional, acelera NLP)</td></tr>
+</table>
+
+<h3>1.2 Software</h3>
+<table>
+<tr><th>Componente</th><th>Versión Mínima</th><th>Notas</th></tr>
+<tr><td><strong>Sistema Operativo</strong></td><td>Windows 10/11, macOS 12+, Ubuntu 20.04+</td><td>Cualquier SO compatible con Python</td></tr>
+<tr><td><strong>Python</strong></td><td>3.11+</td><td>3.11.7 usado en desarrollo</td></tr>
+<tr><td><strong>pip</strong></td><td>23.0+</td><td>Gestor de paquetes</td></tr>
+<tr><td><strong>Git</strong></td><td>2.30+</td><td>Solo para clonar repositorio</td></tr>
+<tr><td><strong>Navegador</strong></td><td>Chrome/Firefox/Edge 90+</td><td>Interfaz Streamlit</td></tr>
+</table>
+
+<h3>1.3 Dependencias Clave</h3>
+<table>
+<tr><th>Librería</th><th>Versión</th><th>Propósito</th></tr>
+<tr><td>Streamlit</td><td>≥1.31.0</td><td>Framework de interfaz web</td></tr>
+<tr><td>pandas</td><td>≥2.2.0</td><td>Manipulación de datos</td></tr>
+<tr><td>scikit-learn</td><td>≥1.4.0</td><td>Preprocesamiento ML</td></tr>
+<tr><td>XGBoost</td><td>≥2.0.0</td><td>Modelo de gradient boosting</td></tr>
+<tr><td>PyTorch</td><td>≥2.2.0</td><td>Backend transformers</td></tr>
+<tr><td>Transformers</td><td>≥4.38.0</td><td>Modelos NLP (BERT)</td></tr>
+<tr><td>SHAP</td><td>≥0.44.0</td><td>Explicabilidad</td></tr>
+<tr><td>bcrypt</td><td>≥4.1.0</td><td>Hashing de contraseñas</td></tr>
+<tr><td>SQLite3</td><td>Incluido</td><td>Base de datos local</td></tr>
+</table>
+
+<!-- ============================================================ -->
+<h2 id="s2">2. Estructura del Proyecto</h2>
+
+<div class="file-tree">
+<span class="dir">TFM-FINAL/</span>
+├── <span class="file">app.py</span>                          <span class="comment">← Punto de entrada principal</span>
+├── <span class="file">run_pipeline.py</span>                 <span class="comment">← Pipeline de entrenamiento ML</span>
+├── <span class="dir">sistema-triaje-ia/</span>              <span class="comment">← Código fuente de la aplicación</span>
+│   ├── <span class="file">.env.example</span>                <span class="comment">← Plantilla de configuración</span>
+│   ├── <span class="file">requirements.txt</span>            <span class="comment">← Dependencias Python</span>
+│   ├── <span class="file">app.py</span>                      <span class="comment">← Entry point Streamlit</span>
+│   ├── <span class="dir">app/</span>
+│   │   ├── <span class="dir">config/</span>                  <span class="comment">← Carga de configuración (.env)</span>
+│   │   ├── <span class="dir">data/</span>                    <span class="comment">← Inicialización SQLite (12 tablas)</span>
+│   │   ├── <span class="dir">services/</span>               <span class="comment">← Lógica de negocio (auth, pacientes, triaje, IA)</span>
+│   │   └── <span class="dir">ui/</span>                     <span class="comment">← Páginas de la interfaz (14 pantallas)</span>
+│   ├── <span class="dir">data/</span>                       <span class="comment">← Base de datos SQLite (auto-generada)</span>
+│   └── <span class="dir">models/</span>                     <span class="comment">← Modelos serializados del pipeline</span>
+├── <span class="dir">src/</span>                            <span class="comment">← Código del pipeline ML</span>
+│   ├── <span class="dir">data/</span>                       <span class="comment">← Ingesta, limpieza, anonimización</span>
+│   ├── <span class="dir">features/</span>                   <span class="comment">← Embeddings NLP</span>
+│   ├── <span class="dir">models/</span>                     <span class="comment">← Entrenamiento (LR, RF, XGBoost, Fusion)</span>
+│   ├── <span class="dir">evaluation/</span>                 <span class="comment">← Métricas, SHAP, benchmarks</span>
+│   └── <span class="dir">serving/</span>                    <span class="comment">← Serialización de modelos</span>
+├── <span class="dir">datasets/</span>                       <span class="comment">← Datos de entrenamiento (CSV)</span>
+├── <span class="dir">models/</span>                         <span class="comment">← Modelos entrenados (generado por pipeline)</span>
+└── <span class="dir">resources/manuales/</span>               <span class="comment">← Documentación</span>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="s3">3. Instalación Paso a Paso</h2>
+
+<div class="step">
+<h4><span class="num">1</span> Abrir una terminal</h4>
+<p>Windows: PowerShell o CMD. macOS/Linux: Terminal.</p>
+</div>
+
+<div class="step">
+<h4><span class="num">2</span> Navegar a la carpeta del proyecto</h4>
+<div class="cmd"><span class="prompt">PS&gt;</span> cd "C:\Users\ELITEBOOK\OneDrive\Documentos\Repositorio\Trabajo\TFM-FINAL"</div>
+</div>
+
+<div class="step">
+<h4><span class="num">3</span> Crear el entorno virtual</h4>
+<div class="cmd"><span class="prompt">PS&gt;</span> python -m venv .venv</div>
+<p>Esto crea una carpeta <code>.venv/</code> con un Python aislado para el proyecto.</p>
+</div>
+
+<div class="step">
+<h4><span class="num">4</span> Activar el entorno virtual</h4>
+<p><strong>Windows PowerShell:</strong></p>
+<div class="cmd"><span class="prompt">PS&gt;</span> .\.venv\Scripts\Activate.ps1</div>
+<blockquote class="warning">⚠️ Si aparece error de permisos: <code>Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</code></blockquote>
+<p><strong>macOS / Linux:</strong></p>
+<div class="cmd"><span class="prompt">$</span> source .venv/bin/activate</div>
+<p>Verás <code>(.venv)</code> al inicio del prompt indicando que el entorno está activo.</p>
+</div>
+
+<div class="step">
+<h4><span class="num">5</span> Instalar dependencias</h4>
+<div class="cmd"><span class="prompt">(.venv) PS&gt;</span> pip install -r sistema-triaje-ia/requirements.txt</div>
+<p>⏱️ <strong>Tiempo estimado:</strong> 5-15 minutos. PyTorch es el paquete más grande (~122 MB).</p>
+</div>
+
+<div class="step">
+<h4><span class="num">6</span> Configurar variables de entorno</h4>
+<div class="cmd"><span class="prompt">(.venv) PS&gt;</span> Copy-Item sistema-triaje-ia\.env.example sistema-triaje-ia\.env</div>
+<p>Esto copia la plantilla de configuración. No es necesario modificar nada para desarrollo.</p>
+</div>
+
+<div class="step">
+<h4><span class="num">7</span> Verificar instalación</h4>
+<div class="cmd"><span class="prompt">(.venv) PS&gt;</span> python -c "import streamlit; import pandas; import sklearn; import xgboost; import torch; import transformers; print('✓ Todas las dependencias OK')"</div>
+<p>Deberías ver: <code style="color:#3fb950;">✓ Todas las dependencias OK</code></p>
+</div>
+
+<div class="step">
+<h4><span class="num">8</span> Iniciar la aplicación</h4>
+<div class="cmd"><span class="prompt">(.venv) PS&gt;</span> streamlit run app.py --server.port 8501</div>
+</div>
+
+<div class="step">
+<h4><span class="num">9</span> Abrir el navegador</h4>
+<p>Ve a <a href="http://localhost:8501">http://localhost:8501</a></p>
+<p><strong>Usuario:</strong> <code>admin</code> | <strong>Contraseña:</strong> <code>admin123</code></p>
+</div>
+
+<!-- ============================================================ -->
+<h2 id="s4">4. Configuración del Entorno</h2>
+
+<h3>4.1 Archivo <code>.env</code></h3>
+
+<table>
+<tr><th>Variable</th><th>Valor por Defecto</th><th>Descripción</th></tr>
+<tr><td><code>DB_PATH</code></td><td><code>data/triaje.db</code></td><td>Ruta a la base de datos SQLite</td></tr>
+<tr><td><code>SESSION_TIMEOUT_MINUTES</code></td><td><code>15</code></td><td>Inactividad antes de cerrar sesión</td></tr>
+<tr><td><code>BCRYPT_ROUNDS</code></td><td><code>12</code></td><td>Rondas de hashing (12 = ~0.3s, 14 = ~1.2s)</td></tr>
+<tr><td><code>MODEL_PATH</code></td><td><code>models/</code></td><td>Directorio de modelos serializados</td></tr>
+<tr><td><code>ACTIVE_MODEL</code></td><td><code>xgboost_early_fusion_v1</code></td><td>Versión del modelo activo</td></tr>
+<tr><td><code>ENV</code></td><td><code>development</code></td><td>Entorno (development/staging/production)</td></tr>
+<tr><td><code>LOG_LEVEL</code></td><td><code>INFO</code></td><td>Nivel de logging (DEBUG/INFO/WARNING/ERROR)</td></tr>
+</table>
+
+<h3>4.2 Configuración para Producción</h3>
+<pre><code>ENV=production
+SESSION_TIMEOUT_MINUTES=30
+BCRYPT_ROUNDS=14
+LOG_LEVEL=WARNING</code></pre>
+
+<!-- ============================================================ -->
+<h2 id="s5">5. Base de Datos</h2>
+
+<h3>5.1 Inicialización Automática</h3>
+<p>La base de datos SQLite se <strong>crea automáticamente</strong> al iniciar la aplicación. No requiere instalación manual. El archivo se genera en <code>sistema-triaje-ia/data/triaje.db</code>.</p>
+
+<h3>5.2 Tablas (12 en total)</h3>
+<table>
+<tr><th>#</th><th>Tabla</th><th>Descripción</th></tr>
+<tr><td>1</td><td><code>Paciente</code></td><td>Datos demográficos (21 columnas)</td></tr>
+<tr><td>2</td><td><code>EventoTriaje</code></td><td>Máquina de estados de triaje</td></tr>
+<tr><td>3</td><td><code>SignosVitales</code></td><td>TA, FC, FR, T°, SpO₂, IMC</td></tr>
+<tr><td>4</td><td><code>EvaluacionClinica</code></td><td>Motivo consulta, Glasgow, dolor</td></tr>
+<tr><td>5</td><td><code>ResultadoIA</code></td><td>Predicciones del modelo</td></tr>
+<tr><td>6</td><td><code>Usuario</code></td><td>Cuentas con roles (5 roles RBAC)</td></tr>
+<tr><td>7</td><td><code>Sesion</code></td><td>Registro de sesiones</td></tr>
+<tr><td>8</td><td><code>Auditoria</code></td><td>Registro inmutable (17 acciones)</td></tr>
+<tr><td>9-12</td><td><code>Cambio</code>, <code>ModeloIA</code>, etc.</td><td>Control de cambios, versiones ML</td></tr>
+</table>
+
+<h3>5.3 Usuarios Demo Precargados</h3>
+<table>
+<tr><th>Usuario</th><th>Contraseña</th><th>Rol</th></tr>
+<tr><td><code>admin</code></td><td><code>admin123</code></td><td>Administrador (todos los permisos)</td></tr>
+<tr><td><code>medico</code></td><td><code>medico123</code></td><td>Médico (triaje, pacientes, validación)</td></tr>
+<tr><td><code>enfermera</code></td><td><code>enfermera123</code></td><td>Enfermera (registro, signos vitales)</td></tr>
+<tr><td><code>investigador</code></td><td><code>investigador123</code></td><td>Investigador (dashboard, solo lectura)</td></tr>
+<tr><td><code>auditor</code></td><td><code>auditor123</code></td><td>Auditor (solo lectura y reportes)</td></tr>
+</table>
+<blockquote class="warning">🔒 <strong>Cambie estas contraseñas en producción.</strong></blockquote>
+
+<h3>5.4 Restablecer la Base de Datos</h3>
+<div class="cmd"><span class="prompt">PS&gt;</span> Remove-Item sistema-triaje-ia\data\triaje.db -ErrorAction SilentlyContinue</div>
+<p>Se recreará automáticamente al iniciar la app.</p>
+
+<!-- ============================================================ -->
+<h2 id="s6">6. Modelos de Machine Learning</h2>
+
+<h3>6.1 Modelo Pre-entrenado</h3>
+<p>Los artefactos del modelo entrenado están en <code>models/</code>:</p>
+<pre><code>models/
+├── active_version.txt
+└── early_fusion_v20260720_100649/
+    ├── model.joblib        ← Modelo XGBoost
+    ├── scaler.joblib       ← StandardScaler
+    ├── encoder.joblib      ← OneHotEncoder
+    ├── feature_names.json
+    ├── thresholds.json
+    └── metadata.json</code></pre>
+
+<h3>6.2 Re-entrenar Modelos (Opcional)</h3>
+<div class="cmd"><span class="prompt">PS&gt;</span> python run_pipeline.py</div>
+<table>
+<tr><th>Modo</th><th>Tiempo</th><th>Requisitos</th></tr>
+<tr><td>CPU</td><td>~17 minutos</td><td>8 GB RAM</td></tr>
+<tr><td>GPU (CUDA)</td><td>~3 minutos</td><td>GPU NVIDIA + CUDA Toolkit</td></tr>
+</table>
+
+<blockquote class="tip">📘 Consulte el <strong>Manual de Modelos</strong> (<code>MANUAL_MODELOS_STriAI.html</code>) para detalles de arquitectura y resultados.</blockquote>
+
+<!-- ============================================================ -->
+<h2 id="s7">7. Ejecución de la Aplicación</h2>
+
+<h3>7.1 Comando Básico</h3>
+<div class="cmd"><span class="prompt">(.venv) PS&gt;</span> streamlit run app.py --server.port 8501</div>
+
+<h3>7.2 Acceso</h3>
+<p>Abrir <a href="http://localhost:8501">http://localhost:8501</a> en el navegador.</p>
+
+<h3>7.3 Opciones Útiles</h3>
+<table>
+<tr><th>Opción</th><th>Default</th><th>Descripción</th></tr>
+<tr><td><code>--server.port</code></td><td>8501</td><td>Puerto del servidor</td></tr>
+<tr><td><code>--server.address</code></td><td>localhost</td><td>0.0.0.0 para acceso en red</td></tr>
+<tr><td><code>--server.headless</code></td><td>false</td><td>No abrir navegador</td></tr>
+<tr><td><code>--logger.level</code></td><td>info</td><td>debug para más detalles</td></tr>
+</table>
+
+<h3>7.4 Acceso desde otros dispositivos (Red Local)</h3>
+<div class="cmd"><span class="prompt">PS&gt;</span> streamlit run app.py --server.port 8501 --server.address 0.0.0.0</div>
+<p>Luego accede desde: <code>http://&lt;IP-DEL-EQUIPO&gt;:8501</code></p>
+
+<!-- ============================================================ -->
+<h2 id="s8">8. Verificación de la Instalación</h2>
+
+<h3>8.1 Checklist</h3>
+<table>
+<tr><th>#</th><th>Paso</th><th>Comando</th><th>Resultado Esperado</th></tr>
+<tr><td>1</td><td>Python</td><td><code>python --version</code></td><td>Python 3.11.x</td></tr>
+<tr><td>2</td><td>Entorno virtual</td><td>Prompt muestra</td><td><code>(.venv)</code></td></tr>
+<tr><td>3</td><td>Dependencias</td><td><code>streamlit version</code></td><td>1.59.x</td></tr>
+<tr><td>4</td><td>Configuración</td><td><code>cat .env</code></td><td>Variables definidas</td></tr>
+<tr><td>5</td><td>Modelos</td><td><code>ls models/</code></td><td>early_fusion_v...</td></tr>
+<tr><td>6</td><td>App</td><td><code>streamlit run app.py</code></td><td>Servidor en :8501</td></tr>
+<tr><td>7</td><td>Login</td><td>admin / admin123</td><td>Dashboard visible</td></tr>
+</table>
+
+<h3>8.2 Prueba Rápida</h3>
+<pre><code><span class="comment"># Verificar carga del modelo</span>
+python -c "
+import sys; sys.path.insert(0, 'sistema-triaje-ia')
+from src.serving.serialize import ModelSerializer
+m, sc, enc, meta = ModelSerializer().load_active()
+print('✓ Modelo:', meta['model_name'], 'v' + meta['version'])
+print('✓ F1 Macro:', meta['metrics']['f1_macro'])
+"</code></pre>
+
+<!-- ============================================================ -->
+<h2 id="s9">9. Instalación en Producción</h2>
+
+<h3>9.1 Seguridad</h3>
+<table>
+<tr><th>Área</th><th>Recomendación</th></tr>
+<tr><td>Contraseñas</td><td>Cambiar TODAS las demo. Mínimo 12 caracteres.</td></tr>
+<tr><td>.env</td><td>No versionar en Git. Valores seguros.</td></tr>
+<tr><td>BCRYPT_ROUNDS</td><td>Aumentar a 14-16.</td></tr>
+<tr><td>HTTPS</td><td>Reverse proxy (Nginx/Caddy) con SSL.</td></tr>
+<tr><td>Firewall</td><td>Limitar puerto 8501 a IPs autorizadas.</td></tr>
+<tr><td>Backups</td><td>Respaldar <code>data/triaje.db</code> diariamente.</td></tr>
+</table>
+
+<h3>9.2 Despliegue con Docker (Opcional)</h3>
+<pre><code><span class="comment"># Dockerfile</span>
+FROM python:3.11-slim
+WORKDIR /app
+COPY sistema-triaje-ia/requirements.txt .
+RUN pip install --no-cache-dir -r requirements.txt
+COPY . .
+EXPOSE 8501
+CMD ["streamlit", "run", "app.py", "--server.port=8501", "--server.address=0.0.0.0"]</code></pre>
+<div class="cmd"><span class="prompt">$</span> docker build -t striai .</div>
+<div class="cmd"><span class="prompt">$</span> docker run -p 8501:8501 -v $(pwd)/models:/app/models -v $(pwd)/data:/app/data striai</div>
+
+<!-- ============================================================ -->
+<h2 id="s10">10. Solución de Problemas</h2>
+
+<h3>10.1 Errores Frecuentes</h3>
+
+<h4>❌ <code>Python not found</code></h4>
+<p>Descargar Python desde <a href="https://www.python.org/downloads/">python.org</a>. ✅ Marcar <strong>"Add Python to PATH"</strong> durante la instalación.</p>
+
+<h4>❌ <code>pip is not recognized</code></h4>
+<div class="cmd"><span class="prompt">PS&gt;</span> python -m pip install -r sistema-triaje-ia/requirements.txt</div>
+
+<h4>❌ <code>No module named 'streamlit'</code></h4>
+<p>Asegúrate de que el entorno virtual está activo <code>(.venv)</code> y reinstala las dependencias.</p>
+
+<h4>❌ <code>WinError 206</code> — Ruta demasiado larga</h4>
+<p>Habilitar rutas largas en Windows (como Administrador):</p>
+<div class="cmd"><span class="prompt">PS (Admin)&gt;</span> New-ItemProperty -Path "HKLM:\SYSTEM\CurrentControlSet\Control\FileSystem" -Name "LongPathsEnabled" -Value 1 -PropertyType DWORD -Force</div>
+
+<h4>❌ <code>Port 8501 already in use</code></h4>
+<div class="cmd"><span class="prompt">PS&gt;</span> streamlit run app.py --server.port 8502</div>
+
+<h4>❌ Error de política de ejecución (Windows)</h4>
+<div class="cmd"><span class="prompt">PS&gt;</span> Set-ExecutionPolicy -ExecutionPolicy RemoteSigned -Scope CurrentUser</div>
+
+<h4>❌ <code>OutOfMemoryError</code></h4>
+<p>El modelo NLP consume ~1.5 GB de RAM. Cerrar otras aplicaciones. La app funciona sin el modelo IA.</p>
+
+<h4>❌ <code>bcrypt</code> no se instala</h4>
+<p>Instalar <a href="https://visualstudio.microsoft.com/visual-cpp-build-tools/">Visual C++ Build Tools</a>.</p>
+
+<h3>10.2 Restablecimiento Completo</h3>
+<pre><code><span class="comment"># Empezar desde cero</span>
+Remove-Item -Recurse -Force .venv
+Remove-Item -Force sistema-triaje-ia\data\triaje.db -ErrorAction SilentlyContinue
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r sistema-triaje-ia/requirements.txt
+streamlit run app.py --server.port 8501</code></pre>
+
+<hr>
+
+<h2>Apéndice A: Instalación Rápida (Windows)</h2>
+<pre><code><span class="comment"># Copiar y pegar todo en PowerShell:</span>
+cd "C:\Users\ELITEBOOK\OneDrive\Documentos\Repositorio\Trabajo\TFM-FINAL"
+python -m venv .venv
+.\.venv\Scripts\Activate.ps1
+pip install -r sistema-triaje-ia/requirements.txt
+Copy-Item sistema-triaje-ia\.env.example sistema-triaje-ia\.env
+streamlit run app.py --server.port 8501
+start http://localhost:8501</code></pre>
+
+<h2>Apéndice B: Instalación Rápida (macOS / Linux)</h2>
+<pre><code><span class="comment"># Copiar y pegar todo en Terminal:</span>
+cd /ruta/a/TFM-FINAL
+python3 -m venv .venv
+source .venv/bin/activate
+pip install -r sistema-triaje-ia/requirements.txt
+cp sistema-triaje-ia/.env.example sistema-triaje-ia/.env
+streamlit run app.py --server.port 8501
+open http://localhost:8501</code></pre>
+
+<h2>Apéndice C: Espacio en Disco</h2>
+<table>
+<tr><th>Componente</th><th>Tamaño</th></tr>
+<tr><td>Entorno virtual (.venv)</td><td>~800 MB</td></tr>
+<tr><td>Modelo NLP (MiniLM)</td><td>~420 MB</td></tr>
+<tr><td>Modelos entrenados</td><td>~5 MB</td></tr>
+<tr><td>Base de datos</td><td>~2-10 MB (crece con uso)</td></tr>
+<tr><td>Código fuente</td><td>~2 MB</td></tr>
+<tr><td>Datasets CSV</td><td>~15 MB</td></tr>
+<tr><td><strong>Total</strong></td><td><strong>~1.3 GB</strong></td></tr>
+</table>
+
+<p style="margin-top:3rem; color:#8b949e; font-size:0.85rem; text-align:center;">
+Documento generado por STriAI — TFM UNIR Máster en Inteligencia Artificial — Julio 2026
+</p>
+
+</body>
+</html>

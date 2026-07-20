@@ -1,0 +1,588 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manual de Usuario — STriAI (Sistema de Triaje Multimodal IA)</title>
+    <style>
+        :root {
+            --primary: #164E63;
+            --secondary: #0891B2;
+            --accent: #06B6D4;
+            --bg: #F8FAFC;
+            --card: #FFFFFF;
+            --text: #1E293B;
+            --text-light: #64748B;
+            --border: #E2E8F0;
+            --success: #10B981;
+            --warning: #F59E0B;
+            --danger: #EF4444;
+            --red: #DC2626;
+            --orange: #EA580C;
+            --yellow: #CA8A04;
+            --green: #16A34A;
+            --blue: #2563EB;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background: var(--bg);
+            color: var(--text);
+            line-height: 1.7;
+        }
+        .container { max-width: 960px; margin: 0 auto; padding: 2rem 1.5rem; }
+        header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 3rem 1.5rem;
+            text-align: center;
+        }
+        header h1 { font-size: 2.2rem; margin-bottom: 0.5rem; }
+        header .subtitle { font-size: 1.1rem; opacity: 0.9; }
+        header .version { font-size: 0.85rem; opacity: 0.7; margin-top: 0.5rem; }
+
+        h2 {
+            font-size: 1.6rem;
+            color: var(--primary);
+            border-bottom: 3px solid var(--accent);
+            padding-bottom: 0.4rem;
+            margin: 2.5rem 0 1.2rem;
+        }
+        h3 { font-size: 1.25rem; color: var(--secondary); margin: 1.8rem 0 0.8rem; }
+        h4 { font-size: 1.05rem; color: var(--text); margin: 1.2rem 0 0.5rem; }
+
+        p { margin-bottom: 0.8rem; }
+        ul, ol { margin: 0.5rem 0 1rem 1.5rem; }
+        li { margin-bottom: 0.3rem; }
+
+        .card {
+            background: var(--card);
+            border: 1px solid var(--border);
+            border-radius: 12px;
+            padding: 1.5rem;
+            margin: 1rem 0;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.06);
+        }
+        .card h4 { margin-top: 0; }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1rem 0;
+            font-size: 0.92rem;
+        }
+        th, td {
+            border: 1px solid var(--border);
+            padding: 0.6rem 0.8rem;
+            text-align: left;
+        }
+        th {
+            background: var(--primary);
+            color: white;
+            font-weight: 600;
+        }
+        tr:nth-child(even) { background: #F1F5F9; }
+        td:first-child { font-weight: 500; }
+
+        .badge { display: inline-block; padding: 0.15rem 0.5rem; border-radius: 6px; font-size: 0.8rem; font-weight: 600; }
+        .badge-red { background: #FEE2E2; color: var(--red); }
+        .badge-orange { background: #FFEDD5; color: var(--orange); }
+        .badge-yellow { background: #FEF9C3; color: var(--yellow); }
+        .badge-green { background: #DCFCE7; color: var(--green); }
+        .badge-blue { background: #DBEAFE; color: var(--blue); }
+        .badge-admin { background: #E0E7FF; color: #4338CA; }
+        .badge-med { background: #DCFCE7; color: #15803D; }
+        .badge-enf { background: #FEF3C7; color: #B45309; }
+
+        .step-flow {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            margin: 1rem 0;
+            justify-content: center;
+        }
+        .step {
+            background: var(--primary);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 8px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+        .step-arrow { color: var(--secondary); font-size: 1.2rem; align-self: center; }
+
+        .check { color: var(--success); font-weight: bold; }
+        .cross { color: var(--danger); }
+        .warning-box {
+            background: #FEF3C7;
+            border-left: 4px solid var(--warning);
+            padding: 0.8rem 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .info-box {
+            background: #DBEAFE;
+            border-left: 4px solid var(--blue);
+            padding: 0.8rem 1rem;
+            margin: 1rem 0;
+            border-radius: 0 8px 8px 0;
+        }
+        .example-box {
+            background: #F1F5F9;
+            border: 1px dashed var(--border);
+            padding: 1rem;
+            margin: 0.8rem 0;
+            border-radius: 8px;
+            font-family: 'Cascadia Code', 'Fira Code', monospace;
+            font-size: 0.85rem;
+            white-space: pre-wrap;
+        }
+
+        .toc { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 1.2rem 1.5rem; margin: 1rem 0; }
+        .toc a { color: var(--secondary); text-decoration: none; }
+        .toc a:hover { text-decoration: underline; }
+        .toc ol { margin-bottom: 0; }
+
+        footer {
+            text-align: center;
+            padding: 2rem;
+            color: var(--text-light);
+            font-size: 0.85rem;
+            border-top: 1px solid var(--border);
+            margin-top: 3rem;
+        }
+
+        @media (max-width: 640px) {
+            .container { padding: 1rem; }
+            header h1 { font-size: 1.5rem; }
+            table { font-size: 0.78rem; }
+            th, td { padding: 0.4rem; }
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <h1>🏥 Manual de Usuario — STriAI</h1>
+    <p class="subtitle">Sistema de Triaje Multimodal IA · Servicio de Urgencias · Colombia</p>
+    <p class="version">Versión 1.0 Demo · TFM — Máster en Inteligencia Artificial — UNIR</p>
+</header>
+
+<div class="container">
+
+<!-- ================================================================== -->
+<h2>1. Introducción</h2>
+<p>STriAI es un sistema de apoyo a la decisión clínica para <strong>triaje de urgencias</strong> en hospitales colombianos. Utiliza inteligencia artificial multimodal (datos estructurados + texto clínico con BERT-es) para sugerir el nivel de urgencia (<strong>I a V</strong>) según la <strong>Resolución 5596/2015</strong> del Ministerio de Salud, asistiendo al profesional sin reemplazar su criterio.</p>
+
+<div class="info-box">
+    <strong>🌐 Acceso:</strong> <code>http://localhost:8501</code>
+</div>
+
+<!-- ================================================================== -->
+<h2>2. Credenciales de Acceso</h2>
+<table>
+    <tr><th>Usuario</th><th>Contraseña</th><th>Rol</th></tr>
+    <tr><td><code>admin</code></td><td><code>admin123</code></td><td><span class="badge badge-admin">Administrador</span></td></tr>
+    <tr><td><code>enfermera_01</code></td><td><code>admin123</code></td><td><span class="badge badge-enf">Enfermera</span></td></tr>
+    <tr><td><code>medico_01</code></td><td><code>admin123</code></td><td><span class="badge badge-med">Médico</span></td></tr>
+    <tr><td><code>investigador_01</code></td><td><code>admin123</code></td><td>Investigador</td></tr>
+    <tr><td><code>auditor_01</code></td><td><code>admin123</code></td><td>Auditor</td></tr>
+</table>
+<div class="warning-box">⚠️ <strong>Importante:</strong> Cambiar las contraseñas en producción. En entorno demo, todos usan <code>admin123</code>.</div>
+
+<!-- ================================================================== -->
+<h2>3. Roles y Permisos</h2>
+
+<h3>3.1 Matriz de Permisos</h3>
+<table>
+    <tr><th>Funcionalidad</th><th>Admin</th><th>Médico</th><th>Enfermera</th><th>Investigador</th><th>Auditor</th></tr>
+    <tr><td>📝 Registrar Paciente</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+    <tr><td>💓 Signos Vitales</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+    <tr><td>🩺 Evaluación Clínica</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+    <tr><td>🧠 Clasificación IA</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+    <tr><td>✅ Validación y Cierre</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+    <tr><td>📊 Dashboard</td><td class="check">✅</td><td class="check">✅</td><td class="cross">❌</td><td class="check">✅</td><td class="check">✅</td></tr>
+    <tr><td>⚙️ Gestión Modelos</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+    <tr><td>🔬 Comparar Modelos</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="check">✅</td><td class="cross">❌</td></tr>
+    <tr><td>🔍 Auditoría</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="check">✅</td></tr>
+    <tr><td>👥 Gestión Usuarios</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+    <tr><td>📝 Control de Cambios</td><td class="check">✅</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td><td class="cross">❌</td></tr>
+    <tr><td>📜 Histórico del Paciente</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td><td class="check">✅</td></tr>
+</table>
+
+<h3>3.2 Descripción de Roles</h3>
+<div class="card"><h4>🛡️ Administrador</h4><p>Acceso total al sistema. Gestiona usuarios, modelos IA, auditoría y control de cambios. También puede ejecutar el flujo clínico completo.</p></div>
+<div class="card"><h4>🩺 Médico</h4><p>Flujo clínico completo + Dashboard. Responsable de validar y cerrar triajes, revisar la concordancia entre IA y criterio profesional.</p></div>
+<div class="card"><h4>💉 Enfermera</h4><p>Flujo clínico completo. Registra pacientes, captura signos vitales, realiza evaluación clínica y consulta la clasificación sugerida por IA.</p></div>
+<div class="card"><h4>🔬 Investigador</h4><p>Dashboard + Comparación de Modelos. Analiza métricas de rendimiento (F1, AUC-ROC, precisión, recall) de los modelos de IA.</p></div>
+<div class="card"><h4>📋 Auditor</h4><p>Auditoría + Dashboard + Histórico. Revisa la trazabilidad de cambios y consulta históricos de pacientes.</p></div>
+
+<!-- ================================================================== -->
+<h2>4. Flujo de Trabajo Clínico</h2>
+<p>El flujo clínico sigue <strong>6 pasos secuenciales</strong>. Cada paso debe completarse antes de avanzar al siguiente.</p>
+
+<div class="step-flow">
+    <span class="step">1. Registrar Paciente</span>
+    <span class="step-arrow">→</span>
+    <span class="step">2. Signos Vitales</span>
+    <span class="step-arrow">→</span>
+    <span class="step">3. Evaluación Clínica</span>
+    <span class="step-arrow">→</span>
+    <span class="step">4. Clasificación IA</span>
+    <span class="step-arrow">→</span>
+    <span class="step">5. Validación</span>
+    <span class="step-arrow">→</span>
+    <span class="step">6. Cierre</span>
+</div>
+
+<!-- ---------- PASO 1 ---------- -->
+<h3>4.1 Paso 1 — 📝 Registrar Paciente</h3>
+<p><strong>Roles:</strong> Admin, Médico, Enfermera</p>
+
+<h4>Acciones</h4>
+<ol>
+    <li>Haga clic en <strong>📝 Registrar Paciente</strong> en el menú lateral.</li>
+    <li>En la pestaña <strong>🆕 Nuevo Paciente</strong>, complete el formulario en 5 secciones:
+        <ul>
+            <li><strong>Datos Personales:</strong> Tipo y número de documento, nombres, apellidos, fecha de nacimiento (YYYY-MM-DD), sexo.</li>
+            <li><strong>Contacto:</strong> Teléfono (mín. 10 dígitos), correo electrónico.</li>
+            <li><strong>Contacto de Emergencia:</strong> Nombre del contacto y teléfono.</li>
+            <li><strong>Residencia:</strong> Seleccione Departamento → el dropdown de Ciudad se actualiza automáticamente. Dirección.</li>
+            <li><strong>Datos Clínicos:</strong> Vía de llegada, régimen de salud, EPS, episodios previos en urgencias.</li>
+        </ul>
+    </li>
+    <li>Haga clic en <strong>Registrar Paciente y Crear Triaje</strong>.</li>
+    <li>Si el paciente ya existe, el sistema lo detecta y permite usar el registro existente.</li>
+    <li>Se crea automáticamente un evento de triaje en estado <strong>"Registrado"</strong>.</li>
+    <li>El sistema redirige automáticamente a Signos Vitales.</li>
+</ol>
+
+<div class="warning-box">⚠️ <strong>Bloqueo de Triaje Activo:</strong> Si el paciente ya tiene un triaje en curso (no cerrado ni cancelado), el sistema impide crear uno nuevo. Debe cerrar o cancelar el triaje activo primero.</div>
+
+<div class="example-box">Ejemplo de registro:
+Tipo Documento: CC — Número: 1234567890
+Nombres: María Elena — Apellidos: Gómez Restrepo
+Fecha Nacimiento: 1985-03-15 — Sexo: F
+Teléfono: 3101234567 — Correo: maria.gomez@correo.com
+Contacto Emergencia: Carlos Gómez (esposo) — 3119876543
+Departamento: Antioquia — Ciudad: Medellín
+Dirección: Calle 100 # 15-20, Barrio El Poblado
+Vía de Llegada: Particular — Régimen: Contributivo — EPS: Sura — Episodios Previos: 2</div>
+
+<!-- ---------- PASO 2 ---------- -->
+<h3>4.2 Paso 2 — 💓 Captura de Signos Vitales</h3>
+<p><strong>Roles:</strong> Admin, Médico, Enfermera</p>
+
+<h4>Acciones</h4>
+<ol>
+    <li>Verifique el paciente en la cabecera (nombre, documento, edad, sexo, vía de llegada).</li>
+    <li>Complete los <strong>signos de prioridad alta</strong> (mayor peso predictivo):
+        <ul>
+            <li><strong>Saturación de Oxígeno (SpO₂):</strong> 0–100%. ⚠️ Crítico si &lt; 90%.</li>
+            <li><strong>Frecuencia Respiratoria:</strong> respiraciones/minuto. ⚠️ Crítico si &gt; 25.</li>
+        </ul>
+    </li>
+    <li>Complete los signos complementarios: Temperatura (°C), Frecuencia Cardíaca, Presión Sistólica/Diastólica (mmHg), Peso (kg), Talla (cm).</li>
+    <li>El <strong>IMC</strong> se calcula automáticamente.</li>
+    <li>Haga clic en <strong>💾 Guardar Signos Vitales</strong>.</li>
+</ol>
+
+<!-- ---------- PASO 3 ---------- -->
+<h3>4.3 Paso 3 — 🩺 Evaluación Clínica</h3>
+<p><strong>Roles:</strong> Admin, Médico, Enfermera</p>
+
+<h4>Acciones</h4>
+<ol>
+    <li>Verifique el resumen de signos vitales en la cabecera.</li>
+    <li><strong>Motivo de Consulta:</strong> Seleccione categoría (Dolor torácico, Trauma, Disnea, Dolor abdominal, Fiebre, Cefalea, Convulsiones, Hemorragia, Intoxicación, Otro).</li>
+    <li><strong>Descripción:</strong> Texto libre del motivo (opcional, usado por el modelo NLP).</li>
+    <li><strong>Escala de Dolor:</strong> 0 (sin dolor) a 10 (máximo).</li>
+    <li><strong>Glasgow:</strong> 3–15. <strong>Nivel de Conciencia:</strong> Alerta / Somnoliento / Obnubilado / Inconsciente.</li>
+    <li>Marque <strong>antecedentes</strong>: Diabetes, Hipertensión, Enfermedad Renal, Embarazo, Cáncer, Cardiopatías, Enfermedad Pulmonar, Cirugías Recientes.</li>
+    <li>Campos adicionales: Medicación Relevante, Alergias, Observaciones.</li>
+    <li>Haga clic en <strong>💾 Guardar Evaluación Clínica</strong>. El estado cambia a "PendienteIA".</li>
+</ol>
+
+<!-- ---------- PASO 4 ---------- -->
+<h3>4.4 Paso 4 — 🧠 Clasificación IA</h3>
+<p><strong>Roles:</strong> Admin, Médico, Enfermera</p>
+
+<h4>Acciones</h4>
+<ol>
+    <li>Haga clic en <strong>🚀 Ejecutar Clasificación IA</strong>.</li>
+    <li>El sistema carga el modelo multimodal (XGBoost + BERT-es) y procesa los datos.</li>
+    <li>Revise el <strong>Nivel de Triaje Sugerido por IA</strong> con código de colores:
+        <span class="badge badge-red">I — Inmediato</span>
+        <span class="badge badge-orange">II — Emergencia</span>
+        <span class="badge badge-yellow">III — Urgencia</span>
+        <span class="badge badge-green">IV — Urgencia Menor</span>
+        <span class="badge badge-blue">V — Consulta General</span>
+    </li>
+    <li>Revise las <strong>probabilidades</strong> para cada nivel y el <strong>gráfico SHAP</strong> (variables que más influyeron).</li>
+    <li>Seleccione su <strong>Nivel Asignado como Profesional</strong> (I–V).</li>
+    <li>Haga clic en <strong>✅ Confirmar Clasificación</strong>. Se calcula la concordancia IA-Profesional.</li>
+</ol>
+
+<div class="info-box">💡 <strong>Modo Degradado:</strong> Si el modelo IA no está disponible, el sistema muestra un aviso y permite continuar solo con la clasificación del profesional.</div>
+
+<!-- ---------- PASO 5 ---------- -->
+<h3>4.5 Paso 5 — ✅ Validación y Cierre</h3>
+<p><strong>Roles:</strong> Admin, Médico, Enfermera</p>
+
+<h4>Acciones</h4>
+<ol>
+    <li>Revise el <strong>resumen completo</strong> del triaje (signos vitales, evaluación, clasificación IA vs profesional).</li>
+    <li>Si hay discrepancia entre IA y profesional, registre el <strong>motivo</strong>.</li>
+    <li>Haga clic en <strong>🔒 Cerrar Triaje</strong> para finalizar (estado terminal).</li>
+    <li>Use <strong>🔄 Reclasificar</strong> si necesita corregir la clasificación.</li>
+</ol>
+
+<h4>Máquina de Estados del Triaje</h4>
+<div class="step-flow">
+    <span class="step">Registrado</span><span class="step-arrow">→</span>
+    <span class="step">EnEvaluación</span><span class="step-arrow">→</span>
+    <span class="step">PendienteIA</span><span class="step-arrow">→</span>
+    <span class="step">Clasificado</span><span class="step-arrow">→</span>
+    <span class="step">Validado</span><span class="step-arrow">→</span>
+    <span class="step">Cerrado</span>
+</div>
+<p style="text-align:center;margin-top:0.3rem;">Cancelado (reactivable) en cualquier paso</p>
+
+<!-- ================================================================== -->
+<h2>5. Funcionalidades de Soporte</h2>
+
+<div class="card">
+    <h4>📊 Dashboard</h4>
+    <p><strong>Roles:</strong> Admin, Médico, Investigador, Auditor</p>
+    <p>Panel con 7 KPIs, distribución de triajes por nivel, tendencia de 7 días, semáforo de metas (concordancia > 85%). <strong>Exportación:</strong> CSV, Excel, JSON.</p>
+</div>
+
+<div class="card">
+    <h4>⚙️ Gestión de Modelos</h4>
+    <p><strong>Roles:</strong> Admin</p>
+    <p>Active/desactive modelos IA, haga rollback, vea métricas (F1, Precisión, Recall, AUC-ROC). Pestañas: Disco, BD, Registro.</p>
+</div>
+
+<div class="card">
+    <h4>🔬 Comparar Modelos</h4>
+    <p><strong>Roles:</strong> Admin, Investigador</p>
+    <p>Compare dos modelos lado a lado. Gráfico de barras con F1, Precisión, Recall, AUC-ROC. Identifique el mejor modelo.</p>
+</div>
+
+<div class="card">
+    <h4>🔍 Auditoría</h4>
+    <p><strong>Roles:</strong> Admin, Auditor</p>
+    <p>Registro de acciones del sistema. Filtros: Usuario, Acción, Entidad, Fechas, Documento. Exportación CSV/Excel/JSON.</p>
+</div>
+
+<div class="card">
+    <h4>👥 Gestión de Usuarios</h4>
+    <p><strong>Roles:</strong> Admin</p>
+    <p>Crear, editar (email, rol, activo/inactivo), restablecer contraseña. Validaciones: no admins, no auto-edición, contraseña ≥ 6 caracteres.</p>
+</div>
+
+<div class="card">
+    <h4>📝 Control de Cambios</h4>
+    <p><strong>Roles:</strong> Admin</p>
+    <p>Historial de modificaciones a entidades clínicas. Filtros: Entidad, Usuario, Documento. Exportación CSV.</p>
+</div>
+
+<div class="card">
+    <h4>📜 Histórico del Paciente</h4>
+    <p><strong>Roles:</strong> Todos</p>
+    <p>Busque por número de documento. Vea todas las visitas: fecha, motivo, nivel profesional, nivel IA, estado. Exportación CSV.</p>
+</div>
+
+<!-- ================================================================== -->
+<h2>5. Carga y Comparación de Modelos IA ⚙️🔬</h2>
+<div class="info-box"><strong>Rol requerido:</strong> Administrador (carga y gestión) / Investigador (comparación). Los modelos de IA son el núcleo predictivo del sistema.</div>
+
+<h3>5.1 ¿Qué es un modelo en STriAI?</h3>
+<p>Un modelo es un artefacto serializado que contiene:</p>
+<ul>
+    <li><strong>Algoritmo de ML:</strong> XGBoost con Early Fusion o Late Fusion.</li>
+    <li><strong>Transformadores:</strong> Scaler (StandardScaler), Encoder (OneHotEncoder), Tokenizer NLP (BERT-es).</li>
+    <li><strong>Umbrales de decisión:</strong> Calibrados por clase para optimizar F1.</li>
+    <li><strong>Metadatos:</strong> Versión, fecha de entrenamiento, métricas (F1, Precisión, Recall, AUC-ROC, AUPRC).</li>
+</ul>
+
+<p>Cada modelo se guarda en <code>sistema-triaje-ia/models/</code> con una carpeta dedicada:</p>
+<div class="example-box">models/
+└── xgboost_early_fusion_v1/
+    ├── metadata.json        ← Versión, métricas, fecha, arquitectura
+    ├── model.pkl             ← Modelo XGBoost serializado
+    ├── scaler.pkl            ← StandardScaler
+    ├── encoder.pkl           ← OneHotEncoder
+    └── tokenizer/            ← Tokenizer BERT-es</div>
+
+<!-- ---------- 5.2 ---------- -->
+<h3>5.2 ⚙️ Carga y Gestión de Modelos (Administrador)</h3>
+
+<h4>Paso a Paso — Activar un Modelo</h4>
+<ol>
+    <li>En el menú lateral, haga clic en <strong>⚙️ Gestión Modelos</strong> (sección 📊 Soporte).</li>
+    <li>La pantalla tiene <strong>3 pestañas</strong>:</li>
+</ol>
+
+<table>
+    <tr><th>Pestaña</th><th>Función</th></tr>
+    <tr><td><strong>💾 Disco</strong></td><td>Explora los modelos guardados en el sistema de archivos (<code>models/</code>). Muestra carpetas disponibles.</td></tr>
+    <tr><td><strong>🗄️ BD</strong></td><td>Consulta los modelos registrados en la base de datos SQLite (tabla <code>Modelo</code>).</td></tr>
+    <tr><td><strong>📋 Registro</strong></td><td>Registra un nuevo modelo encontrado en disco dentro de la BD para que el sistema lo reconozca.</td></tr>
+</table>
+
+<h4>Pestaña Disco</h4>
+<ol>
+    <li>Seleccione un directorio de modelo de la lista.</li>
+    <li>Vea los archivos contenidos (<code>model.pkl</code>, <code>scaler.pkl</code>, <code>encoder.pkl</code>, <code>tokenizer/</code>, <code>metadata.json</code>).</li>
+    <li>Si el modelo no está registrado en la BD, use <strong>Registrar en BD</strong>.</li>
+</ol>
+
+<h4>Pestaña BD</h4>
+<ol>
+    <li>Observe la tabla de modelos con columnas: Nombre, Versión, Arquitectura, Algoritmo, F1-Score, Precisión, Recall, AUC-ROC, Estado.</li>
+    <li><strong>Estados posibles:</strong>
+        <ul>
+            <li>🟢 <strong>Activo:</strong> Es el modelo que se usa para inferencia en el flujo clínico.</li>
+            <li>🟡 <strong>EnValidación:</strong> Modelo registrado pero no activo (requiere pruebas).</li>
+            <li>⚫ <strong>Inactivo:</strong> Modelo descartado o legacy.</li>
+        </ul>
+    </li>
+    <li>Para <strong>activar</strong> un modelo, haga clic en el botón correspondiente.</li>
+    <li>Para <strong>desactivar</strong> (rollback), active otro modelo — solo puede haber uno activo a la vez.</li>
+</ol>
+
+<h4>Pestaña Registro</h4>
+<ol>
+    <li>Ingrese manualmente los metadatos del modelo (nombre, versión, arquitectura, algoritmo, hiperparámetros, métricas).</li>
+    <li>Útil cuando el modelo fue entrenado offline con <code>run_pipeline.py</code> y necesita ser registrado.</li>
+</ol>
+
+<div class="card"><h4>🔢 Ejemplo — Activar un modelo recién entrenado</h4>
+<div class="example-box">1. Entrenó un nuevo modelo: xgboost_late_fusion_v2
+2. La carpeta aparece en models/ con metadata.json:
+   {
+     "model_name": "xgboost_late_fusion_v2",
+     "architecture": "Late Fusion",
+     "algorithm": "XGBoost",
+     "f1_score": 0.87, "precision": 0.86,
+     "recall": 0.88, "auc_roc": 0.94, "auprc": 0.81
+   }
+3. Vaya a ⚙️ Gestión Modelos → Pestaña Disco
+4. Seleccione "xgboost_late_fusion_v2" → Registrar en BD
+5. Pestaña BD → El modelo aparece con Estado "EnValidación"
+6. Revise métricas. Si F1 > modelo actual (0.85), active este.
+7. Clic en "Activar" → Estado cambia a "Activo"
+8. El modelo anterior pasa a "Inactivo" (rollback seguro)
+9. ¡Listo! El flujo clínico ahora usa late_fusion_v2.</div>
+</div>
+
+<!-- ---------- 5.3 ---------- -->
+<h3>5.3 🔬 Comparación de Modelos (Administrador e Investigador)</h3>
+
+<h4>Objetivo</h4>
+<p>Comparar dos modelos lado a lado usando métricas estándar de clasificación para decidir cuál desplegar.</p>
+
+<h4>Paso a Paso — Comparar dos Modelos</h4>
+<ol>
+    <li>En el menú lateral, haga clic en <strong>🔬 Comparar Modelos</strong> (sección 📊 Soporte).</li>
+    <li>La pantalla muestra dos selectores: <strong>Modelo A</strong> y <strong>Modelo B</strong>.</li>
+    <li>Al seleccionar ambos, el sistema muestra automáticamente:</li>
+</ol>
+
+<h4>📊 Tabla Comparativa de Métricas</h4>
+<table>
+    <tr><th>Métrica</th><th>Modelo A</th><th>Modelo B</th><th>Ganador</th></tr>
+    <tr><td>F1-Score (macro)</td><td>0.85</td><td>0.87</td><td>🏆 B</td></tr>
+    <tr><td>Precisión (macro)</td><td>0.84</td><td>0.86</td><td>🏆 B</td></tr>
+    <tr><td>Recall (macro)</td><td>0.86</td><td>0.88</td><td>🏆 B</td></tr>
+    <tr><td>AUC-ROC (macro)</td><td>0.93</td><td>0.94</td><td>🏆 B</td></tr>
+    <tr><td>AUPRC (macro)</td><td>0.79</td><td>0.81</td><td>🏆 B</td></tr>
+</table>
+
+<h4>📈 Gráfico de Barras Comparativo</h4>
+<ul>
+    <li>Barras agrupadas por métrica (Azul = Modelo A, Naranja = Modelo B).</li>
+    <li>Diferencia porcentual anotada sobre cada par de barras.</li>
+</ul>
+
+<h4>📋 Metadatos de Cada Modelo</h4>
+<ul>
+    <li>Nombre, versión, arquitectura, algoritmo.</li>
+    <li>Fecha de serialización.</li>
+    <li>Hiperparámetros (si disponibles en <code>metadata.json</code>).</li>
+</ul>
+
+<h4>🧠 Interpretación de Métricas</h4>
+<table>
+    <tr><th>Métrica</th><th>Qué mide</th><th>Meta del sistema</th></tr>
+    <tr><td><strong>F1-Score</strong></td><td>Balance precisión-recall. Ideal para datos desbalanceados.</td><td>&gt; 0.80</td></tr>
+    <tr><td><strong>AUC-ROC</strong></td><td>Capacidad de discriminar entre clases.</td><td>&gt; 0.90</td></tr>
+    <tr><td><strong>AUPRC</strong></td><td>Más informativo que AUC-ROC en datos desbalanceados. Enfoque en clases minoritarias (I, II).</td><td>&gt; 0.75</td></tr>
+    <tr><td><strong>Precisión por clase</strong></td><td>¿Identifica correctamente los niveles críticos (I y II)?</td><td>Recall I, II &gt; 0.90</td></tr>
+</table>
+
+<h4>✅ Criterios de Decisión</h4>
+<table>
+    <tr><th>Escenario</th><th>Acción recomendada</th></tr>
+    <tr><td>B supera a A en TODAS las métricas</td><td>Active B inmediatamente (⚙️ Gestión Modelos → Activar)</td></tr>
+    <tr><td>B gana en F1 y AUC pero pierde en precisión</td><td>Si la prioridad es no sub-triajar, prefiera mayor recall</td></tr>
+    <tr><td>B tiene mejor AUPRC</td><td>Señal de mejor manejo de clases minoritarias — recomendado activar</td></tr>
+    <tr><td>Empate técnico</td><td>Consulte SHAP y curvas de calibración antes de decidir</td></tr>
+</table>
+
+<div class="card"><h4>🔢 Ejemplo Completo — Flujo de Decisión</h4>
+<div class="example-box">Situación: Modelo actual = early_fusion_v1 (F1=0.83)
+         Modelo candidato = late_fusion_v2 (F1=0.87)
+
+1. 🔬 Comparar Modelos → A=early_fusion_v1, B=late_fusion_v2
+2. Resultados:
+   - F1: 0.83 vs 0.87 → B gana (+4.8%)
+   - AUC-ROC: 0.92 vs 0.94 → B gana (+2.2%)
+   - AUPRC: 0.77 vs 0.81 → B gana (+5.2%)
+   - Recall nivel I: 0.91 vs 0.93 → B gana
+3. Conclusión: B es superior en todas las métricas.
+4. Acción: ⚙️ Gestión Modelos → Activar late_fusion_v2.
+5. Verificación: Pruebe triajes y revise concordancia en Dashboard.</div>
+</div>
+
+<!-- ================================================================== -->
+<h2>6. Niveles de Triaje (Resolución 5596/2015)</h2>
+<table>
+    <tr><th>Nivel</th><th>Nombre</th><th>Tiempo de Atención</th><th>Indicador</th></tr>
+    <tr><td><span class="badge badge-red">I</span></td><td>Atención Inmediata</td><td>Inmediato</td><td>🔴 Riesgo vital</td></tr>
+    <tr><td><span class="badge badge-orange">II</span></td><td>Emergencia</td><td>&lt; 30 minutos</td><td>🟠 Alto riesgo</td></tr>
+    <tr><td><span class="badge badge-yellow">III</span></td><td>Urgencia</td><td>30–60 minutos</td><td>🟡 Riesgo moderado</td></tr>
+    <tr><td><span class="badge badge-green">IV</span></td><td>Urgencia Menor</td><td>1–2 horas</td><td>🟢 Bajo riesgo</td></tr>
+    <tr><td><span class="badge badge-blue">V</span></td><td>Consulta General</td><td>&gt; 2 horas</td><td>🔵 Sin riesgo inmediato</td></tr>
+</table>
+
+<!-- ================================================================== -->
+<h2>7. Resolución de Problemas</h2>
+
+<div class="warning-box"><strong>"Usuario o contraseña inválidos"</strong><br>Verifique credenciales (sección 2). Si la cuenta fue bloqueada (5 intentos fallidos), espere 15 minutos o contacte al Admin.</div>
+<div class="warning-box"><strong>"Este paciente ya tiene un triaje en curso"</strong><br>El paciente tiene un triaje activo. Ciérrelo o cancélelo antes. Use 📜 Histórico del Paciente para localizarlo.</div>
+<div class="info-box"><strong>"Modelo no disponible" (Modo Degradado)</strong><br>Continúe con clasificación manual del profesional. Contacte al Admin para activar un modelo.</div>
+<div class="info-box"><strong>Sesión expirada</strong><br>Por inactividad (> 15 min). Vuelva a iniciar sesión.</div>
+
+<!-- ================================================================== -->
+<h2>8. Notas Técnicas</h2>
+<table>
+    <tr><th>Componente</th><th>Tecnología</th></tr>
+    <tr><td>Plataforma</td><td>Streamlit 1.59+ · Python 3.11</td></tr>
+    <tr><td>Base de Datos</td><td>SQLite (WAL mode, 11 tablas)</td></tr>
+    <tr><td>Modelo IA</td><td>XGBoost Early/Late Fusion + BERT-es (768-dim)</td></tr>
+    <tr><td>Explicabilidad</td><td>SHAP con etiquetas clínicas en español</td></tr>
+    <tr><td>Seguridad</td><td>bcrypt (12 rounds), soft delete, append-only auditoría</td></tr>
+    <tr><td>Estados</td><td>Máquina de 7 estados con transiciones validadas</td></tr>
+</table>
+
+</div>
+
+<footer>
+    TFM · UNIR · Máster en Inteligencia Artificial · v1.0 Demo<br>
+    Documento generado el 20 de julio de 2026
+</footer>
+
+</body>
+</html>

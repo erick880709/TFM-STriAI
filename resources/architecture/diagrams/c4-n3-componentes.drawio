@@ -1,0 +1,101 @@
+<mxfile host="app.diagrams.net" modified="2026-07-19T22:00:00.000Z" agent="archi-skill" version="21.0.0" type="device">
+  <diagram id="C3-Components" name="C4 N3 - Componentes">
+    <mxGraphModel dx="1600" dy="1000" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="1600" pageHeight="1200" math="0" shadow="0">
+      <root>
+        <mxCell id="0"/>
+        <mxCell id="1" parent="0"/>
+        <mxCell id="title" value="Diagrama de Componentes (C4 N3) — Aplicación Web Demo" style="text;html=1;strokeColor=none;fillColor=none;align=center;verticalAlign=middle;whiteSpace=wrap;fontSize=18;fontStyle=1;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="300" y="10" width="800" height="30" as="geometry"/>
+        </mxCell>
+        <!-- UI Layer -->
+        <mxCell id="boundary-ui" value="Capa UI (Streamlit)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#ECFEFF;strokeColor=#0891B2;fontSize=13;fontStyle=1;fontColor=#0891B2;dashed=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="60" width="620" height="350" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-login" value="Login" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="40" y="100" width="120" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-patient" value="Gestión Pacientes" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="180" y="100" width="130" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-vitals" value="Signos Vitales" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="330" y="100" width="120" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-eval" value="Evaluación Clínica" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="470" y="100" width="140" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-ia" value="Clasificación IA + SHAP" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F59E0B;strokeColor=#EA580C;fontSize=10;fontColor=#164E63;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="40" y="170" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-valid" value="Validación Triaje" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="230" y="170" width="140" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-comp" value="Comparación Modelos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="390" y="170" width="150" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-dash" value="Dashboard" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="40" y="240" width="120" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-audit" value="Auditoría" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="180" y="240" width="120" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-models" value="Gestión Modelos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="320" y="240" width="130" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="ui-session" value="Gestión Sesión/RBAC" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#22D3EE;strokeColor=#0891B2;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="470" y="240" width="140" height="44" as="geometry"/>
+        </mxCell>
+        <!-- Services Layer -->
+        <mxCell id="boundary-svc" value="Capa de Servicios (Python)" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F0FDF4;strokeColor=#059669;fontSize=13;fontStyle=1;fontColor=#059669;dashed=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="440" width="620" height="280" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-auth" value="🔐 AuthService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=#047857;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="40" y="480" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-patient" value="👤 PatientService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=#047857;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="230" y="480" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-triage" value="🏥 TriageService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=#047857;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="420" y="480" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-clinical" value="💓 ClinicalService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=#047857;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="40" y="550" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-inference" value="🧠 InferenceService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F59E0B;strokeColor=#EA580C;fontSize=10;fontColor=#FFFFFF;fontStyle=1;" vertex="1" parent="1">
+          <mxGeometry x="230" y="550" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-audit" value="📝 AuditService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=#047857;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="420" y="550" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-report" value="📊 ReportService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=#047857;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="40" y="620" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <mxCell id="svc-models" value="⚙️ ModelMgmtService" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#059669;strokeColor=#047857;fontSize=10;fontColor=#FFFFFF;" vertex="1" parent="1">
+          <mxGeometry x="230" y="620" width="170" height="44" as="geometry"/>
+        </mxCell>
+        <!-- Data Layer -->
+        <mxCell id="boundary-data" value="Capa de Datos" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#F8FAFC;strokeColor=#64748B;fontSize=13;fontStyle=1;fontColor=#64748B;dashed=1;verticalAlign=top;align=left;" vertex="1" parent="1">
+          <mxGeometry x="20" y="750" width="620" height="120" as="geometry"/>
+        </mxCell>
+        <mxCell id="data-db" value="🗄️ SQLite Database&lt;br&gt;12 tablas modelo dominio&lt;br&gt;+ auditoría + usuarios + modelos" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fillColor=#F8FAFC;strokeColor=#64748B;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="60" y="790" width="220" height="70" as="geometry"/>
+        </mxCell>
+        <mxCell id="data-loader" value="📦 ModelLoader&lt;br&gt;joblib/scalers&lt;br&gt;encoders/tokenizer" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#E8F1F6;strokeColor=#64748B;fontSize=10;fontColor=#164E63;" vertex="1" parent="1">
+          <mxGeometry x="370" y="790" width="160" height="70" as="geometry"/>
+        </mxCell>
+        <!-- Relations -->
+        <mxCell id="r-ui-svc" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1;endArrow=block;endFill=1;" edge="1" parent="1" source="ui-ia" target="svc-inference">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-svc-data" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1;endArrow=block;endFill=1;" edge="1" parent="1" source="svc-patient" target="data-db">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-inf-loader" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#F59E0B;strokeWidth=1.5;endArrow=block;endFill=1;dashed=1;" edge="1" parent="1" source="svc-inference" target="data-loader">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+        <mxCell id="r-audit-db" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;strokeColor=#64748B;strokeWidth=1;endArrow=block;endFill=1;" edge="1" parent="1" source="svc-audit" target="data-db">
+          <mxGeometry relative="1" as="geometry"/>
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>
