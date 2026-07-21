@@ -2,7 +2,6 @@ import { useState } from 'react'
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query'
 import { modelsApi, type ModelInfo, type DiskModel } from '../api/models'
 import { inferenceApi, type InferenceStatus } from '../api/inference'
-import { LoadingSpinner, ErrorAlert } from '../components/shared'
 
 export default function ModelManagementPage() {
   const qc = useQueryClient()

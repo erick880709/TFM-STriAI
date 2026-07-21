@@ -4,7 +4,7 @@ from pydantic import BaseModel, Field
 
 
 class TriageCreate(BaseModel):
-    id_paciente: int
+    id_paciente: str  # UUID string como "pac-abc123"
     profesional: str
 
 

@@ -22,7 +22,7 @@ export default function DashboardPage() {
   if (kpis.isError) return <ErrorAlert error="Error al cargar KPIs" onRetry={() => kpis.refetch()} />
 
   const d = kpis.data as DashboardKPIs
-  const nivelData = Object.entries(d.triages_por_nivel_ia || {}).map(([n, c]) => ({ nivel: n, triajes: c, fill: NIVELES_COLORS[n] || '#64748B' }))
+  const nivelData = Object.entries(d.triajes_por_nivel_ia || {}).map(([n, c]) => ({ nivel: n, triajes: c, fill: NIVELES_COLORS[n] || '#64748B' }))
 
   return (
     <div>
@@ -30,7 +30,7 @@ export default function DashboardPage() {
       <p className="text-sm text-slate-500 mb-6">Indicadores de desempeño del sistema de triaje</p>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
-        <KpiCard label="Total Triajes" value={d.total_triages?.toLocaleString() || '0'} sub={`Hoy: ${d.triages_hoy || 0}`} />
+        <KpiCard label="Total Triajes" value={d.total_triages?.toLocaleString() || '0'} sub={`Hoy: ${d.triajes_hoy || 0}`} />
         <KpiCard label="Pacientes" value={d.total_pacientes?.toLocaleString() || '0'} />
         <KpiCard label="Concordancia" value={`${d.tasa_concordancia?.toFixed(1) || 0}%`} sub={`${d.concordancia_si || 0}/${d.concordancia_total || 0}`} />
         <KpiCard label="Tiempo Inf." value={`${d.tiempo_inferencia_promedio?.toFixed(2) || 0}s`} sub={d.tiempo_inferencia_promedio < 3 ? '✅ < 3s' : '⚠️ > 3s'} />

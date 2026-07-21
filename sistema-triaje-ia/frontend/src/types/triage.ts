@@ -1,0 +1,2 @@
+export interface Triage { id_triaje: string; id_paciente: number | string; estado: string; nivel_sugerido_ia?: string; nivel_profesional?: string; concordancia?: boolean; fecha_inicio?: string; fecha_cierre?: string }
+export interface VitalSigns { frecuencia_cardiaca: number; frecuencia_respiratoria: number; presion_sistolica: number; presion_diastolica: number; temperatura: number; saturacion_oxigeno: number }

@@ -54,7 +54,7 @@ export default function AuditPage() {
               ))}
             </tbody>
           </table>
-          {(data as { total?: number; page?: number; pages?: number })?.pages > 1 && (
+          {(data as { pages?: number })?.pages && (data as { pages: number }).pages > 1 && (
             <div className="flex justify-center gap-2 mt-4">
               {Array.from({ length: (data as { pages: number }).pages }, (_, i) => (
                 <button key={i} onClick={() => setFilters(p => ({ ...p, page: i + 1 }))}

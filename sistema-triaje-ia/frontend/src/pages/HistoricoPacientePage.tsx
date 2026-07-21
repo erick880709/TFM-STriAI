@@ -16,7 +16,7 @@ export default function HistoricoPacientePage() {
 
   const triagesQuery = useQuery({
     queryKey: ['patient-triages', patientQuery.data?.id_paciente],
-    queryFn: () => patientsApi.getTriages(patientQuery.data!.id_paciente).then(r => r.data.data as unknown[]),
+    queryFn: () => patientsApi.getTriages(Number(patientQuery.data!.id_paciente)).then(r => r.data.data as unknown[]),
     enabled: !!patientQuery.data?.id_paciente,
   })
 

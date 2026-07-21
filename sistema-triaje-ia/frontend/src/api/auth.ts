@@ -1,6 +1,5 @@
 import api from './client'
-import type { ApiResponse, PaginatedResponse } from '../types/api'
-import type { User } from '../types/user'
+import type { ApiResponse } from '../types/api'
 
 export interface LoginResponse {
   access_token: string

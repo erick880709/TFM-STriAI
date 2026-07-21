@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react'
+import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { triagesApi } from '../api/triages'
@@ -38,7 +38,7 @@ export default function VitalSignsPage() {
     mutationFn: async () => {
       if (!patient) throw new Error('No hay paciente activo')
       // Crear triaje primero
-      const triageRes = await triagesApi.create(patient.id_paciente, user?.username || 'sistema')
+      const triageRes = await triagesApi.create(Number(patient.id_paciente), user?.username || 'sistema')
       const triageId = (triageRes.data.data as { id_triaje: string }).id_triaje
       // Guardar signos vitales
       const nums = Object.fromEntries(

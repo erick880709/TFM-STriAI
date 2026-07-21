@@ -1,6 +1,6 @@
 import { useState } from 'react'
-import { patientsApi } from '../api/patients'
-import type { Patient } from '../types/patient'
+import { patientsApi } from '../../api/patients'
+import type { Patient } from '../../types/patient'
 
 interface PatientSearchProps {
   onSelect: (patient: Patient) => void

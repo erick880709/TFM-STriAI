@@ -1,18 +1,24 @@
 """
 Aplicación FastAPI — Punto de entrada del backend REST.
-Reemplaza a app.py (Streamlit) como servidor de la capa de negocio.
+Sirve también el frontend React en producción.
 
 Uso:
     uvicorn app.main:app --reload --port 8000
 """
 from contextlib import asynccontextmanager
+from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.staticfiles import StaticFiles
 
-from app.config.settings import load_config, get_db_path
+from app.config.settings import load_config, get_db_path, REPO_ROOT
 from app.data.database import init_db
 from app.services.auth_service import AuthService
 from app.services.inference_service import get_inference_service
+
+
+# Ruta al build de React
+FRONTEND_DIST = REPO_ROOT / "sistema-triaje-ia" / "frontend" / "dist"
 
 
 # ---------------------------------------------------------------------------
@@ -32,8 +38,7 @@ async def lifespan(app: FastAPI):
     app.state.config = cfg
     app.state.auth_service = AuthService(db_path)
 
-    # Cargar modelo IA — usa MODELS_DIR automático de inference_service.py
-    # (que ya resuelve TFM-FINAL/models/ y sistema-triaje-ia/models/ correctamente)
+    # Cargar modelo IA — usa MODELS_DIR automático
     print("[FASTAPI] Cargando modelo IA...")
     from app.services.inference_service import MODELS_DIR
     print(f"[FASTAPI] Directorio de modelos: {MODELS_DIR}")
@@ -48,9 +53,8 @@ async def lifespan(app: FastAPI):
     print(f"[FASTAPI] Servidor listo en http://0.0.0.0:8000")
     print(f"[FASTAPI] Swagger UI: http://localhost:8000/docs")
 
-    yield  # La app corre aquí
+    yield
 
-    # Cleanup
     print("[FASTAPI] Apagando servidor...")
 
 
@@ -88,6 +92,20 @@ def create_app() -> FastAPI:
     app.include_router(reports.router, prefix="/api/reports", tags=["Reportes"])
     app.include_router(users.router, prefix="/api/users", tags=["Usuarios"])
     app.include_router(control_cambios.router, prefix="/api/control-cambios", tags=["Control de Cambios"])
+
+    # Servir frontend React en producción
+    if FRONTEND_DIST.exists() and (FRONTEND_DIST / "index.html").exists():
+        app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
+
+        @app.get("/{full_path:path}")
+        async def serve_react(full_path: str = ""):
+            """Sirve el SPA de React para cualquier ruta no-API."""
+            # Si es una ruta de API, dejarla pasar (fastapi maneja rutas API primero)
+            index_path = FRONTEND_DIST / "index.html"
+            if index_path.exists():
+                from fastapi.responses import FileResponse
+                return FileResponse(index_path)
+            return {"message": "Frontend no construido. Ejecuta: cd frontend && npm run build"}
 
     # Health check
     @app.get("/health")

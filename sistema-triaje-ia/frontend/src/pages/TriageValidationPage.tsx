@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { triagesApi } from '../api/triages'
 import { useAuth } from '../hooks/useAuth'
-import { NIVELES_TRIAGE, NIVELES_COLORS, ESTADOS_TRIAGE } from '../lib/constants'
+import { NIVELES_TRIAGE, NIVELES_COLORS } from '../lib/constants'
 
 const PASOS = ['Registro', 'Signos Vitales', 'Evaluación', 'Clasificación IA', 'Validación']
 

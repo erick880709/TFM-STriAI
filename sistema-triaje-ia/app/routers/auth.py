@@ -62,7 +62,7 @@ async def logout(
     """Cierra la sesión. El frontend debe descartar el token."""
     auth_svc = _get_auth_service(request)
     auth_svc.logout()
-    return ApiResponse(message="Sesión cerrada")
+    return ApiResponse(data={}, message="Sesión cerrada")
 
 
 # ---------------------------------------------------------------------------

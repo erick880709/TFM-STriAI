@@ -5,6 +5,23 @@ import { inferenceApi, type PredictResult } from '../api/inference'
 import { NIVELES_TRIAGE, NIVELES_COLORS } from '../lib/constants'
 import { LoadingSpinner } from '../components/shared'
 
+function ShapDisplay({ data }: { data: { top_features?: { feature: string; importancia: number; direccion: string }[]; fallback?: boolean } }) {
+  return (
+    <div className="mt-4 space-y-2">
+      {data.top_features?.slice(0, 10).map((f, i) => (
+        <div key={i} className="flex items-center gap-2 text-sm">
+          <span className="w-4 text-xs">{f.direccion === '+' ? '🔴' : '🟢'}</span>
+          <span className="flex-1 text-slate-700">{f.feature}</span>
+          <span className="text-slate-400">{f.importancia.toFixed(4)}</span>
+        </div>
+      ))}
+      {data.fallback && (
+        <p className="text-xs text-amber-600 mt-2">⚠️ Usando importancia de features (SHAP no disponible)</p>
+      )}
+    </div>
+  )
+}
+
 export default function IAClassificationPage() {
   const navigate = useNavigate()
   const triageId = localStorage.getItem('active_triage_id') || ''
@@ -114,19 +131,8 @@ export default function IAClassificationPage() {
             >
               {showShap ? '🔽 Ocultar Explicación' : '🔍 Ver Explicación SHAP'}
             </button>
-            {showShap && shapResult && (
-              <div className="mt-4 space-y-2">
-                {(shapResult as { top_features: { feature: string; importancia: number; direccion: string }[] }).top_features?.slice(0, 10).map((f, i) => (
-                  <div key={i} className="flex items-center gap-2 text-sm">
-                    <span className="w-4 text-xs">{f.direccion === '+' ? '🔴' : '🟢'}</span>
-                    <span className="flex-1 text-slate-700">{f.feature}</span>
-                    <span className="text-slate-400">{f.importancia.toFixed(4)}</span>
-                  </div>
-                ))}
-                {(shapResult as { fallback: boolean }).fallback && (
-                  <p className="text-xs text-amber-600 mt-2">⚠️ Usando importancia de features (SHAP no disponible)</p>
-                )}
-              </div>
+            {showShap && shapResult != null && (
+              <ShapDisplay data={shapResult as { top_features?: { feature: string; importancia: number; direccion: string }[]; fallback?: boolean }} />
             )}
           </div>
 
