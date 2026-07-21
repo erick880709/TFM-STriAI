@@ -28,7 +28,7 @@ async def get_control_cambios(
 ):
     """Obtiene el historial de cambios, opcionalmente filtrado por paciente."""
     svc = _get_patient_service(request)
-    cambios = svc.get_historial_cambios(documento=documento if documento else None)
+    cambios = svc.get_historial_cambios(numero_documento=documento if documento else None)
     return ApiResponse(data=cambios)
 
 

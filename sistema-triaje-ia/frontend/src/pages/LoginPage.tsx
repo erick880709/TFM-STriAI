@@ -1,6 +1,6 @@
 import { useState } from 'react'
 import { useAuth } from '../hooks/useAuth'
-import { useNavigate } from 'react-router-dom'
+import { useNavigate, Link } from 'react-router-dom'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -59,12 +59,14 @@ export default function LoginPage() {
                 onChange={(e) => setPassword(e.target.value)}
                 className="w-full px-3 py-2 border border-[#A5F3FC] rounded-lg focus:ring-2 focus:ring-[#0891B2] focus:border-[#0891B2] outline-none pr-10"
                 autoComplete="current-password"
+                onKeyDown={(e) => { if (e.key === 'Enter') handleSubmit(e) }}
                 required
               />
               <button
                 type="button"
                 onClick={() => setShowPwd(!showPwd)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-slate-400 hover:text-slate-600"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#475569] hover:text-[#164E63]"
+                aria-label={showPwd ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               >
                 {showPwd ? '🙈' : '👁️'}
               </button>
@@ -80,14 +82,21 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg font-medium hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="w-full bg-[#0891B2] text-white py-2.5 rounded-lg font-medium hover:bg-[#0E7490] transition-colors disabled:opacity-50"
+            style={{minHeight:'44px'}}
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
           </button>
         </form>
 
-        <p className="text-center text-xs text-[#64748B] mt-6">
-          Hospital Universitario · Colombia · v2.0
+        <p className="text-center mt-4">
+          <Link to="/reset-password" className="text-sm text-[#0891B2] hover:underline">
+            ¿Olvidaste tu contraseña?
+          </Link>
+        </p>
+
+        <p className="text-center text-xs text-[#475569] mt-6">
+          Hospital Universitario · Colombia
         </p>
       </div>
     </div>

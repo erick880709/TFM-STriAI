@@ -6,13 +6,13 @@ import { useAuth } from '../hooks/useAuth'
 import PatientSearch from '../components/clinical/PatientSearch'
 import type { Patient } from '../types/patient'
 
-const RANGOS: Record<string, { min: number; max: number; unit: string; normal: [number, number] }> = {
-  frecuencia_cardiaca: { min: 30, max: 250, unit: 'lpm', normal: [60, 100] },
-  frecuencia_respiratoria: { min: 5, max: 60, unit: 'rpm', normal: [12, 20] },
-  presion_sistolica: { min: 40, max: 280, unit: 'mmHg', normal: [90, 140] },
-  presion_diastolica: { min: 20, max: 180, unit: 'mmHg', normal: [60, 90] },
-  temperatura: { min: 30, max: 45, unit: '°C', normal: [36, 37.5] },
-  saturacion_oxigeno: { min: 30, max: 100, unit: '%', normal: [95, 100] },
+const RANGOS: Record<string, { min: number; max: number; unit: string; normal: [number, number]; label: string; help: string }> = {
+  frecuencia_cardiaca: { min: 30, max: 250, unit: 'lpm', normal: [60, 100], label: 'Frecuencia Cardíaca', help: 'Latidos del corazón por minuto. Normal: 60-100 lpm.' },
+  frecuencia_respiratoria: { min: 5, max: 60, unit: 'rpm', normal: [12, 20], label: 'Frecuencia Respiratoria', help: 'Respiraciones por minuto. Normal: 12-20 rpm.' },
+  presion_sistolica: { min: 40, max: 280, unit: 'mmHg', normal: [90, 140], label: 'Presión Sistólica', help: 'Presión arterial al contraer el corazón. Normal: 90-140 mmHg.' },
+  presion_diastolica: { min: 20, max: 180, unit: 'mmHg', normal: [60, 90], label: 'Presión Diastólica', help: 'Presión arterial al relajar el corazón. Normal: 60-90 mmHg.' },
+  temperatura: { min: 30, max: 45, unit: '°C', normal: [36, 37.5], label: 'Temperatura', help: 'Temperatura corporal. Normal: 36-37.5 °C.' },
+  saturacion_oxigeno: { min: 30, max: 100, unit: '%', normal: [95, 100], label: 'Saturación de Oxígeno', help: 'Porcentaje de oxígeno en sangre. Normal: ≥ 95%.' },
 }
 
 function alertClass(value: number, normal: [number, number]) {
@@ -80,7 +80,7 @@ export default function VitalSignsPage() {
   if (!patient) {
     return (
       <div className="max-w-lg mx-auto mt-12 text-center">
-        <p className="text-slate-500 mb-4">No hay un paciente activo. Busca uno para continuar.</p>
+        <p className="text-[#475569] mb-4">No hay un paciente activo. Busca uno para continuar.</p>
         <PatientSearch onSelect={(p) => { localStorage.setItem('active_patient', JSON.stringify(p)); setPatient(p) }} />
       </div>
     )
@@ -88,30 +88,35 @@ export default function VitalSignsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-800 mb-1">💓 Signos Vitales</h1>
-      <p className="text-sm text-slate-500 mb-2">
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>💓 Signos Vitales</h1>
+      <p className="text-sm text-[#475569] mb-2">
         Paciente: {patient.nombre} {patient.apellido} · {patient.numero_documento}
       </p>
 
       <PatientSearch onSelect={(p) => { localStorage.setItem('active_patient', JSON.stringify(p)); setPatient(p) }} />
 
-      <div className="mt-6 bg-white border border-slate-200 rounded-lg p-5 max-w-xl">
+      <div className="mt-6 bg-white border border-[#CFFAFE] rounded-lg p-5 max-w-xl">
         <div className="space-y-4">
           {Object.entries(RANGOS).map(([key, cfg]) => {
             const val = parseFloat(signs[key as keyof typeof signs]) || 0
             const status = val ? alertClass(val, cfg.normal) : ''
             return (
               <div key={key}>
-                <label className="block text-sm font-medium text-slate-600 mb-1 capitalize">
-                  {key.replace(/_/g, ' ')} ({cfg.unit})
-                </label>
+                <div className="flex items-center gap-2 mb-1">
+                  <label className="text-sm font-medium text-[#164E63]">
+                    {cfg.label}
+                  </label>
+                  <span className="text-xs text-[#475569]" title={cfg.help}>ℹ️</span>
+                </div>
                 <div className="flex items-center gap-3">
                   <input
                     type="number" step="0.1" min={cfg.min} max={cfg.max}
                     value={signs[key as keyof typeof signs]}
                     onChange={(e) => handleChange(key, e.target.value)}
                     className={`flex-1 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 ${inputBorderClass(status)}`}
+                    style={{minHeight:'44px'}}
                     aria-valuemin={cfg.min} aria-valuemax={cfg.max}
+                    aria-label={cfg.label}
                     required
                   />
                   {val > 0 && (
@@ -120,6 +125,7 @@ export default function VitalSignsPage() {
                     </span>
                   )}
                 </div>
+                <p className="text-xs text-[#475569] mt-1 ml-1">Normal: {cfg.normal[0]}-{cfg.normal[1]} {cfg.unit}</p>
               </div>
             )
           })}

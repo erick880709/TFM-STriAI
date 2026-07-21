@@ -39,8 +39,8 @@ async def query_audit(
         accion=accion if accion else None,
         entidad=entidad if entidad else None,
         usuario=usuario if usuario else None,
-        page=page,
         limit=limit,
+        offset=(page - 1) * limit,
     )
     pages = (total + limit - 1) // limit if total > 0 else 1
     return PaginatedResponse(
