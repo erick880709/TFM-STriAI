@@ -1,35 +1,171 @@
-# Inventario de Pantallas — Sistema de Triaje Multimodal IA
+# 📋 Inventario de Pantallas — STriAI Frontend React
 
-**Fecha:** 2026-07-19 · **Proyecto:** TFM UNIR · **Framework:** Streamlit (recomendado)
+**Proyecto:** STriAI — Sistema de Triaje Multimodal IA
+**Frontend:** React 19 + TypeScript + Vite + Tailwind CSS
+**Fecha auditoría:** 2026-07-21
+**Total pantallas:** 14 (13 autenticadas + 1 login)
 
-## Flujo Clínico Principal (7 pantallas secuenciales)
+---
 
-| # | Pantalla | Checkpoint Excalidraw | Propósito | Rol(es) | Estados diseñados |
-|---|---|---|---|---|---|
-| 1 | Login | `b4eedc99c5784bae9e` | Autenticación con usuario/contraseña, bloqueo por intentos, enlace de recuperación | Todos | Default, Error credenciales |
-| 2 | Registro de Paciente | `77e0a5983363417ebb` | Alta de episodio, búsqueda de duplicados, campos obligatorios + ViaLlegada + Edad auto | Personal Administrativo | Default, Paciente existente (alerta), Campos con error |
-| 3 | Captura de Signos Vitales | `caa3c5e1e02946be8f` | 8 signos vitales con validación de rangos, IMC auto, alertas visuales por valores críticos | Enfermera | Default, Valores críticos (alerta roja), Rangos normales |
-| 4 | Evaluación Clínica | `81b8340f461343cea9` | Motivo consulta (texto libre + catálogo), dolor 0-10, Glasgow, conciencia, antecedentes, alergias | Enfermera / Médico | Default, Formulario completo |
-| 5 | Clasificación IA | `e6a776c79d6042e9b8` | Inferencia + probabilidades I-V + explicación SHAP + campo independiente del profesional | Médico / Enfermera | Cargando (spinner), Resultados, Error inferencia, Discrepancia |
-| 6 | Explicación SHAP | `4ef872d21a8a446b95` | Waterfall plot + ranking top 10 variables + comparación MTS + exportación | Médico | Default |
-| 7 | Validación de Triaje | `c9f9b6dea3f141b8af` | Confirmación de concordancia o captura de motivo de discrepancia + cierre de evento + descarga | Médico | Concordancia (éxito verde), Discrepancia (alerta naranja) |
+## Pantalla 01 — Login
 
-## Pantallas de Soporte / Administración (5)
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/login` |
+| **Componente** | `LoginPage.tsx` |
+| **Propósito** | Autenticación JWT de profesionales de salud |
+| **Estados** | Loading ✅ · Error ✅ · Success ✅ |
+| **Navega a** | `/pacientes` |
+| **Issues** | Sin enlace "Olvidé mi contraseña" · Sin `autocomplete` · Footer académico no clínico · Botón toggle sin aria-label |
 
-| # | Pantalla | Checkpoint Excalidraw | Propósito | Rol(es) |
-|---|---|---|---|---|
-| 8 | Comparación de Modelos | `94a2ab14e23e420fa2` | Early vs. Late Fusion lado a lado con métricas (F1, Prec, Recall, AUC, Recall Nivel I) | Investigador |
-| 9 | Gestión de Modelos | `d00e334a7f3f4a7181` | CRUD de modelos, versionado, activación/rollback, historial con métricas | Administrador IA |
-| 10 | Dashboard Operativo | `13609941ff5e454a82` | KPIs (triajes, tiempo, concordancia, disponibilidad) + distribución I-V + desempeño IA + matriz concordancia | Médico / Administrador |
-| 11 | Auditoría | `fa1f74713a454758a7` | Consulta con filtros (usuario, fecha, acción, entidad) + resultados paginados + exportación CSV/Excel/PDF | Auditor |
-| 12 | Registro de Triaje (PDF) | `009d205c20d04fd5aa` | Documento descargable con: evento anonimizado, clasificación IA vs Profesional, signos vitales, SHAP top, metadatos | Médico / Auditor |
+## Pantalla 02 — Registro de Paciente
 
-## Navegación
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/pacientes` |
+| **Componente** | `PatientRegistrationPage.tsx` |
+| **Propósito** | Registrar nuevo paciente o buscar existente para iniciar triaje |
+| **Estados** | Loading ✅ · Error ✅ · Duplicado ✅ · Success ✅ |
+| **Navega a** | `/signos-vitales` |
+| **Issues** | Clase CSS `.input` inexistente · Tabs sin ARIA · Select departamento sin búsqueda · Validación solo al submit |
 
-```
-Login → Registro → Signos Vitales → Evaluación Clínica → Clasificación IA → SHAP → Validación → Cierre
-                                                                                              ↓
-                                                                                    Registro Descargable (PDF)
-```
+## Pantalla 03 — Signos Vitales
 
-Pantallas 8-12 accesibles desde menú lateral/sidebar según rol.
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/signos-vitales` |
+| **Componente** | `VitalSignsPage.tsx` |
+| **Propósito** | Captura de 6 signos vitales con indicadores de normalidad |
+| **Estados** | Loading ✅ · Error ✅ · Empty (sin paciente) ✅ · Success ✅ |
+| **Navega a** | `/evaluacion-clinica` |
+| **Issues** | Clases Tailwind dinámicas rotas · Sin aria-valuemin/max · Sin stepper · Doble PatientSearch |
+
+## Pantalla 04 — Evaluación Clínica
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/evaluacion-clinica` |
+| **Componente** | `ClinicalEvaluationPage.tsx` |
+| **Propósito** | Evaluación clínica: Glasgow, dolor, conciencia, comorbilidades |
+| **Estados** | Loading ✅ · Error ✅ · Empty ✅ · Success ✅ |
+| **Navega a** | `/clasificacion-ia` |
+| **Issues** | Sin breadcrumb/stepper · Slider dolor sin output · Chips sin aria-pressed · Sin validación Glasgow |
+
+## Pantalla 05 — Clasificación IA
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/clasificacion-ia` |
+| **Componente** | `IAClassificationPage.tsx` |
+| **Propósito** | Inferencia IA con explicación SHAP |
+| **Estados** | Loading ✅ · Error (pred) ✅ · Error (SHAP) ❌ · Success ✅ |
+| **Navega a** | `/validacion` |
+| **Issues** | 🔴 Datos de signos hardcodeados · SHAP sin manejo de error · Barras sin aria · Feature names sin traducción |
+
+## Pantalla 06 — Validación y Cierre
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/validacion` |
+| **Componente** | `TriageValidationPage.tsx` |
+| **Propósito** | Validar nivel profesional y cerrar triaje |
+| **Estados** | Loading ✅ · Error ✅ · Success ✅ |
+| **Navega a** | `/pacientes` |
+| **Issues** | Stepper falso · Sin comparativa IA vs Profesional · Sin resumen post-cierre |
+
+## Pantalla 07 — Dashboard
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/dashboard` |
+| **Componente** | `DashboardPage.tsx` |
+| **Propósito** | KPIs operativos y gráficos de tendencia |
+| **Estados** | Loading ✅ · Error (KPIs) ✅ · Error (trend) ❌ · Empty ✅ · Success ✅ |
+| **Navega a** | — |
+| **Issues** | 🔴 Error en tendencia sin manejo · Gráficos sin aria · Umbral 3s hardcodeado · Sin selector de fechas |
+
+## Pantalla 08 — Gestión Modelos IA
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/modelos` |
+| **Componente** | `ModelManagementPage.tsx` |
+| **Propósito** | CRUD de modelos ML: serializados, BD, registro |
+| **Estados** | Loading ❌ · Error ❌ · Empty (disk) ✅ · Empty (db) ❌ · Success ✅ |
+| **Navega a** | — |
+| **Issues** | 🔴 Sin loading/error · ACTIVO hardcodeado · Tabs sin ARIA · `.input` roto |
+
+## Pantalla 09 — Comparar Modelos
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/comparar-modelos` |
+| **Componente** | `ModelComparisonPage.tsx` |
+| **Propósito** | Tabla comparativa de métricas entre modelos |
+| **Estados** | Loading ✅ · Error ❌ · Empty ❌ · Success ✅ |
+| **Navega a** | — |
+| **Issues** | Sin error/empty · SHAP emoji sin texto · Sin highlight · Tabla no ordenable |
+
+## Pantalla 10 — Auditoría
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/auditoria` |
+| **Componente** | `AuditPage.tsx` |
+| **Propósito** | Consultar y exportar logs de auditoría |
+| **Estados** | Loading ✅ · Error ❌ · Empty ❌ · Success ✅ |
+| **Navega a** | — |
+| **Issues** | Sin error/empty · Tabla sin caption · CSV sin loading · Paginación sin Anterior/Siguiente · Fecha raw |
+
+## Pantalla 11 — Gestión Usuarios
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/usuarios` |
+| **Componente** | `UserManagementPage.tsx` |
+| **Propósito** | CRUD de usuarios + reset de contraseña |
+| **Estados** | Loading ✅ · Error ❌ · Empty ❌ · Success ✅ |
+| **Navega a** | — |
+| **Issues** | 🔴 Contraseña en texto plano · Modal sin role=dialog · Sin confirmación desactivar · `.input` roto |
+
+## Pantalla 12 — Control de Cambios
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/control-cambios` |
+| **Componente** | `ControlCambiosPage.tsx` |
+| **Propósito** | Historial de cambios en entidades |
+| **Estados** | Loading ✅ · Error ❌ · Empty ❌ · Success ✅ |
+| **Navega a** | — |
+| **Issues** | Sin error/empty · Tabla sin caption · Casting unknown frágil · Sin paginación |
+
+## Pantalla 13 — Histórico Paciente
+
+| Atributo | Valor |
+|----------|-------|
+| **Ruta** | `/historico` |
+| **Componente** | `HistoricoPacientePage.tsx` |
+| **Propósito** | Buscar paciente y ver historial de triajes |
+| **Estados** | Loading ✅ · Error ❌ · Empty ❌ · Success ✅ |
+| **Navega a** | — |
+| **Issues** | Sin error/empty · Concordancia emoji sin texto · Sin scroll al resultado · Sin botón Limpiar |
+
+---
+
+## Componentes Layout
+
+| Componente | Issues |
+|------------|--------|
+| **Sidebar** | Sin aria-label en nav · Ítems desaparecen sin indicación · No colapsable · 256px fijo |
+| **Header** | Sin breadcrumb · Sin indicador de sede · Badge rol contraste bajo |
+| **AppLayout** | 🔴 Sin ErrorBoundary · Sin Suspense/lazy loading · Sin transiciones entre rutas |
+
+---
+
+## Resumen de severidad
+
+| Severidad | Cantidad | Descripción |
+|-----------|----------|-------------|
+| 🔴 Crítico | 13 | Datos hardcodeados, sin manejo de error en 7 páginas, clases CSS rotas, contraseña expuesta, sin ErrorBoundary |
+| 🟠 Medio | 18 | ARIA faltante, validación débil, sin confirmación en acciones destructivas, layout rígido |
+| 🟡 Leve | 14 | Tooltips faltantes, formato de fechas, decimales excesivos, sin lazy loading |
