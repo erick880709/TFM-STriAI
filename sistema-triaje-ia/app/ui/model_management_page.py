@@ -72,7 +72,12 @@ def render_model_management():
                 if thresholds:
                     umbral_data = []
                     for k, v in thresholds.items():
-                        nivel = ["I", "II", "III", "IV", "V"][int(k)] if k.isdigit() else k
+                        # k puede ser int o str; convertir a int para indexar
+                        try:
+                            idx = int(k)
+                            nivel = ["I", "II", "III", "IV", "V"][idx] if 0 <= idx <= 4 else str(k)
+                        except (ValueError, TypeError):
+                            nivel = str(k)
                         umbral_data.append({"Nivel": nivel, "Umbral": float(v)})
                     st.dataframe(umbral_data, use_container_width=True, hide_index=True)
                 else:

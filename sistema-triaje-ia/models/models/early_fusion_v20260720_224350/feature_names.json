@@ -1,0 +1,7 @@
+{
+  "feature_names": [
+    "edad",
+    "sexo_Desconocido",
+    "regimen_salud_Desconocido"
+  ]
+}

@@ -81,7 +81,7 @@ def render_dashboard():
             "WHERE FechaHoraIngreso >= DATE('now', '-7 days') "
             "GROUP BY dia ORDER BY dia"
         ).fetchall()
-        triajes_7d = rows_to_dicts(triages_7d_rows) if triajes_7d_rows else []
+        triajes_7d = rows_to_dicts(triajes_7d_rows) if triajes_7d_rows else []
 
     finally:
         conn.close()

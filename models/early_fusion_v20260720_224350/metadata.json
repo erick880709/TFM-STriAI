@@ -1,0 +1,38 @@
+{
+  "model_name": "Early Fusion",
+  "version": "v20260720_224350",
+  "serialized_at": "2026-07-21T03:43:50.547767Z",
+  "model_hash_sha256": "d933641c78e374c43d8116e0cc40864ab8d70e8ac726c3dfdacef9b2a0002fe4",
+  "n_features": 3,
+  "feature_names": [
+    "edad",
+    "sexo_Desconocido",
+    "regimen_salud_Desconocido"
+  ],
+  "metrics": {
+    "f1_macro": 0.18949086104676066,
+    "f1_weighted": 0.792155567794449,
+    "precision_macro": 0.20041794142488212,
+    "recall_macro": 0.2004550493572253,
+    "accuracy": 0.7986471251409245,
+    "auc_roc_macro": 0.0,
+    "auprc_macro": 0.19990646806066534
+  },
+  "thresholds": {
+    "0": 0.2,
+    "1": 0.05,
+    "2": 0.2,
+    "3": 0.2,
+    "4": 0.2
+  },
+  "nlp_model_key": "multilingual",
+  "framework": "scikit-learn + XGBoost",
+  "description": "Modelo Early Fusion entrenado sobre 133,047 registros clínicos.",
+  "class_labels": [
+    "I",
+    "II",
+    "III",
+    "IV",
+    "V"
+  ]
+}
