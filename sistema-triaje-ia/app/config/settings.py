@@ -6,7 +6,9 @@ import os
 from pathlib import Path
 from dotenv import load_dotenv
 
-BASE_DIR = Path(__file__).resolve().parent.parent
+BASE_DIR = Path(__file__).resolve().parent.parent  # sistema-triaje-ia/app/
+REPO_ROOT = BASE_DIR.parent.parent  # TFM-FINAL/
+MODELS_DEFAULT = REPO_ROOT / "models"  # TFM-FINAL/models/
 
 def load_config() -> dict:
     """Carga la configuración desde .env con valores por defecto."""
@@ -18,7 +20,7 @@ def load_config() -> dict:
         "db_path": os.getenv("DB_PATH", str(BASE_DIR / "data" / "triaje.db")),
         "session_timeout_minutes": int(os.getenv("SESSION_TIMEOUT_MINUTES", "15")),
         "bcrypt_rounds": int(os.getenv("BCRYPT_ROUNDS", "12")),
-        "model_path": os.getenv("MODEL_PATH", str(BASE_DIR / "models")),
+        "model_path": os.getenv("MODEL_PATH", str(MODELS_DEFAULT)),
         "active_model": os.getenv("ACTIVE_MODEL", "xgboost_early_fusion_v1"),
         "env": os.getenv("ENV", "development"),
         "log_level": os.getenv("LOG_LEVEL", "INFO"),

@@ -32,9 +32,12 @@ async def lifespan(app: FastAPI):
     app.state.config = cfg
     app.state.auth_service = AuthService(db_path)
 
-    # Cargar modelo IA
+    # Cargar modelo IA — usa MODELS_DIR automático de inference_service.py
+    # (que ya resuelve TFM-FINAL/models/ y sistema-triaje-ia/models/ correctamente)
     print("[FASTAPI] Cargando modelo IA...")
-    inference = get_inference_service(str(cfg["model_path"]))
+    from app.services.inference_service import MODELS_DIR
+    print(f"[FASTAPI] Directorio de modelos: {MODELS_DIR}")
+    inference = get_inference_service(None)
     if not inference.model:
         ok = inference.load_model()
         print(f"[FASTAPI] Modelo cargado: {ok}")
