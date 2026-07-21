@@ -16,8 +16,8 @@ export class ErrorBoundary extends Component<Props, State> {
       return (
         <div className="flex flex-col items-center justify-center min-h-[400px] gap-4 p-8">
           <div className="text-4xl">⚠️</div>
-          <h2 className="text-xl font-semibold text-slate-800">Algo salió mal</h2>
-          <p className="text-sm text-slate-500 text-center max-w-md">
+          <h2 className="text-xl font-semibold text-[#164E63]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>Algo salió mal</h2>
+          <p className="text-sm text-[#64748B] text-center max-w-md">
             Ocurrió un error inesperado al cargar esta sección.
             Intenta recargar la página.
           </p>
@@ -28,7 +28,7 @@ export class ErrorBoundary extends Component<Props, State> {
           )}
           <button
             onClick={() => window.location.reload()}
-            className="px-4 py-2 bg-slate-800 text-white rounded-lg text-sm hover:bg-slate-700 transition-colors"
+            className="px-4 py-2 bg-[#0891B2] text-white rounded-lg text-sm hover:bg-[#0E7490] transition-colors"
           >
             Recargar página
           </button>

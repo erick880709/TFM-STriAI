@@ -25,38 +25,40 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-slate-100">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md">
+    <div className="min-h-screen flex items-center justify-center bg-[#ECFEFF]">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border border-[#CFFAFE]">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-slate-800">🏥 Triaje IA</h1>
-          <p className="text-sm text-slate-500 mt-1">Servicio de Urgencias · Colombia</p>
+          <h1 className="text-2xl font-bold text-[#164E63]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>🏥 Triaje IA</h1>
+          <p className="text-sm text-[#64748B] mt-1">Servicio de Urgencias · Colombia</p>
         </div>
 
-        <h2 className="text-lg font-semibold text-slate-700 mb-4 text-center">
+        <h2 className="text-lg font-semibold text-[#164E63] mb-4 text-center" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>
           Sistema de Triaje IA
         </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">Usuario</label>
+            <label className="block text-sm font-medium text-[#164E63] mb-1">Usuario</label>
             <input
               type="text"
               placeholder="usuario@hospital.gov.co"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
-              className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+              className="w-full px-3 py-2 border border-[#A5F3FC] rounded-lg focus:ring-2 focus:ring-[#0891B2] focus:border-[#0891B2] outline-none"
+              autoComplete="username"
               required
             />
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-slate-600 mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-[#164E63] mb-1">Contraseña</label>
             <div className="relative">
               <input
                 type={showPwd ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-3 py-2 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none pr-10"
+                className="w-full px-3 py-2 border border-[#A5F3FC] rounded-lg focus:ring-2 focus:ring-[#0891B2] focus:border-[#0891B2] outline-none pr-10"
+                autoComplete="current-password"
                 required
               />
               <button
@@ -84,8 +86,8 @@ export default function LoginPage() {
           </button>
         </form>
 
-        <p className="text-center text-xs text-slate-400 mt-6">
-          TFM · UNIR · Máster en Inteligencia Artificial · v2.0
+        <p className="text-center text-xs text-[#64748B] mt-6">
+          Hospital Universitario · Colombia · v2.0
         </p>
       </div>
     </div>

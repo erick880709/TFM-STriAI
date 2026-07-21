@@ -1,24 +1,56 @@
-/* STriAI Tema clinico */
+/* STriAI — Design System Healthcare (Tailwind v4)
+   Colores: resources/diseno/design-system.md
+   Mockups: resources/diseno/imagenes/
+   ============================================ */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+
+/* Design Tokens como CSS custom properties */
+:root {
+  --color-primary: #0891B2;
+  --color-primary-hover: #0E7490;
+  --color-primary-light: #22D3EE;
+  --color-accent: #059669;
+  --color-bg: #ECFEFF;
+  --color-bg-card: #FFFFFF;
+  --color-fg: #164E63;
+  --color-fg-muted: #64748B;
+  --color-border: #A5F3FC;
+  --color-border-light: #CFFAFE;
+  --color-destructive: #DC2626;
+  --color-warning: #F59E0B;
+  --font-heading: 'Lexend', system-ui, sans-serif;
+  --font-body: 'Source Sans 3', system-ui, sans-serif;
+}
+
+/* Reset */
 *, *::before, *::after { box-sizing: border-box; }
-body { margin: 0; font-family: system-ui, sans-serif; background: #F8FAFC; color: #1E293B; }
+body {
+  margin: 0;
+  font-family: 'Source Sans 3', system-ui, sans-serif;
+  background: var(--color-bg);
+  color: var(--color-fg);
+}
 #root { min-height: 100vh; }
 
-/* Clase base para inputs usada en PatientRegistration, ModelManagement, UserManagement */
+/* Headings */
+h1, h2, h3, h4 { font-family: 'Lexend', system-ui, sans-serif; }
+
+/* Clase base para inputs */
 .input {
   width: 100%;
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: #1E293B;
-  background-color: #FFFFFF;
-  border: 1px solid #CBD5E1;
+  color: var(--color-fg);
+  background-color: var(--color-bg-card);
+  border: 1px solid var(--color-border);
   border-radius: 0.5rem;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .input:focus {
-  border-color: #3B82F6;
-  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+  border-color: var(--color-primary);
+  box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.2);
 }
 .input:disabled {
   background-color: #F1F5F9;
@@ -26,19 +58,19 @@ body { margin: 0; font-family: system-ui, sans-serif; background: #F8FAFC; color
   cursor: not-allowed;
 }
 
-/* Accesibilidad: foco visible global */
+/* Accesibilidad */
 :focus-visible {
-  outline: 2px solid #3B82F6;
+  outline: 2px solid var(--color-primary);
   outline-offset: 2px;
 }
 
-/* Scrollbar estilizada */
+/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: #F1F5F9; }
-::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+::-webkit-scrollbar-track { background: var(--color-bg); }
+::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
 
-/* Impresión — ocultar sidebar y header */
+/* Impresión */
 @media print {
   aside, header, nav { display: none !important; }
   main { margin: 0 !important; padding: 1cm !important; }

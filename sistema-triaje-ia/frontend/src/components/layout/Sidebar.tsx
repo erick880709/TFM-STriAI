@@ -27,16 +27,16 @@ export default function Sidebar() {
   const hasPermission = (perm: string) => permissions.includes(perm)
 
   return (
-    <aside className="w-64 bg-slate-900 text-white flex flex-col shrink-0">
-      <div className="p-4 border-b border-slate-700">
-        <h1 className="text-lg font-bold">🏥 Triaje IA</h1>
-        <p className="text-xs text-slate-400">Servicio de Urgencias · Colombia</p>
+    <aside className="w-64 bg-[#164E63] text-white flex flex-col shrink-0" aria-label="Navegación principal">
+      <div className="p-4 border-b border-[#0E7490]">
+        <h1 className="text-lg font-bold" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>🏥 Triaje IA</h1>
+        <p className="text-xs text-[#22D3EE]">Servicio de Urgencias · Colombia</p>
       </div>
 
       <nav className="flex-1 overflow-y-auto p-3 space-y-4">
         {menuItems.map((group) => (
           <div key={group.group}>
-            <p className="text-xs font-semibold text-slate-400 uppercase tracking-wider mb-2 px-2">
+            <p className="text-xs font-semibold text-[#22D3EE] uppercase tracking-wider mb-2 px-2">
               {group.group}
             </p>
             {group.items.map((item) =>
@@ -47,8 +47,8 @@ export default function Sidebar() {
                   className={({ isActive }) =>
                     `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
-                        ? 'bg-slate-700 text-white'
-                        : 'text-slate-300 hover:bg-slate-800 hover:text-white'
+                        ? 'bg-[#0891B2] text-white shadow-sm'
+                        : 'text-[#CFFAFE] hover:bg-[#0E7490] hover:text-white'
                     }`
                   }
                 >
@@ -61,19 +61,19 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-3 border-t border-slate-700">
-        <div className="flex items-center gap-3 px-3 py-2 text-sm text-slate-300">
-          <div className="w-8 h-8 rounded-full bg-slate-700 flex items-center justify-center text-xs font-bold">
+      <div className="p-3 border-t border-[#0E7490]">
+        <div className="flex items-center gap-3 px-3 py-2 text-sm text-[#CFFAFE]">
+          <div className="w-8 h-8 rounded-full bg-[#0891B2] flex items-center justify-center text-xs font-bold">
             {user?.username?.charAt(0).toUpperCase()}
           </div>
           <div className="flex-1 min-w-0">
             <p className="truncate font-medium">{user?.username}</p>
-            <p className="text-xs text-slate-400">{user?.rol}</p>
+            <p className="text-xs text-[#22D3EE]">{user?.rol}</p>
           </div>
         </div>
         <button
           onClick={logout}
-          className="flex items-center gap-2 w-full mt-2 px-3 py-2 text-sm text-red-400 hover:bg-red-900/30 rounded-lg transition-colors"
+          className="flex items-center gap-2 w-full mt-2 px-3 py-2 text-sm text-red-300 hover:bg-red-900/30 rounded-lg transition-colors"
         >
           <LogOut size={16} /> Cerrar Sesión
         </button>
