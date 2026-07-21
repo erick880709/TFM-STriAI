@@ -22,7 +22,7 @@ export default function DashboardPage() {
   if (kpis.isError) return <ErrorAlert error="Error al cargar KPIs" onRetry={() => kpis.refetch()} />
 
   const d = kpis.data as DashboardKPIs
-  const nivelData = Object.entries(d.triajes_por_nivel_ia || {}).map(([n, c]) => ({ nivel: n, triajes: c, fill: NIVELES_COLORS[n] || '#64748B' }))
+  const nivelData = Object.entries(d.triajes_por_nivel_ia || {}).map(([n, c]) => ({ nivel: n, triajes: c, fill: NIVELES_COLORS[n] || '#526771' }))
 
   return (
     <div>

@@ -25,11 +25,11 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#ECFEFF]">
+    <div className="min-h-screen flex items-center justify-center bg-[#F0F9FA]">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border border-[#CFFAFE]">
         <div className="text-center mb-6">
           <h1 className="text-2xl font-bold text-[#164E63]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>🏥 Triaje IA</h1>
-          <p className="text-sm text-[#64748B] mt-1">Servicio de Urgencias · Colombia</p>
+          <p className="text-sm text-[#526771] mt-1">Servicio de Urgencias · Colombia</p>
         </div>
 
         <h2 className="text-lg font-semibold text-[#164E63] mb-4 text-center" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>
@@ -82,7 +82,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#0891B2] text-white py-2.5 rounded-lg font-medium hover:bg-[#0E7490] transition-colors disabled:opacity-50"
+            className="w-full bg-[#0891B2] text-white py-2.5 rounded-lg font-medium hover:bg-[#0E6B7A] transition-colors disabled:opacity-50"
             style={{minHeight:'44px'}}
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}

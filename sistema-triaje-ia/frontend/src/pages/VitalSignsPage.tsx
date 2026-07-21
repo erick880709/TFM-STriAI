@@ -80,7 +80,7 @@ export default function VitalSignsPage() {
   if (!patient) {
     return (
       <div className="max-w-lg mx-auto mt-12 text-center">
-        <p className="text-[#475569] mb-4">No hay un paciente activo. Busca uno para continuar.</p>
+        <p className="text-[#526771] mb-4">No hay un paciente activo. Busca uno para continuar.</p>
         <PatientSearch onSelect={(p) => { localStorage.setItem('active_patient', JSON.stringify(p)); setPatient(p) }} />
       </div>
     )
@@ -88,8 +88,8 @@ export default function VitalSignsPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#164E63] mb-1" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>💓 Signos Vitales</h1>
-      <p className="text-sm text-[#475569] mb-2">
+      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>💓 Signos Vitales</h1>
+      <p className="text-sm text-[#526771] mb-2">
         Paciente: {patient.nombre} {patient.apellido} · {patient.numero_documento}
       </p>
 
@@ -103,10 +103,10 @@ export default function VitalSignsPage() {
             return (
               <div key={key}>
                 <div className="flex items-center gap-2 mb-1">
-                  <label className="text-sm font-medium text-[#164E63]">
+                  <label className="text-sm font-medium text-[#0F3D47]">
                     {cfg.label}
                   </label>
-                  <span className="text-xs text-[#475569]" title={cfg.help}>ℹ️</span>
+                  <span className="text-xs text-[#526771]" title={cfg.help}>ℹ️</span>
                 </div>
                 <div className="flex items-center gap-3">
                   <input
@@ -125,7 +125,7 @@ export default function VitalSignsPage() {
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-[#475569] mt-1 ml-1">Normal: {cfg.normal[0]}-{cfg.normal[1]} {cfg.unit}</p>
+                <p className="text-xs text-[#526771] mt-1 ml-1">Normal: {cfg.normal[0]}-{cfg.normal[1]} {cfg.unit}</p>
               </div>
             )
           })}
