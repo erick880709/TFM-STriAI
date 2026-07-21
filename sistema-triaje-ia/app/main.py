@@ -74,8 +74,17 @@ def create_app() -> FastAPI:
     )
 
     # Montar routers
-    from app.routers import auth
+    from app.routers import auth, patients, control_cambios, triages, inference, dashboard, models, audit, reports, users
     app.include_router(auth.router, prefix="/api/auth", tags=["Autenticación"])
+    app.include_router(patients.router, prefix="/api/patients", tags=["Pacientes"])
+    app.include_router(triages.router, prefix="/api/triages", tags=["Triajes"])
+    app.include_router(inference.router, prefix="/api/inference", tags=["Inferencia IA"])
+    app.include_router(dashboard.router, prefix="/api/dashboard", tags=["Dashboard"])
+    app.include_router(models.router, prefix="/api/models", tags=["Modelos IA"])
+    app.include_router(audit.router, prefix="/api/audit", tags=["Auditoría"])
+    app.include_router(reports.router, prefix="/api/reports", tags=["Reportes"])
+    app.include_router(users.router, prefix="/api/users", tags=["Usuarios"])
+    app.include_router(control_cambios.router, prefix="/api/control-cambios", tags=["Control de Cambios"])
 
     # Health check
     @app.get("/health")
