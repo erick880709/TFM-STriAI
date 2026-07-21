@@ -29,12 +29,11 @@ export default function DashboardPage() {
       <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">📊 Dashboard Operativo</h1>
       <p className="text-sm text-[#526771] mb-6">Indicadores de desempeño del sistema de triaje</p>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8" role="list" aria-label="Indicadores clave de desempeño">
-        <KpiCard label="Total Triajes" value={d.total_triages?.toLocaleString() || '0'} sub={`Hoy: ${d.triajes_hoy || 0}`} />
-        <KpiCard label="Pacientes" value={d.total_pacientes?.toLocaleString() || '0'} />
-        <KpiCard label="Concordancia" value={`${d.tasa_concordancia?.toFixed(1) || 0}%`} sub={`${d.concordancia_si || 0}/${d.concordancia_total || 0}`} />
-        <KpiCard label="Tiempo Inf." value={`${d.tiempo_inferencia_promedio?.toFixed(2) || 0}s`} sub={d.tiempo_inferencia_promedio < 3 ? '✅ < 3s' : '⚠️ > 3s'} />
-        <KpiCard label="Tasa Cierre" value={`${d.tasa_cierre?.toFixed(1) || 0}%`} sub={`${d.cerrados || 0} cerrados`} />
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8" role="list" aria-label="Indicadores clave de desempeño">
+        <KpiCard label="Triajes" value={d.total_triages?.toLocaleString() || '0'} sub={`Hoy: ${d.triajes_hoy || 0}`} />
+        <KpiCard label="Tiempo Promedio" value={`${d.tiempo_inferencia_promedio?.toFixed(2) || '0'}s`} sub={d.tiempo_inferencia_promedio < 3 ? '✅ < 3s' : '⚠️ > 3s'} />
+        <KpiCard label="Concordancia IA" value={`${d.tasa_concordancia?.toFixed(1) || 0}%`} sub={`${d.concordancia_si || 0}/${d.concordancia_total || 0}`} />
+        <KpiCard label="Disp. Modelo" value={d.tasa_cierre?.toFixed(1) || '0'} sub={`${d.cerrados || 0} cerrados`} />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">

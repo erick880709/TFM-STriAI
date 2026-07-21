@@ -28,20 +28,17 @@ export default function LoginPage() {
     <div className="min-h-screen flex items-center justify-center bg-[#F0F9FA]">
       <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border border-[#CFFAFE]">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-[#0F3D47]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>🏥 Triaje IA</h1>
-          <p className="text-sm text-[#526771] mt-1">Servicio de Urgencias · Colombia</p>
+          <h1 className="text-2xl font-bold text-[#0F3D47]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>STriAI</h1>
+          <p className="text-sm text-[#526771] mt-1">Sistema de Triaje Multimodal IA</p>
+          <p className="text-xs text-[#526771] mt-0.5">Servicio de Urgencias · Colombia</p>
         </div>
-
-        <h2 className="text-lg font-semibold text-[#0F3D47] mb-4 text-center" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>
-          Sistema de Triaje IA
-        </h2>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <label className="block text-sm font-medium text-[#0F3D47] mb-1">Usuario</label>
             <input
               type="text"
-              placeholder="usuario@hospital.gov.co"
+              placeholder="enfermera.triaje@hospital.gov.co"
               value={username}
               onChange={(e) => setUsername(e.target.value)}
               className="w-full px-3 py-2 border border-[#A5F3FC] rounded-lg focus:ring-2 focus:ring-[#0891B2] focus:border-[#0891B2] outline-none"
@@ -96,7 +93,7 @@ export default function LoginPage() {
         </p>
 
         <p className="text-center text-xs text-[#526771] mt-6">
-          Hospital Universitario · Colombia
+          TFM · UNIR · Máster en IA · v1.0 Demo
         </p>
       </div>
     </div>

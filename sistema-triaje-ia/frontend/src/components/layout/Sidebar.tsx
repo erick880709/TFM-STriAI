@@ -33,8 +33,8 @@ export default function Sidebar() {
       <div className={`p-4 border-b border-[#0E6B7A] flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
         {!collapsed && (
           <div>
-            <h1 className="text-lg font-bold" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>🏥 Triaje IA</h1>
-            <p className="text-xs text-[#22D3EE]">Servicio de Urgencias</p>
+            <h1 className="text-lg font-bold" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>STriAI</h1>
+            <p className="text-xs text-[#22D3EE]">Triaje Multimodal IA</p>
           </div>
         )}
         <button onClick={() => setCollapsed(!collapsed)} className="text-[#22D3EE] hover:text-white rounded" aria-label={collapsed ? 'Expandir menú' : 'Colapsar menú'} style={{minHeight:'44px', minWidth:'44px', display:'flex', alignItems:'center', justifyContent:'center'}}>
