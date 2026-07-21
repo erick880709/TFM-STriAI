@@ -1,9 +1,11 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
-
-// Lazy-loaded pages (se irán agregando)
-import LoginPage from '../../pages/LoginPage'
+import PatientRegistrationPage from '../../pages/PatientRegistrationPage'
+import VitalSignsPage from '../../pages/VitalSignsPage'
+import ClinicalEvaluationPage from '../../pages/ClinicalEvaluationPage'
+import IAClassificationPage from '../../pages/IAClassificationPage'
+import TriageValidationPage from '../../pages/TriageValidationPage'
 
 export default function AppLayout() {
   return (
@@ -14,7 +16,11 @@ export default function AppLayout() {
         <main className="flex-1 overflow-y-auto p-6">
           <Routes>
             <Route path="/" element={<Navigate to="/pacientes" replace />} />
-            {/* Las rutas se irán agregando en HU-03 a HU-14 */}
+            <Route path="/pacientes" element={<PatientRegistrationPage />} />
+            <Route path="/signos-vitales" element={<VitalSignsPage />} />
+            <Route path="/evaluacion-clinica" element={<ClinicalEvaluationPage />} />
+            <Route path="/clasificacion-ia" element={<IAClassificationPage />} />
+            <Route path="/validacion" element={<TriageValidationPage />} />
           </Routes>
         </main>
       </div>
