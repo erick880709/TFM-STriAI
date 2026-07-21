@@ -6,6 +6,13 @@ import VitalSignsPage from '../../pages/VitalSignsPage'
 import ClinicalEvaluationPage from '../../pages/ClinicalEvaluationPage'
 import IAClassificationPage from '../../pages/IAClassificationPage'
 import TriageValidationPage from '../../pages/TriageValidationPage'
+import DashboardPage from '../../pages/DashboardPage'
+import ModelManagementPage from '../../pages/ModelManagementPage'
+import ModelComparisonPage from '../../pages/ModelComparisonPage'
+import AuditPage from '../../pages/AuditPage'
+import UserManagementPage from '../../pages/UserManagementPage'
+import HistoricoPacientePage from '../../pages/HistoricoPacientePage'
+import ControlCambiosPage from '../../pages/ControlCambiosPage'
 
 export default function AppLayout() {
   return (
@@ -21,6 +28,13 @@ export default function AppLayout() {
             <Route path="/evaluacion-clinica" element={<ClinicalEvaluationPage />} />
             <Route path="/clasificacion-ia" element={<IAClassificationPage />} />
             <Route path="/validacion" element={<TriageValidationPage />} />
+            <Route path="/dashboard" element={<DashboardPage />} />
+            <Route path="/modelos" element={<ModelManagementPage />} />
+            <Route path="/comparar-modelos" element={<ModelComparisonPage />} />
+            <Route path="/auditoria" element={<AuditPage />} />
+            <Route path="/usuarios" element={<UserManagementPage />} />
+            <Route path="/historico" element={<HistoricoPacientePage />} />
+            <Route path="/control-cambios" element={<ControlCambiosPage />} />
           </Routes>
         </main>
       </div>
