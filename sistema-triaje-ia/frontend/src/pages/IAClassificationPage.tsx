@@ -6,6 +6,7 @@ import { triagesApi } from '../api/triages'
 import type { VitalSigns } from '../types/triage'
 import { NIVELES_TRIAGE, NIVELES_COLORS } from '../lib/constants'
 import { LoadingSpinner, ErrorAlert } from '../components/shared'
+import StepIndicator from '../components/clinical/StepIndicator'
 
 function ShapDisplay({ data }: { data: { top_features?: { feature: string; importancia: number; direccion: string }[]; fallback?: boolean } }) {
   return (
@@ -104,6 +105,7 @@ export default function IAClassificationPage() {
 
   return (
     <div className="max-w-3xl">
+      <StepIndicator step={4} label="Flujo Triaje" />
       <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">🧠 Clasificación IA</h1>
       <p className="text-sm text-[#526771] mb-6">Predicción del nivel de triaje por el modelo de Machine Learning</p>
 

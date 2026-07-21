@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { patientsApi } from '../api/patients'
 import PatientSearch from '../components/clinical/PatientSearch'
+import StepIndicator from '../components/clinical/StepIndicator'
 import {
   TIPOS_DOCUMENTO, GRUPOS_SANGUINEOS, EPS_COLOMBIA,
   VIAS_LLEGADA, DEPARTAMENTOS_COLOMBIA,
@@ -65,6 +66,7 @@ export default function PatientRegistrationPage() {
 
   return (
     <div>
+      <StepIndicator step={1} label="Flujo Triaje" />
       <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">📝 Registrar Paciente</h1>
       <p className="text-sm text-[#526771] mb-6">Registro de nuevo paciente o búsqueda de existente</p>
 

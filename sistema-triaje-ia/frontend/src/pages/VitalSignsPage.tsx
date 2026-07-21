@@ -5,6 +5,7 @@ import { triagesApi } from '../api/triages'
 import { useAuth } from '../hooks/useAuth'
 import PatientSearch from '../components/clinical/PatientSearch'
 import type { Patient } from '../types/patient'
+import StepIndicator from '../components/clinical/StepIndicator'
 
 const RANGOS: Record<string, { min: number; max: number; unit: string; normal: [number, number]; label: string; help: string }> = {
   frecuencia_cardiaca: { min: 30, max: 250, unit: 'lpm', normal: [60, 100], label: 'Frecuencia Cardíaca', help: 'Latidos del corazón por minuto. Normal: 60-100 lpm.' },
@@ -107,58 +108,83 @@ export default function VitalSignsPage() {
 
   return (
     <div>
+      <StepIndicator step={2} label={`Paciente: ${patient.nombre} ${patient.apellido}`} />
       <h1 className="text-2xl font-bold text-[#0F3D47] mb-1" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>💓 Signos Vitales</h1>
       <p className="text-sm text-[#526771] mb-2">
-        Paciente: {patient.nombre} {patient.apellido} · {patient.numero_documento}
+        {patient.numero_documento}
       </p>
-
       <PatientSearch onSelect={(p) => { localStorage.setItem('active_patient', JSON.stringify(p)); setPatient(p) }} />
 
-      <div className="mt-6 bg-white border border-[#CFFAFE] rounded-lg p-5 max-w-xl">
-        <div className="space-y-4">
-          {Object.entries(RANGOS).map(([key, cfg]) => {
-            const val = parseFloat(signs[key as keyof typeof signs]) || 0
-            const status = val ? alertClass(val, cfg.normal) : ''
-            return (
-              <div key={key}>
-                <div className="flex items-center gap-2 mb-1">
-                  <PulseDot status={val ? status : ''} />
-                  <label className="text-sm font-medium text-[#0F3D47]">
-                    {cfg.label}
-                  </label>
-                  <span className="text-xs text-[#526771]" title={cfg.help}>ℹ️</span>
+      <div className="mt-6 grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Columna Izquierda: Prioridad Alta */}
+        <div className="bg-white border-2 border-red-300 rounded-lg p-5">
+          <h2 className="font-semibold text-red-700 mb-4 flex items-center gap-2" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>
+            🔴 Prioridad Alta
+          </h2>
+          <div className="space-y-5">
+            {(['saturacion_oxigeno', 'frecuencia_respiratoria'] as const).map(key => {
+              const cfg = RANGOS[key]
+              const val = parseFloat(signs[key]) || 0
+              const status = val ? alertClass(val, cfg.normal) : ''
+              return (
+                <div key={key}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <PulseDot status={val ? status : ''} />
+                    <label className="text-sm font-medium text-[#0F3D47]">{cfg.label} *</label>
+                    <span className="text-xs text-[#526771]" title={cfg.help}>ℹ️</span>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input type="number" step="0.1" min={cfg.min} max={cfg.max}
+                      value={signs[key]} onChange={(e) => handleChange(key, e.target.value)}
+                      className={`w-24 px-3 py-2 border-2 rounded-lg text-lg font-bold text-center outline-none focus:ring-2 ${inputBorderClass(status)} ${status === 'danger' ? 'bg-red-50 border-red-400' : 'bg-white'}`}
+                      style={{minHeight:'44px'}} aria-label={cfg.label} required />
+                    {val > 0 && (
+                      <span className={`text-xs font-bold ${statusLabelClass(status)}`}>
+                        {val < cfg.normal[0] ? `⚠ Bajo (<${cfg.normal[0]}${cfg.unit})` : val > cfg.normal[1] ? `⚠ Elev (>${cfg.normal[1]}${cfg.unit})` : '✓ Normal'}
+                      </span>
+                    )}
+                  </div>
                 </div>
-                <div className="flex items-center gap-3">
-                  <input
-                    type="number" step="0.1" min={cfg.min} max={cfg.max}
-                    value={signs[key as keyof typeof signs]}
-                    onChange={(e) => handleChange(key, e.target.value)}
-                    className={`flex-1 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 ${inputBorderClass(status)}`}
-                    style={{minHeight:'44px'}}
-                    aria-valuemin={cfg.min} aria-valuemax={cfg.max}
-                    aria-label={cfg.label}
-                    required
-                  />
-                  {val > 0 && (
-                    <span className={`text-xs font-medium w-20 ${statusLabelClass(status)}`}>
-                      {val < cfg.normal[0] ? '↓ Bajo' : val > cfg.normal[1] ? '↑ Alto' : '✓ Normal'}
-                    </span>
-                  )}
-                </div>
-                <p className="text-xs text-[#526771] mt-1 ml-1">Normal: {cfg.normal[0]}-{cfg.normal[1]} {cfg.unit}</p>
-              </div>
-            )
-          })}
+              )
+            })}
+          </div>
         </div>
 
-        {error && <div className="mt-4 bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm">{error}</div>}
+        {/* Columna Derecha: Resto de Signos */}
+        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
+          <div className="space-y-5">
+            {(['temperatura', 'frecuencia_cardiaca', 'presion_sistolica', 'presion_diastolica'] as const).map(key => {
+              const cfg = RANGOS[key]
+              const val = parseFloat(signs[key]) || 0
+              const status = val ? alertClass(val, cfg.normal) : ''
+              return (
+                <div key={key}>
+                  <div className="flex items-center gap-2 mb-1">
+                    <PulseDot status={val ? status : ''} />
+                    <label className="text-sm font-medium text-[#0F3D47]">{cfg.label} *</label>
+                  </div>
+                  <div className="flex items-center gap-3">
+                    <input type="number" step="0.1" min={cfg.min} max={cfg.max}
+                      value={signs[key]} onChange={(e) => handleChange(key, e.target.value)}
+                      className={`flex-1 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 ${inputBorderClass(status)}`}
+                      style={{minHeight:'44px'}} aria-label={cfg.label} required />
+                    <span className="text-xs text-[#526771] w-16 text-right">{cfg.unit}</span>
+                  </div>
+                </div>
+              )
+            })}
+          </div>
+        </div>
+      </div>
 
+      <div className="mt-6">
+        {error && <div className="mb-4 bg-red-50 border border-red-200 rounded-lg p-3 text-red-600 text-sm">{error}</div>}
         <button
           onClick={() => saveMutation.mutate()}
           disabled={saveMutation.isPending}
-          className="w-full mt-6 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 disabled:opacity-50 transition-colors"
+          className="w-full bg-[#0891B2] text-white py-3 rounded-lg font-medium hover:bg-[#0E6B7A] disabled:opacity-50 transition-colors"
         >
-          {saveMutation.isPending ? 'Guardando...' : 'Guardar Signos Vitales y Continuar'}
+          {saveMutation.isPending ? 'Guardando...' : 'Guardar y Continuar →'}
         </button>
       </div>
     </div>

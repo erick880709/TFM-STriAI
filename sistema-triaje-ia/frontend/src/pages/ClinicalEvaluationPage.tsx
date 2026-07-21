@@ -2,6 +2,7 @@ import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { triagesApi } from '../api/triages'
+import StepIndicator from '../components/clinical/StepIndicator'
 import { NIVELES_CONCIENCIA, COMORBILIDADES } from '../lib/constants'
 
 export default function ClinicalEvaluationPage() {
@@ -54,6 +55,7 @@ export default function ClinicalEvaluationPage() {
 
   return (
     <div className="max-w-2xl">
+      <StepIndicator step={3} label="Flujo Triaje" />
       <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">🩺 Evaluación Clínica</h1>
       <p className="text-sm text-[#526771] mb-6">Motivo de consulta, Glasgow, dolor y comorbilidades</p>
 

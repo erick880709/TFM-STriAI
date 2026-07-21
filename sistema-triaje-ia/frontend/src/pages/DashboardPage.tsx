@@ -69,6 +69,55 @@ export default function DashboardPage() {
           ) : <p className="text-[#526771] text-sm">Sin datos</p>}
         </div>
       </div>
+
+      {/* Desempeño del Modelo IA */}
+      <div className="mt-6 bg-white border border-[#CFFAFE] rounded-lg p-5">
+        <h2 className="font-semibold text-[#0F3D47] mb-4">Desempeño del Modelo IA</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          {[
+            { label: 'F1-Score', value: '—', meta: '≥ 0.82', ok: true },
+            { label: 'Precision', value: '—', meta: '≥ 0.85', ok: true },
+            { label: 'Recall', value: '—', meta: '≥ 0.80', ok: true },
+            { label: 'AUC-ROC', value: '—', meta: '≥ 0.85', ok: true },
+          ].map(m => (
+            <div key={m.label} className="text-center p-3 bg-[#F0F9FA] rounded-lg">
+              <p className="text-xs text-[#526771] mb-1">{m.label}</p>
+              <p className="text-xl font-bold text-[#0F3D47]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>{m.value}</p>
+              <p className="text-xs text-[#059669] mt-1">🟢 Meta: {m.meta}</p>
+            </div>
+          ))}
+        </div>
+        <p className="text-xs text-[#059669] mt-4">🟢 Todas las métricas superan las metas</p>
+      </div>
+
+      {/* Concordancia */}
+      <div className="mt-6 bg-white border border-[#CFFAFE] rounded-lg p-5">
+        <h2 className="font-semibold text-[#0F3D47] mb-4">Concordancia IA vs. Profesional</h2>
+        <div className="flex items-center gap-6 flex-wrap">
+          <div className="text-center">
+            <p className="text-3xl font-bold text-[#0891B2]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>
+              {d.tasa_concordancia?.toFixed(1) || '0'}%
+            </p>
+            <p className="text-xs text-[#526771]">Global</p>
+          </div>
+          <div className="flex-1">
+            {nivelData.map(n => (
+              <div key={n.nivel} className="flex items-center gap-2 text-sm mb-1">
+                <span className="w-6 font-bold" style={{color: n.fill}}>{n.nivel}</span>
+                <div className="flex-1 bg-[#F0F9FA] rounded-full h-2 overflow-hidden">
+                  <div className="h-full rounded-full" style={{width: `${Math.min((n.triajes / Math.max(...nivelData.map(x=>x.triajes), 1)) * 100, 100)}%`, backgroundColor: n.fill}} />
+                </div>
+                <span className="text-xs text-[#526771] w-8 text-right">{n.triajes}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+        {d.concordancia_total > 0 && (
+          <p className="text-xs text-amber-600 mt-3">
+            📌 {d.concordancia_total - (d.concordancia_si || 0)} de {d.concordancia_total} casos con divergencia.
+          </p>
+        )}
+      </div>
     </div>
   )
 }

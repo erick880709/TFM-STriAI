@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom'
 import { useMutation } from '@tanstack/react-query'
 import { triagesApi } from '../api/triages'
 import { useAuth } from '../hooks/useAuth'
+import StepIndicator from '../components/clinical/StepIndicator'
 import { NIVELES_TRIAGE, NIVELES_COLORS } from '../lib/constants'
 
 const PASOS = ['Registro', 'Signos Vitales', 'Evaluación', 'Clasificación IA', 'Validación']
@@ -56,6 +57,7 @@ export default function TriageValidationPage() {
 
   return (
     <div className="max-w-2xl">
+      <StepIndicator step={5} label="Flujo Triaje" />
       <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">✅ Validación y Cierre</h1>
       <p className="text-sm text-[#526771] mb-6">Confirmación profesional del nivel de triaje y cierre del episodio</p>
 
