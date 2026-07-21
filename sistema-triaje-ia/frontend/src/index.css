@@ -1,39 +1,47 @@
-/* STriAI — Design System Healthcare (Tailwind v4)
-   Colores: resources/diseno/design-system.md
-   Mockups: resources/diseno/imagenes/
+/* STriAI — \"Cian Quirúrgico\" Design System
+   Front Skill: .github/skills/front/SKILL.md
+   Plan: resources/diseno/imagenes/ux/plan-diseno-front.md
    ============================================ */
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* Design Tokens como CSS custom properties */
+/* Design Tokens — Paleta \"Cian Quirúrgico\" */
 :root {
-  --color-primary: #0891B2;
-  --color-primary-hover: #0E7490;
-  --color-primary-light: #22D3EE;
-  --color-accent: #059669;
-  --color-bg: #ECFEFF;
-  --color-bg-card: #FFFFFF;
-  --color-fg: #164E63;
-  --color-fg-muted: #64748B;
-  --color-border: #A5F3FC;
-  --color-border-light: #CFFAFE;
-  --color-destructive: #DC2626;
-  --color-warning: #F59E0B;
-  --font-heading: 'Lexend', system-ui, sans-serif;
+  --color-scrub: #0A4C5C;
+  --color-teal: #0891B2;
+  --color-teal-hover: #0E7490;
+  --color-ether: #22D3EE;
+  --color-linen: #F0F9FA;
+  --color-snow: #FFFFFF;
+  --color-ink: #0F3D47;
+  --color-slate: #526771;
+  --color-border: #CFFAFE;
+  --color-border-strong: #A5F3FC;
+  --color-coral: #E04A3A;
+  --color-amber: #D97706;
+  --color-moss: #059669;
+  --font-display: 'Lexend', system-ui, sans-serif;
   --font-body: 'Source Sans 3', system-ui, sans-serif;
+  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
 }
 
 /* Reset */
 *, *::before, *::after { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: 'Source Sans 3', system-ui, sans-serif;
-  background: var(--color-bg);
-  color: var(--color-fg);
+  font-family: var(--font-body);
+  background: var(--color-linen);
+  color: var(--color-ink);
 }
 #root { min-height: 100vh; }
 
 /* Headings */
-h1, h2, h3, h4 { font-family: 'Lexend', system-ui, sans-serif; }
+h1, h2, h3, h4 { font-family: var(--font-display); }
+
+/* Datos técnicos: IDs, versiones, códigos */
+code, .font-mono, [data-mono] {
+  font-family: var(--font-mono);
+  font-size: 0.875rem;
+}
 
 /* Clase base para inputs */
 .input {
@@ -41,15 +49,15 @@ h1, h2, h3, h4 { font-family: 'Lexend', system-ui, sans-serif; }
   padding: 0.5rem 0.75rem;
   font-size: 0.875rem;
   line-height: 1.5;
-  color: var(--color-fg);
-  background-color: var(--color-bg-card);
-  border: 1px solid var(--color-border);
+  color: var(--color-ink);
+  background-color: var(--color-snow);
+  border: 1px solid var(--color-border-strong);
   border-radius: 0.5rem;
   outline: none;
   transition: border-color 0.15s ease, box-shadow 0.15s ease;
 }
 .input:focus {
-  border-color: var(--color-primary);
+  border-color: var(--color-teal);
   box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.2);
 }
 .input:disabled {
@@ -60,15 +68,15 @@ h1, h2, h3, h4 { font-family: 'Lexend', system-ui, sans-serif; }
 
 /* Accesibilidad */
 :focus-visible {
-  outline: 2px solid var(--color-primary);
+  outline: 2px solid var(--color-teal);
   outline-offset: 2px;
 }
 
 /* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--color-bg); }
-::-webkit-scrollbar-thumb { background: var(--color-border); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-primary); }
+::-webkit-scrollbar-track { background: var(--color-linen); }
+::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--color-teal); }
 
 /* Impresión */
 @media print {

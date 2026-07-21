@@ -17,7 +17,7 @@ import ControlCambiosPage from '../../pages/ControlCambiosPage'
 
 export default function AppLayout() {
   return (
-    <div className="flex h-screen" style={{backgroundColor:'#ECFEFF'}}>
+    <div className="flex h-screen" style={{backgroundColor:'#F0F9FA'}}>
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />

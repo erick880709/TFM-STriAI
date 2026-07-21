@@ -29,8 +29,8 @@ export default function Sidebar() {
   const hasPermission = (perm: string) => permissions.includes(perm)
 
   return (
-    <aside className={`${collapsed ? 'w-16' : 'w-64'} bg-[#164E63] text-white flex flex-col shrink-0 transition-all duration-200`} aria-label="Navegación principal">
-      <div className={`p-4 border-b border-[#0E7490] flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
+    <aside className={`${collapsed ? 'w-14' : 'w-60'} bg-[#0A4C5C] text-white flex flex-col shrink-0 transition-all duration-200`} aria-label="Navegación principal">
+      <div className={`p-4 border-b border-[#0E6B7A] flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
         {!collapsed && (
           <div>
             <h1 className="text-lg font-bold" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>🏥 Triaje IA</h1>
