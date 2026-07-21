@@ -162,7 +162,7 @@ def render_dashboard():
     with col_d:
         st.subheader("📅 Tendencia de Triajes (7 días)")
         if triajes_7d:
-            df_tendencia = pd.DataFrame(triages_7d)
+            df_tendencia = pd.DataFrame(triajes_7d)
             if "dia" in df_tendencia.columns and "cnt" in df_tendencia.columns:
                 st.line_chart(df_tendencia.set_index("dia")["cnt"], use_container_width=True)
             else:
