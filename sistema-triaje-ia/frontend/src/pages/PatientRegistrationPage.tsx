@@ -67,17 +67,17 @@ export default function PatientRegistrationPage() {
   return (
     <div>
       <StepIndicator step={1} label="Flujo Triaje" />
-      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">📝 Registrar Paciente</h1>
-      <p className="text-sm text-[#526771] mb-6">Registro de nuevo paciente o búsqueda de existente</p>
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1">📝 Registrar Paciente</h1>
+      <p className="text-sm text-[#64748B] mb-6">Registro de nuevo paciente o búsqueda de existente</p>
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#F0F9FA] rounded-lg p-1 w-fit">
+      <div className="flex gap-1 mb-6 bg-[#ECFEFF] rounded-lg p-1 w-fit">
         {(['new', 'search'] as const).map((t) => (
           <button
             key={t}
             onClick={() => setTab(t)}
             className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${
-              tab === t ? 'bg-white shadow text-[#0F3D47]' : 'text-[#526771] hover:text-[#0F3D47]'
+              tab === t ? 'bg-white shadow text-[#164E63]' : 'text-[#64748B] hover:text-[#164E63]'
             }`}
           >
             {t === 'new' ? '🆕 Nuevo Paciente' : '🔍 Buscar Paciente'}
@@ -92,8 +92,8 @@ export default function PatientRegistrationPage() {
       ) : (
         <form onSubmit={handleSubmit} className="max-w-2xl space-y-5">
           {/* Datos básicos */}
-          <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
-            <h2 className="font-semibold text-[#0F3D47] mb-4">Datos Básicos</h2>
+          <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
+            <h2 className="font-semibold text-[#164E63] mb-4">Datos Básicos</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Field label="Tipo Doc.">
                 <select value={form.tipo_documento} onChange={(e) => handleChange('tipo_documento', e.target.value)}
@@ -124,8 +124,8 @@ export default function PatientRegistrationPage() {
           </div>
 
           {/* Datos clínicos */}
-          <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
-            <h2 className="font-semibold text-[#0F3D47] mb-4">Datos Clínicos</h2>
+          <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
+            <h2 className="font-semibold text-[#164E63] mb-4">Datos Clínicos</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Field label="Grupo Sanguíneo">
                 <select value={form.grupo_sanguineo} onChange={(e) => handleChange('grupo_sanguineo', e.target.value)} className="input">
@@ -152,8 +152,8 @@ export default function PatientRegistrationPage() {
           </div>
 
           {/* Contacto */}
-          <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
-            <h2 className="font-semibold text-[#0F3D47] mb-4">Contacto y Ubicación</h2>
+          <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
+            <h2 className="font-semibold text-[#164E63] mb-4">Contacto y Ubicación</h2>
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <Field label="Departamento">
                 <select value={form.departamento} onChange={(e) => handleChange('departamento', e.target.value)} className="input">
@@ -202,7 +202,7 @@ export default function PatientRegistrationPage() {
 function Field({ label, children, className = '' }: { label: string; children: React.ReactNode; className?: string }) {
   return (
     <div className={className}>
-      <label className="block text-xs font-medium text-[#526771] mb-1">{label}</label>
+      <label className="block text-xs font-medium text-[#64748B] mb-1">{label}</label>
       {children}
     </div>
   )

@@ -100,7 +100,7 @@ export default function VitalSignsPage() {
   if (!patient) {
     return (
       <div className="max-w-lg mx-auto mt-12 text-center">
-        <p className="text-[#526771] mb-4">No hay un paciente activo. Busca uno para continuar.</p>
+        <p className="text-[#64748B] mb-4">No hay un paciente activo. Busca uno para continuar.</p>
         <PatientSearch onSelect={(p) => { localStorage.setItem('active_patient', JSON.stringify(p)); setPatient(p) }} />
       </div>
     )
@@ -109,8 +109,8 @@ export default function VitalSignsPage() {
   return (
     <div>
       <StepIndicator step={2} label={`Paciente: ${patient.nombre} ${patient.apellido}`} />
-      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>💓 Signos Vitales</h1>
-      <p className="text-sm text-[#526771] mb-2">
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>💓 Signos Vitales</h1>
+      <p className="text-sm text-[#64748B] mb-2">
         {patient.numero_documento}
       </p>
       <PatientSearch onSelect={(p) => { localStorage.setItem('active_patient', JSON.stringify(p)); setPatient(p) }} />
@@ -130,8 +130,8 @@ export default function VitalSignsPage() {
                 <div key={key}>
                   <div className="flex items-center gap-2 mb-1">
                     <PulseDot status={val ? status : ''} />
-                    <label className="text-sm font-medium text-[#0F3D47]">{cfg.label} *</label>
-                    <span className="text-xs text-[#526771]" title={cfg.help}>ℹ️</span>
+                    <label className="text-sm font-medium text-[#164E63]">{cfg.label} *</label>
+                    <span className="text-xs text-[#64748B]" title={cfg.help}>ℹ️</span>
                   </div>
                   <div className="flex items-center gap-3">
                     <input type="number" step="0.1" min={cfg.min} max={cfg.max}
@@ -151,7 +151,7 @@ export default function VitalSignsPage() {
         </div>
 
         {/* Columna Derecha: Resto de Signos */}
-        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
           <div className="space-y-5">
             {(['temperatura', 'frecuencia_cardiaca', 'presion_sistolica', 'presion_diastolica'] as const).map(key => {
               const cfg = RANGOS[key]
@@ -161,14 +161,14 @@ export default function VitalSignsPage() {
                 <div key={key}>
                   <div className="flex items-center gap-2 mb-1">
                     <PulseDot status={val ? status : ''} />
-                    <label className="text-sm font-medium text-[#0F3D47]">{cfg.label} *</label>
+                    <label className="text-sm font-medium text-[#164E63]">{cfg.label} *</label>
                   </div>
                   <div className="flex items-center gap-3">
                     <input type="number" step="0.1" min={cfg.min} max={cfg.max}
                       value={signs[key]} onChange={(e) => handleChange(key, e.target.value)}
                       className={`flex-1 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 ${inputBorderClass(status)}`}
                       style={{minHeight:'44px'}} aria-label={cfg.label} required />
-                    <span className="text-xs text-[#526771] w-16 text-right">{cfg.unit}</span>
+                    <span className="text-xs text-[#64748B] w-16 text-right">{cfg.unit}</span>
                   </div>
                 </div>
               )
@@ -182,7 +182,7 @@ export default function VitalSignsPage() {
         <button
           onClick={() => saveMutation.mutate()}
           disabled={saveMutation.isPending}
-          className="w-full bg-[#0891B2] text-white py-3 rounded-lg font-medium hover:bg-[#0E6B7A] disabled:opacity-50 transition-colors"
+          className="w-full bg-[#0891B2] text-white py-3 rounded-lg font-medium hover:bg-[#0E7490] disabled:opacity-50 transition-colors"
         >
           {saveMutation.isPending ? 'Guardando...' : 'Guardar y Continuar →'}
         </button>

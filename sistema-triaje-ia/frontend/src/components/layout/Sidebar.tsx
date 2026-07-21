@@ -30,7 +30,7 @@ export default function Sidebar() {
 
   return (
     <aside className={`${collapsed ? 'w-14' : 'w-60'} bg-[#0A4C5C] text-white flex flex-col shrink-0 transition-all duration-200`} aria-label="Navegación principal">
-      <div className={`p-4 border-b border-[#0E6B7A] flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
+      <div className={`p-4 border-b border-[#0E7490] flex items-center ${collapsed ? 'justify-center' : 'justify-between'}`}>
         {!collapsed && (
           <div>
             <h1 className="text-lg font-bold" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>STriAI</h1>
@@ -60,7 +60,7 @@ export default function Sidebar() {
                     `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
                         ? 'bg-[#0891B2] text-white shadow-sm'
-                        : 'text-[#CFFAFE] hover:bg-[#0E6B7A] hover:text-white'
+                        : 'text-[#A5F3FC] hover:bg-[#0E7490] hover:text-white'
                     } ${collapsed ? 'justify-center' : ''}`
                   }
                   style={{minHeight:'44px'}}
@@ -82,8 +82,8 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-3 border-t border-[#0E6B7A]">
-        <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : 'px-3'} py-2 text-sm text-[#CFFAFE]`}>
+      <div className="p-3 border-t border-[#0E7490]">
+        <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : 'px-3'} py-2 text-sm text-[#A5F3FC]`}>
           <div className="w-8 h-8 rounded-full bg-[#0891B2] flex items-center justify-center text-xs font-bold shrink-0">
             {user?.username?.charAt(0).toUpperCase()}
           </div>

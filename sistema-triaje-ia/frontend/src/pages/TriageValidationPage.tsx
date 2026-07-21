@@ -34,7 +34,7 @@ export default function TriageValidationPage() {
   if (!triageId && !closed) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#526771]">No hay un triaje activo para validar.</p>
+        <p className="text-[#64748B]">No hay un triaje activo para validar.</p>
       </div>
     )
   }
@@ -44,7 +44,7 @@ export default function TriageValidationPage() {
       <div className="max-w-lg mx-auto mt-12 text-center">
         <div className="text-6xl mb-4">🎉</div>
         <h1 className="text-2xl font-bold text-green-700 mb-2">¡Triaje Completado!</h1>
-        <p className="text-[#526771] mb-6">El evento de triaje ha sido cerrado exitosamente.</p>
+        <p className="text-[#64748B] mb-6">El evento de triaje ha sido cerrado exitosamente.</p>
         <button
           onClick={() => navigate('/pacientes')}
           className="bg-blue-600 text-white px-6 py-3 rounded-lg font-medium hover:bg-blue-700"
@@ -58,8 +58,8 @@ export default function TriageValidationPage() {
   return (
     <div className="max-w-2xl">
       <StepIndicator step={5} label="Flujo Triaje" />
-      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">✅ Validación y Cierre</h1>
-      <p className="text-sm text-[#526771] mb-6">Confirmación profesional del nivel de triaje y cierre del episodio</p>
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1">✅ Validación y Cierre</h1>
+      <p className="text-sm text-[#64748B] mb-6">Confirmación profesional del nivel de triaje y cierre del episodio</p>
 
       {/* Progreso */}
       <div className="flex items-center gap-1 mb-8 flex-wrap">
@@ -77,9 +77,9 @@ export default function TriageValidationPage() {
 
       <div className="space-y-5">
         {/* Clasificación profesional */}
-        <div className="bg-white border border-[#CFFAFE] rounded-lg p-6">
-          <h2 className="font-semibold text-[#0F3D47] mb-4">🏷️ Clasificación del Profesional</h2>
-          <p className="text-sm text-[#526771] mb-3">Selecciona el nivel de triaje según tu criterio clínico:</p>
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-6">
+          <h2 className="font-semibold text-[#164E63] mb-4">🏷️ Clasificación del Profesional</h2>
+          <p className="text-sm text-[#64748B] mb-3">Selecciona el nivel de triaje según tu criterio clínico:</p>
           <div className="flex gap-3 flex-wrap">
             {NIVELES_TRIAGE.map((nivel) => (
               <button
@@ -87,7 +87,7 @@ export default function TriageValidationPage() {
                 onClick={() => setNivelProf(nivel)}
                 className={`px-6 py-3 rounded-lg text-lg font-bold border-2 transition-all ${
                   nivelProf === nivel
-                    ? 'border-[#0F3D47] scale-105'
+                    ? 'border-[#164E63] scale-105'
                     : 'border-transparent opacity-60 hover:opacity-100'
                 }`}
                 style={{ backgroundColor: NIVELES_COLORS[nivel] + '20', color: NIVELES_COLORS[nivel] }}
@@ -99,8 +99,8 @@ export default function TriageValidationPage() {
         </div>
 
         {/* Cierre */}
-        <div className="bg-white border border-[#CFFAFE] rounded-lg p-6">
-          <h2 className="font-semibold text-[#0F3D47] mb-4">🔒 Cierre del Triaje</h2>
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-6">
+          <h2 className="font-semibold text-[#164E63] mb-4">🔒 Cierre del Triaje</h2>
           <textarea
             value={motivoCierre}
             onChange={(e) => setMotivoCierre(e.target.value)}

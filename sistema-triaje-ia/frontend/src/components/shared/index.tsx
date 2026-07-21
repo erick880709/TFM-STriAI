@@ -1,8 +1,8 @@
 export function LoadingSpinner({ message = 'Cargando...' }: { message?: string }) {
   return (
     <div className="flex flex-col items-center justify-center py-12 gap-3">
-      <div className="w-8 h-8 border-4 border-[#CFFAFE] border-t-[#0891B2] rounded-full animate-spin" />
-      <p className="text-sm text-[#526771]">{message}</p>
+      <div className="w-8 h-8 border-4 border-[#A5F3FC] border-t-[#0891B2] rounded-full animate-spin" />
+      <p className="text-sm text-[#64748B]">{message}</p>
     </div>
   )
 }
@@ -23,7 +23,7 @@ export function ErrorAlert({ error, onRetry }: { error: string; onRetry?: () => 
 export function EmptyState({ message = 'Sin datos disponibles' }: { message?: string }) {
   return (
     <div className="text-center py-12">
-      <p className="text-[#526771]">{message}</p>
+      <p className="text-[#64748B]">{message}</p>
     </div>
   )
 }

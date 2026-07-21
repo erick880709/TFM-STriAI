@@ -28,7 +28,7 @@ export default function PatientSearch({ onSelect }: PatientSearchProps) {
   }
 
   return (
-    <div className="bg-white border border-[#CFFAFE] rounded-lg p-4">
+    <div className="bg-white border border-[#A5F3FC] rounded-lg p-4">
       <div className="flex gap-3">
         <input
           type="text"

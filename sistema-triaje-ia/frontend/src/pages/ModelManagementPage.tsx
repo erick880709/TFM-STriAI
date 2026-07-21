@@ -30,8 +30,8 @@ export default function ModelManagementPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">⚙️ Gestión de Modelos IA</h1>
-      <p className="text-sm text-[#526771] mb-4">Registro, versionado y activación de modelos de ML</p>
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1">⚙️ Gestión de Modelos IA</h1>
+      <p className="text-sm text-[#64748B] mb-4">Registro, versionado y activación de modelos de ML</p>
 
       {status.isError && <ErrorAlert error="Error al obtener estado de inferencia" onRetry={() => status.refetch()} />}
       {s && (
@@ -42,10 +42,10 @@ export default function ModelManagementPage() {
       )}
 
       {/* Tabs */}
-      <div className="flex gap-1 mb-6 bg-[#F0F9FA] rounded-lg p-1 w-fit" role="tablist">
+      <div className="flex gap-1 mb-6 bg-[#ECFEFF] rounded-lg p-1 w-fit" role="tablist">
         {(['disk', 'db', 'register'] as const).map((t) => (
           <button key={t} onClick={() => setTab(t)} role="tab" aria-selected={tab === t}
-            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${tab === t ? 'bg-white shadow text-[#0F3D47]' : 'text-[#526771]'}`}>
+            className={`px-4 py-2 rounded-md text-sm font-medium transition-colors ${tab === t ? 'bg-white shadow text-[#164E63]' : 'text-[#64748B]'}`}>
             {t === 'disk' ? '💾 Serializados' : t === 'db' ? '🗄️ Registro BD' : '➕ Registrar'}
           </button>
         ))}
@@ -57,26 +57,26 @@ export default function ModelManagementPage() {
           {diskModels.data?.map((m: DiskModel) => {
             const isActive = m.version === currentActiveVersion
             return (
-              <div key={m.version} className="bg-white border border-[#CFFAFE] rounded-lg p-4 flex items-center justify-between">
+              <div key={m.version} className="bg-white border border-[#A5F3FC] rounded-lg p-4 flex items-center justify-between">
                 <div>
-                  <p className="font-medium text-[#0F3D47]">{m.nombre} {isActive ? <span className="text-xs text-green-600 font-medium">🟢 ACTIVO</span> : <span className="text-xs text-[#526771]">⚪ Inactivo</span>}</p>
-                  <p className="text-xs text-[#526771]">v{m.version} · {m.n_features} features · {m.tamano_mb} MB</p>
+                  <p className="font-medium text-[#164E63]">{m.nombre} {isActive ? <span className="text-xs text-green-600 font-medium">🟢 ACTIVO</span> : <span className="text-xs text-[#64748B]">⚪ Inactivo</span>}</p>
+                  <p className="text-xs text-[#64748B]">v{m.version} · {m.n_features} features · {m.tamano_mb} MB</p>
                 </div>
-                <span className="text-sm text-[#526771]">F1: {m.f1_macro?.toFixed(3) || '?'}</span>
+                <span className="text-sm text-[#64748B]">F1: {m.f1_macro?.toFixed(3) || '?'}</span>
               </div>
             )
           })}
-          {diskModels.data?.length === 0 && <p className="text-[#526771]">No se encontraron modelos en disco.</p>}
+          {diskModels.data?.length === 0 && <p className="text-[#64748B]">No se encontraron modelos en disco.</p>}
         </div>
       )}
 
       {tab === 'db' && (
         <div className="space-y-3">
           {dbModels.data?.map((m: ModelInfo) => (
-            <div key={m.IdModelo} className="bg-white border border-[#CFFAFE] rounded-lg p-4 flex items-center justify-between">
+            <div key={m.IdModelo} className="bg-white border border-[#A5F3FC] rounded-lg p-4 flex items-center justify-between">
               <div>
-                <p className="font-medium text-[#0F3D47]">{m.Nombre} <span className={`text-xs ${m.Estado === 'Activo' ? 'text-green-600' : 'text-[#526771]'}`}>{m.Estado === 'Activo' ? '🟢' : '⚪'} {m.Estado}</span></p>
-                <p className="text-xs text-[#526771]">v{m.Version} · {m.Arquitectura} · F1: {m.F1Score || '?'}</p>
+                <p className="font-medium text-[#164E63]">{m.Nombre} <span className={`text-xs ${m.Estado === 'Activo' ? 'text-green-600' : 'text-[#64748B]'}`}>{m.Estado === 'Activo' ? '🟢' : '⚪'} {m.Estado}</span></p>
+                <p className="text-xs text-[#64748B]">v{m.Version} · {m.Arquitectura} · F1: {m.F1Score || '?'}</p>
               </div>
               {m.Estado !== 'Activo' && m.IdModelo && (
                 <button onClick={() => activateMut.mutate(m.IdModelo!)} className="text-sm bg-green-600 text-white px-3 py-1 rounded hover:bg-green-700">🟢 Activar</button>
@@ -87,10 +87,10 @@ export default function ModelManagementPage() {
       )}
 
       {tab === 'register' && (
-        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5 max-w-md space-y-4">
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-5 max-w-md space-y-4">
           {(['nombre', 'version'] as const).map((f) => (
             <div key={f}>
-              <label className="block text-xs font-medium text-[#526771] mb-1 capitalize">{f.replace('_', ' ')} *</label>
+              <label className="block text-xs font-medium text-[#64748B] mb-1 capitalize">{f.replace('_', ' ')} *</label>
               <input value={regForm[f]} onChange={(e) => setRegForm(p => ({ ...p, [f]: e.target.value }))} className="input w-full" />
             </div>
           ))}

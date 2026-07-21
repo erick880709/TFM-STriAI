@@ -48,7 +48,7 @@ export default function ClinicalEvaluationPage() {
   if (!triageId) {
     return (
       <div className="text-center py-12">
-        <p className="text-[#526771]">No hay un triaje activo. Inicia desde el registro de paciente.</p>
+        <p className="text-[#64748B]">No hay un triaje activo. Inicia desde el registro de paciente.</p>
       </div>
     )
   }
@@ -56,13 +56,13 @@ export default function ClinicalEvaluationPage() {
   return (
     <div className="max-w-2xl">
       <StepIndicator step={3} label="Flujo Triaje" />
-      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">🩺 Evaluación Clínica</h1>
-      <p className="text-sm text-[#526771] mb-6">Motivo de consulta, Glasgow, dolor y comorbilidades</p>
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1">🩺 Evaluación Clínica</h1>
+      <p className="text-sm text-[#64748B] mb-6">Motivo de consulta, Glasgow, dolor y comorbilidades</p>
 
       <div className="space-y-5">
         {/* Motivo */}
-        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
-          <h2 className="font-semibold text-[#0F3D47] mb-3">Motivo de Consulta</h2>
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
+          <h2 className="font-semibold text-[#164E63] mb-3">Motivo de Consulta</h2>
           <textarea
             value={form.motivo_consulta}
             onChange={(e) => setForm((p) => ({ ...p, motivo_consulta: e.target.value }))}
@@ -83,8 +83,8 @@ export default function ClinicalEvaluationPage() {
         </div>
 
         {/* Glasgow */}
-        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
-          <h2 className="font-semibold text-[#0F3D47] mb-3">Escala de Glasgow</h2>
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
+          <h2 className="font-semibold text-[#164E63] mb-3">Escala de Glasgow</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
             {[
               { key: 'glasgow_ocular', label: 'Apertura Ocular', min: 1, max: 4 },
@@ -92,7 +92,7 @@ export default function ClinicalEvaluationPage() {
               { key: 'glasgow_motora', label: 'Respuesta Motora', min: 1, max: 6 },
             ].map((g) => (
               <div key={g.key}>
-                <label className="block text-xs font-medium text-[#526771] mb-1">{g.label}</label>
+                <label className="block text-xs font-medium text-[#64748B] mb-1">{g.label}</label>
                 <input
                   type="number" min={g.min} max={g.max}
                   value={form[g.key as keyof typeof form] as number}
@@ -108,16 +108,16 @@ export default function ClinicalEvaluationPage() {
         </div>
 
         {/* Dolor + Conciencia */}
-        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h2 className="font-semibold text-[#0F3D47] mb-3">Escala de Dolor (0-10)</h2>
+              <h2 className="font-semibold text-[#164E63] mb-3">Escala de Dolor (0-10)</h2>
               <input
                 type="range" min={0} max={10} value={form.escala_dolor}
                 onChange={(e) => setForm((p) => ({ ...p, escala_dolor: parseInt(e.target.value) }))}
                 className="w-full"
               />
-              <div className="flex justify-between text-xs text-[#526771] mt-1">
+              <div className="flex justify-between text-xs text-[#64748B] mt-1">
                 <span>0 Sin dolor</span>
                 <span className={`font-bold text-lg ${form.escala_dolor >= 7 ? 'text-red-600' : form.escala_dolor >= 3 ? 'text-amber-600' : 'text-green-600'}`}>
                   {form.escala_dolor}/10
@@ -126,7 +126,7 @@ export default function ClinicalEvaluationPage() {
               </div>
             </div>
             <div>
-              <h2 className="font-semibold text-[#0F3D47] mb-3">Nivel de Conciencia</h2>
+              <h2 className="font-semibold text-[#164E63] mb-3">Nivel de Conciencia</h2>
               <select value={form.nivel_conciencia}
                 onChange={(e) => setForm((p) => ({ ...p, nivel_conciencia: e.target.value }))}
                 className="w-full px-3 py-2 border border-[#A5F3FC] rounded-lg text-sm">
@@ -137,8 +137,8 @@ export default function ClinicalEvaluationPage() {
         </div>
 
         {/* Comorbilidades */}
-        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
-          <h2 className="font-semibold text-[#0F3D47] mb-3">Comorbilidades</h2>
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
+          <h2 className="font-semibold text-[#164E63] mb-3">Comorbilidades</h2>
           <div className="flex flex-wrap gap-2">
             {COMORBILIDADES.map((c) => (
               <button
@@ -148,7 +148,7 @@ export default function ClinicalEvaluationPage() {
                 className={`px-3 py-1.5 rounded-full text-sm border transition-colors ${
                   form.comorbilidades.includes(c)
                     ? 'bg-blue-100 border-blue-300 text-blue-700'
-                    : 'bg-white border-[#CFFAFE] text-[#526771] hover:bg-[#F0F9FA]'
+                    : 'bg-white border-[#A5F3FC] text-[#64748B] hover:bg-[#ECFEFF]'
                 }`}
               >
                 {c}

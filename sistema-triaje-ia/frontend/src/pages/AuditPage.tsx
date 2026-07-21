@@ -24,8 +24,8 @@ export default function AuditPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">🔍 Auditoría</h1>
-      <p className="text-sm text-[#526771] mb-6">Registro de acciones en el sistema</p>
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1">🔍 Auditoría</h1>
+      <p className="text-sm text-[#64748B] mb-6">Registro de acciones en el sistema</p>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <input type="date" value={filters.fecha_desde} onChange={e => setFilters(p => ({ ...p, fecha_desde: e.target.value, page: 1 }))}
@@ -41,21 +41,21 @@ export default function AuditPage() {
 
       {items.length === 0 ? <EmptyState message="No se encontraron registros de auditoría con los filtros seleccionados." /> : (
         <div className="overflow-x-auto">
-          <table className="w-full bg-white border border-[#CFFAFE] rounded-lg text-sm">
+          <table className="w-full bg-white border border-[#A5F3FC] rounded-lg text-sm">
             <caption className="sr-only">Registros de auditoría del sistema</caption>
             <thead>
-              <tr className="border-b border-[#CFFAFE] bg-[#F0F9FA] text-left text-xs font-medium text-[#526771] uppercase">
+              <tr className="border-b border-[#A5F3FC] bg-[#ECFEFF] text-left text-xs font-medium text-[#64748B] uppercase">
                 <th scope="col" className="px-4 py-3">Fecha</th><th scope="col" className="px-4 py-3">Usuario</th><th scope="col" className="px-4 py-3">Acción</th><th scope="col" className="px-4 py-3">Entidad</th><th scope="col" className="px-4 py-3">Detalle</th>
               </tr>
             </thead>
             <tbody>
               {items.map((e, i) => (
-                <tr key={i} className="border-b border-[#CFFAFE] hover:bg-[#F0F9FA]">
-                  <td className="px-4 py-3 text-[#526771] text-xs">{e.FechaHora?.slice(0, 16)}</td>
+                <tr key={i} className="border-b border-[#A5F3FC] hover:bg-[#ECFEFF]">
+                  <td className="px-4 py-3 text-[#64748B] text-xs">{e.FechaHora?.slice(0, 16)}</td>
                   <td className="px-4 py-3 font-medium">{e.Usuario}</td>
                   <td className="px-4 py-3">{e.Accion}</td>
                   <td className="px-4 py-3">{e.EntidadAfectada}</td>
-                  <td className="px-4 py-3 text-[#526771] text-xs max-w-xs truncate">{e.Observaciones}</td>
+                  <td className="px-4 py-3 text-[#64748B] text-xs max-w-xs truncate">{e.Observaciones}</td>
                 </tr>
               ))}
             </tbody>
@@ -64,7 +64,7 @@ export default function AuditPage() {
             <div className="flex justify-center gap-2 mt-4">
               {Array.from({ length: (data as { pages: number }).pages }, (_, i) => (
                 <button key={i} onClick={() => setFilters(p => ({ ...p, page: i + 1 }))}
-                  className={`px-3 py-1 rounded text-sm ${filters.page === i + 1 ? 'bg-blue-600 text-white' : 'bg-[#F0F9FA] text-[#526771] hover:bg-[#CFFAFE]'}`}>
+                  className={`px-3 py-1 rounded text-sm ${filters.page === i + 1 ? 'bg-blue-600 text-white' : 'bg-[#ECFEFF] text-[#64748B] hover:bg-[#A5F3FC]'}`}>
                   {i + 1}
                 </button>
               ))}

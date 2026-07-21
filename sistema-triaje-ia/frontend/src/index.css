@@ -1,108 +1,126 @@
-/* STriAI — \"Cian Quirúrgico\" Design System
-   Front Skill: .github/skills/front/SKILL.md
-   Plan: resources/diseno/imagenes/ux/plan-diseno-front.md
-   ============================================ */
-@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap');
+/* STriAI - Design System from mockups.html */
+@import url('https://fonts.googleapis.com/css2?family=Lexend:wght@400;500;600;700&family=Source+Sans+3:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap');
 
-/* Design Tokens — Paleta \"Cian Quirúrgico\" */
 :root {
-  --color-scrub: #0A4C5C;
-  --color-teal: #0891B2;
-  --color-teal-hover: #0E7490;
-  --color-ether: #22D3EE;
-  --color-linen: #F0F9FA;
-  --color-snow: #FFFFFF;
-  --color-ink: #0F3D47;
-  --color-slate: #526771;
-  --color-border: #CFFAFE;
-  --color-border-strong: #A5F3FC;
-  --color-coral: #E04A3A;
-  --color-amber: #D97706;
-  --color-moss: #059669;
-  --font-display: 'Lexend', system-ui, sans-serif;
-  --font-body: 'Source Sans 3', system-ui, sans-serif;
-  --font-mono: 'JetBrains Mono', 'Fira Code', monospace;
+  --primary: #0891B2; --on-primary: #FFFFFF; --secondary: #22D3EE;
+  --accent: #059669; --bg: #ECFEFF; --fg: #164E63; --card: #FFFFFF;
+  --muted: #E8F1F6; --muted-fg: #64748B; --border: #A5F3FC;
+  --destructive: #DC2626;
+  --nivel1: #DC2626; --nivel2: #EA580C; --nivel3: #F59E0B;
+  --nivel4: #059669; --nivel5: #64748B;
+  --color-scrub: #0A4C5C; --color-teal: #0891B2; --color-ether: #22D3EE;
+  --color-linen: #ECFEFF; --color-snow: #FFFFFF; --color-ink: #164E63;
+  --color-slate: #64748B; --color-border: #A5F3FC; --color-border-strong: #A5F3FC;
+  --color-coral: #DC2626; --color-amber: #EA580C; --color-moss: #059669;
+  --font-display: "Lexend", system-ui, sans-serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+  --font-mono: "JetBrains Mono", "Fira Code", monospace;
 }
 
-/* Reset */
 *, *::before, *::after { box-sizing: border-box; }
+
 body {
   margin: 0;
   font-family: var(--font-body);
-  background: var(--color-linen);
-  color: var(--color-ink);
+  background: var(--bg);
+  color: var(--fg);
+  font-size: 13px;
+  line-height: 1.5;
 }
+
 #root { min-height: 100vh; }
 
-/* Headings */
 h1, h2, h3, h4 { font-family: var(--font-display); }
+h1 { font-size: 18px; font-weight: 600; }
+h2 { font-size: 14px; font-weight: 600; }
 
-/* Datos técnicos: IDs, versiones, códigos */
 code, .font-mono, [data-mono] {
   font-family: var(--font-mono);
   font-size: 0.875rem;
 }
 
-/* Clase base para inputs */
-.input {
+input, select, textarea {
   width: 100%;
-  padding: 0.5rem 0.75rem;
-  font-size: 0.875rem;
-  line-height: 1.5;
-  color: var(--color-ink);
-  background-color: var(--color-snow);
-  border: 1px solid var(--color-border-strong);
-  border-radius: 0.5rem;
+  height: 38px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 0 10px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  background: #F8FAFC;
+  color: var(--fg);
   outline: none;
-  transition: border-color 0.15s ease, box-shadow 0.15s ease;
-}
-.input:focus {
-  border-color: var(--color-teal);
-  box-shadow: 0 0 0 2px rgba(8, 145, 178, 0.2);
-}
-.input:disabled {
-  background-color: #F1F5F9;
-  color: #94A3B8;
-  cursor: not-allowed;
+  transition: border-color 0.15s, box-shadow 0.15s;
 }
 
-/* Accesibilidad */
+input:focus, select:focus, textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(8,145,178,0.15);
+}
+
+textarea { height: 60px; padding: 8px 10px; resize: vertical; }
+
+label, .label {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--fg);
+  display: block;
+  margin-top: 10px;
+  margin-bottom: 2px;
+}
+
+.btn {
+  display: inline-block;
+  padding: 10px 24px;
+  border-radius: 6px;
+  font-family: var(--font-display);
+  font-size: 14px;
+  font-weight: 600;
+  cursor: pointer;
+  border: none;
+  text-align: center;
+  min-height: 44px;
+}
+
+.btn-primary { background: var(--primary); color: var(--on-primary); }
+.btn-success { background: var(--accent); color: #fff; }
+.btn-outline { background: #fff; color: var(--primary); border: 2px solid var(--primary); }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 12px;
+  font-size: 10px;
+  font-weight: 600;
+}
+
 :focus-visible {
-  outline: 2px solid var(--color-teal);
+  outline: 2px solid var(--primary);
   outline-offset: 2px;
 }
 
-/* Scrollbar */
 ::-webkit-scrollbar { width: 6px; height: 6px; }
-::-webkit-scrollbar-track { background: var(--color-linen); }
-::-webkit-scrollbar-thumb { background: var(--color-border-strong); border-radius: 3px; }
-::-webkit-scrollbar-thumb:hover { background: var(--color-teal); }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--primary); }
 
-/* Impresión */
 @media print {
   aside, header, nav { display: none !important; }
   main { margin: 0 !important; padding: 1cm !important; }
 }
 
-/* Animaciones */
 @keyframes slide-up {
   from { transform: translateY(100%); }
   to { transform: translateY(0); }
 }
 .animate-slide-up { animation: slide-up 0.3s ease-out; }
 
-/* Safe area para notch de móviles */
 .safe-area-bottom { padding-bottom: env(safe-area-inset-bottom, 0); }
 
-/* Pulso Visual — firma del diseño "Cian Quirúrgico" */
 @keyframes pulse-ring {
   0% { transform: scale(1); opacity: 0.7; }
   50% { transform: scale(1.8); opacity: 0.15; }
   100% { transform: scale(1); opacity: 0.7; }
 }
-.pulse-ring {
-  animation: pulse-ring 1.2s ease-in-out infinite;
-}
-.pulse-ring--critical {
-  animation: pulse-ring 0.6s ease-in-out infinite;
-}
+.pulse-ring { animation: pulse-ring 1.2s ease-in-out infinite; }
+.pulse-ring--critical { animation: pulse-ring 0.6s ease-in-out infinite; }

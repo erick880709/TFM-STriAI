@@ -24,8 +24,8 @@ export default function HistoricoPacientePage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">📜 Histórico del Paciente</h1>
-      <p className="text-sm text-[#526771] mb-6">Consulta del historial de triajes por documento</p>
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1">📜 Histórico del Paciente</h1>
+      <p className="text-sm text-[#64748B] mb-6">Consulta del historial de triajes por documento</p>
 
       <div className="flex gap-3 mb-6 max-w-md">
         <input type="text" placeholder="Número de documento" value={doc} aria-label="Buscar paciente por documento"
@@ -51,10 +51,10 @@ export default function HistoricoPacientePage() {
 
       {triagesQuery.data && triagesQuery.data.length > 0 && (
         <div className="overflow-x-auto">
-          <table className="w-full bg-white border border-[#CFFAFE] rounded-lg text-sm">
+          <table className="w-full bg-white border border-[#A5F3FC] rounded-lg text-sm">
             <caption className="sr-only">Historial de triajes del paciente</caption>
             <thead>
-              <tr className="border-b border-[#CFFAFE] bg-[#F0F9FA] text-left text-xs font-medium text-[#526771] uppercase">
+              <tr className="border-b border-[#A5F3FC] bg-[#ECFEFF] text-left text-xs font-medium text-[#64748B] uppercase">
                 <th scope="col" className="px-4 py-3">Fecha</th><th scope="col" className="px-4 py-3">Nivel IA</th><th scope="col" className="px-4 py-3">Nivel Prof.</th><th scope="col" className="px-4 py-3">Concordancia</th><th scope="col" className="px-4 py-3">Estado</th>
               </tr>
             </thead>
@@ -63,8 +63,8 @@ export default function HistoricoPacientePage() {
                 const triage = t as Record<string, unknown>
                 const concordancia = triage.Concordancia || triage.concordancia
                 return (
-                  <tr key={i} className="border-b border-[#CFFAFE] hover:bg-[#F0F9FA]">
-                    <td className="px-4 py-3 text-[#526771] text-xs">{String(triage.FechaHoraIngreso || triage.fecha_inicio || '').slice(0, 16)}</td>
+                  <tr key={i} className="border-b border-[#A5F3FC] hover:bg-[#ECFEFF]">
+                    <td className="px-4 py-3 text-[#64748B] text-xs">{String(triage.FechaHoraIngreso || triage.fecha_inicio || '').slice(0, 16)}</td>
                     <td className="px-4 py-3">{String(triage.NivelSugeridoIA || triage.nivel_sugerido_ia || '—')}</td>
                     <td className="px-4 py-3">{String(triage.NivelProfesional || triage.nivel_profesional || '—')}</td>
                     <td className="px-4 py-3">{concordancia ? 'Coincide ✅' : 'Difiere ⚠️'}</td>

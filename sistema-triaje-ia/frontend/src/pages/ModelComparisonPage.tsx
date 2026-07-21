@@ -14,14 +14,14 @@ export default function ModelComparisonPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">🔬 Comparar Modelos</h1>
-      <p className="text-sm text-[#526771] mb-6">Comparativa de métricas entre versiones de modelos IA</p>
+      <h1 className="text-2xl font-bold text-[#164E63] mb-1">🔬 Comparar Modelos</h1>
+      <p className="text-sm text-[#64748B] mb-6">Comparativa de métricas entre versiones de modelos IA</p>
 
       <div className="overflow-x-auto">
-        <table className="w-full bg-white border border-[#CFFAFE] rounded-lg">
+        <table className="w-full bg-white border border-[#A5F3FC] rounded-lg">
           <caption className="sr-only">Tabla comparativa de métricas de modelos IA</caption>
           <thead>
-            <tr className="border-b border-[#CFFAFE] bg-[#F0F9FA] text-left text-xs font-medium text-[#526771] uppercase">
+            <tr className="border-b border-[#A5F3FC] bg-[#ECFEFF] text-left text-xs font-medium text-[#64748B] uppercase">
               <th scope="col" className="px-4 py-3">Nombre</th>
               <th scope="col" className="px-4 py-3">Versión</th>
               <th scope="col" className="px-4 py-3">F1 Macro</th>
@@ -33,9 +33,9 @@ export default function ModelComparisonPage() {
           </thead>
           <tbody>
             {(data || []).map((m: DiskModel) => (
-              <tr key={m.version} className="border-b border-[#CFFAFE] hover:bg-[#F0F9FA] text-sm">
-                <td className="px-4 py-3 font-medium text-[#0F3D47]">{m.nombre}</td>
-                <td className="px-4 py-3 text-[#526771] font-mono text-xs">{m.version}</td>
+              <tr key={m.version} className="border-b border-[#A5F3FC] hover:bg-[#ECFEFF] text-sm">
+                <td className="px-4 py-3 font-medium text-[#164E63]">{m.nombre}</td>
+                <td className="px-4 py-3 text-[#64748B] font-mono text-xs">{m.version}</td>
                 <td className="px-4 py-3">{m.f1_macro?.toFixed(3) || 'N/D'}</td>
                 <td className="px-4 py-3">{m.auc_roc?.toFixed(3) || 'N/D'}</td>
                 <td className="px-4 py-3">{m.n_features || '?'}</td>

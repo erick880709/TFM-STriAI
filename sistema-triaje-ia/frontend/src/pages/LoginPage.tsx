@@ -25,17 +25,17 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-[#F0F9FA]">
-      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-md border border-[#CFFAFE]">
+    <div className="min-h-screen flex items-center justify-center bg-[#ECFEFF]">
+      <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-[340px] border border-[#A5F3FC]">
         <div className="text-center mb-6">
-          <h1 className="text-2xl font-bold text-[#0F3D47]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>STriAI</h1>
-          <p className="text-sm text-[#526771] mt-1">Sistema de Triaje Multimodal IA</p>
-          <p className="text-xs text-[#526771] mt-0.5">Servicio de Urgencias · Colombia</p>
+          <h1 className="text-2xl font-bold text-[#164E63]" style={{fontFamily:'Lexend,system-ui,sans-serif'}}>STriAI</h1>
+          <p className="text-sm text-[#64748B] mt-1">Sistema de Triaje Multimodal IA</p>
+          <p className="text-xs text-[#64748B] mt-0.5">Servicio de Urgencias · Colombia</p>
         </div>
 
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <label className="block text-sm font-medium text-[#0F3D47] mb-1">Usuario</label>
+            <label className="block text-sm font-medium text-[#164E63] mb-1">Usuario</label>
             <input
               type="text"
               placeholder="enfermera.triaje@hospital.gov.co"
@@ -48,7 +48,7 @@ export default function LoginPage() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-[#0F3D47] mb-1">Contraseña</label>
+            <label className="block text-sm font-medium text-[#164E63] mb-1">Contraseña</label>
             <div className="relative">
               <input
                 type={showPwd ? 'text' : 'password'}
@@ -62,7 +62,7 @@ export default function LoginPage() {
               <button
                 type="button"
                 onClick={() => setShowPwd(!showPwd)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#526771] hover:text-[#0F3D47]"
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-[#64748B] hover:text-[#164E63]"
                 aria-label={showPwd ? 'Ocultar contraseña' : 'Mostrar contraseña'}
               >
                 {showPwd ? '🙈' : '👁️'}
@@ -79,7 +79,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
-            className="w-full bg-[#0891B2] text-white py-2.5 rounded-lg font-medium hover:bg-[#0E6B7A] transition-colors disabled:opacity-50"
+            className="w-full bg-[#0891B2] text-white py-2.5 rounded-lg font-medium hover:bg-[#0E7490] transition-colors disabled:opacity-50"
             style={{minHeight:'44px'}}
           >
             {loading ? 'Iniciando sesión...' : 'Iniciar Sesión'}
@@ -92,7 +92,7 @@ export default function LoginPage() {
           </Link>
         </p>
 
-        <p className="text-center text-xs text-[#526771] mt-6">
+        <p className="text-center text-xs text-[#64748B] mt-6">
           TFM · UNIR · Máster en IA · v1.0 Demo
         </p>
       </div>

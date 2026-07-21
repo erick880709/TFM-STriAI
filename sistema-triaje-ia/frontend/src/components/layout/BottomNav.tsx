@@ -26,7 +26,7 @@ export default function BottomNav() {
 
   return (
     <>
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0A4C5C] border-t border-[#0E6B7A] flex items-center justify-around z-40 safe-area-bottom"
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-[#0A4C5C] border-t border-[#0E7490] flex items-center justify-around z-40 safe-area-bottom"
            aria-label="Navegación móvil">
         {mobileNav.map((item) => {
           if (!hasPermission(permMap[item.to])) return null
@@ -36,7 +36,7 @@ export default function BottomNav() {
               to={item.to}
               className={({ isActive }) =>
                 `flex flex-col items-center gap-0.5 py-2 px-3 text-xs transition-colors min-w-[64px] ${
-                  isActive ? 'text-[#22D3EE]' : 'text-[#CFFAFE]/70'
+                  isActive ? 'text-[#22D3EE]' : 'text-[#A5F3FC]/70'
                 }`
               }
               style={{ minHeight: '56px', justifyContent: 'center' }}
@@ -56,7 +56,7 @@ export default function BottomNav() {
         })}
         <button
           onClick={() => setMenuOpen(!menuOpen)}
-          className="flex flex-col items-center gap-0.5 py-2 px-3 text-xs text-[#CFFAFE]/70 min-w-[64px]"
+          className="flex flex-col items-center gap-0.5 py-2 px-3 text-xs text-[#A5F3FC]/70 min-w-[64px]"
           style={{ minHeight: '56px', justifyContent: 'center' }}
           aria-label="Menú"
         >
@@ -87,7 +87,7 @@ export default function BottomNav() {
                   onClick={() => setMenuOpen(false)}
                   className={({ isActive }) =>
                     `flex flex-col items-center gap-1 p-3 rounded-lg text-xs transition-colors ${
-                      isActive ? 'bg-[#0891B2] text-white' : 'text-[#CFFAFE] hover:bg-white/10'
+                      isActive ? 'bg-[#0891B2] text-white' : 'text-[#A5F3FC] hover:bg-white/10'
                     }`
                   }
                 >

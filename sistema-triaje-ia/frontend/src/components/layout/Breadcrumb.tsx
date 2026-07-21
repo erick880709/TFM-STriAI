@@ -22,12 +22,12 @@ export default function Breadcrumb() {
   const currentLabel = routeLabels[location.pathname] || pathSegments[pathSegments.length - 1] || 'Inicio'
 
   return (
-    <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[#526771]">
+    <nav aria-label="Breadcrumb" className="flex items-center gap-1.5 text-sm text-[#64748B]">
       <Link to="/" className="hover:text-[#0891B2] transition-colors" title="Inicio">
         <Home size={16} />
       </Link>
       <ChevronRight size={14} className="text-[#A5F3FC]" />
-      <span className="text-[#0F3D47] font-medium" style={{ fontFamily: 'Lexend, system-ui, sans-serif' }}>
+      <span className="text-[#164E63] font-medium" style={{ fontFamily: 'Lexend, system-ui, sans-serif' }}>
         {currentLabel}
       </span>
     </nav>
