@@ -93,24 +93,22 @@ def create_app() -> FastAPI:
     app.include_router(users.router, prefix="/api/users", tags=["Usuarios"])
     app.include_router(control_cambios.router, prefix="/api/control-cambios", tags=["Control de Cambios"])
 
-    # Servir frontend React en producción
-    if FRONTEND_DIST.exists() and (FRONTEND_DIST / "index.html").exists():
-        app.mount("/assets", StaticFiles(directory=FRONTEND_DIST / "assets"), name="assets")
-
-        @app.get("/{full_path:path}")
-        async def serve_react(full_path: str = ""):
-            """Sirve el SPA de React para cualquier ruta no-API."""
-            # Si es una ruta de API, dejarla pasar (fastapi maneja rutas API primero)
-            index_path = FRONTEND_DIST / "index.html"
-            if index_path.exists():
-                from fastapi.responses import FileResponse
-                return FileResponse(index_path)
-            return {"message": "Frontend no construido. Ejecuta: cd frontend && npm run build"}
-
-    # Health check
+    # Health check (debe ir antes del catch-all del SPA)
     @app.get("/health")
     async def health():
         return {"status": "ok", "version": "2.0.0"}
+
+    # Servir frontend React en producción (solo rutas no-API)
+    if FRONTEND_DIST.exists() and (FRONTEND_DIST / "index.html").exists():
+        from fastapi.responses import FileResponse
+
+        @app.get("/{full_path:path}")
+        async def serve_react(full_path: str = ""):
+            """Sirve el SPA de React para rutas no-API."""
+            index_path = FRONTEND_DIST / "index.html"
+            if index_path.exists():
+                return FileResponse(index_path)
+            return {"message": "Frontend no disponible"}
 
     return app
 
