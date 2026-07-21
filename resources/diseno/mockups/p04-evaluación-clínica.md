@@ -1,11 +1,11 @@
-﻿# p03 — Signos Vitales
+﻿# p04 — Evaluación Clínica
 
 **Ruta Streamlit:** http://localhost:8501  
 **Ruta React:** http://localhost:8000  
 
 ## Descripción
 
-Paso 2. Layout 2 columnas: Prioridad Alta (SpO2, FR) en tarjeta roja izquierda + resto derecha.
+Paso 3. Motivo consulta, Glasgow, escala dolor, nivel conciencia, comorbilidades.
 
 ## Layout
 

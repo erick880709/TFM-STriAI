@@ -1,11 +1,11 @@
-﻿# p03 — Signos Vitales
+﻿# p08 — Gestión de Modelos IA
 
 **Ruta Streamlit:** http://localhost:8501  
 **Ruta React:** http://localhost:8000  
 
 ## Descripción
 
-Paso 2. Layout 2 columnas: Prioridad Alta (SpO2, FR) en tarjeta roja izquierda + resto derecha.
+Registro de modelos, listado DB/disco, activación/rollback, estado de inferencia.
 
 ## Layout
 

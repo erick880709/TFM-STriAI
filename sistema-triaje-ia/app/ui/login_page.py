@@ -64,7 +64,7 @@ def render_login(auth: AuthService):
             # Botón de login
             col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
             with col_btn2:
-                if st.button("Iniciar Sesión", type="primary", use_container_width=True):
+                if st.button("Iniciar Sesión", type="primary", width='stretch'):
                     user = auth.login(username, password)
                     if user:
                         st.session_state.user = user

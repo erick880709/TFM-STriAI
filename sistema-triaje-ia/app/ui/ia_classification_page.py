@@ -66,7 +66,7 @@ def render_ia_classification():
                         st.markdown(f"**{nombre}** · {p.get('tipo_documento','')} {p.get('numero_documento','')} · {badge}")
                     with col_p2:
                         if activo:
-                            if st.button("📋 Cargar", key=f"p05load_{p['id_paciente'][:8]}", use_container_width=True):
+                            if st.button("📋 Cargar", key=f"p05load_{p['id_paciente'][:8]}", width='stretch'):
                                 st.session_state.triaje_activo = activo['id_triaje']
                                 st.rerun()
             else:
@@ -311,13 +311,13 @@ def render_ia_classification():
     col_btn1, col_btn2, col_btn3 = st.columns([1, 1, 1])
 
     with col_btn1:
-        if st.button("⬅️ Volver a Evaluación", use_container_width=True):
+        if st.button("⬅️ Volver a Evaluación", width='stretch'):
             st.session_state.page = "evaluacion_clinica"
             st.rerun()
 
     with col_btn2:
         # Re-ejecutar inferencia
-        if st.button("🔄 Re-ejecutar IA", use_container_width=True):
+        if st.button("🔄 Re-ejecutar IA", width='stretch'):
             st.session_state.pop(prediction_key, None)
             st.session_state.pop(shap_key, None)
             st.rerun()
@@ -333,7 +333,7 @@ def render_ia_classification():
         if st.button(
             "✅ Continuar a Validación →",
             type="primary",
-            use_container_width=True,
+            width='stretch',
             disabled=not puede_continuar or (discrepancia and not motivo_ok),
         ):
             # Guardar datos en sesión para la pantalla de validación

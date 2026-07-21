@@ -1,11 +1,11 @@
-﻿# p03 — Signos Vitales
+﻿# p12 — Control de Cambios
 
 **Ruta Streamlit:** http://localhost:8501  
 **Ruta React:** http://localhost:8000  
 
 ## Descripción
 
-Paso 2. Layout 2 columnas: Prioridad Alta (SpO2, FR) en tarjeta roja izquierda + resto derecha.
+Búsqueda por documento, tabla de historial de modificaciones (campo, valor anterior, valor nuevo).
 
 ## Layout
 

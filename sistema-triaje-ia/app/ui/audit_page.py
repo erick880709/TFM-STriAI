@@ -98,7 +98,7 @@ def render_audit():
         with col_lim:
             limit = st.slider("Resultados por página", 10, 200, 50, key="audit_limit")
         with col_btn:
-            buscar = st.button("🔍 Buscar", type="primary", use_container_width=True)
+            buscar = st.button("🔍 Buscar", type="primary", width='stretch')
 
     # ==================================================================
     # RESULTADOS
@@ -157,7 +157,7 @@ def render_audit():
                 })
 
             df = pd.DataFrame(rows_display)
-            st.dataframe(df, use_container_width=True, hide_index=True, height=400)
+            st.dataframe(df, width='stretch', hide_index=True, height=400)
 
             # ------------------------------------------------------------------
             # EXPORTACIÓN
@@ -175,7 +175,7 @@ def render_audit():
                     data=csv_data,
                     file_name=f"auditoria_{datetime.now().strftime('%Y%m%d_%H%M')}.csv",
                     mime="text/csv",
-                    use_container_width=True,
+                    width='stretch',
                 )
 
             with col_exp2:
@@ -191,7 +191,7 @@ def render_audit():
                         data=excel_data,
                         file_name=f"auditoria_{datetime.now().strftime('%Y%m%d_%H%M')}.xlsx",
                         mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                        use_container_width=True,
+                        width='stretch',
                     )
                 except ImportError:
                     st.warning("openpyxl no instalado. `pip install openpyxl`")
@@ -205,7 +205,7 @@ def render_audit():
                     data=json_data,
                     file_name=f"auditoria_{datetime.now().strftime('%Y%m%d_%H%M')}.json",
                     mime="application/json",
-                    use_container_width=True,
+                    width='stretch',
                 )
 
             # ------------------------------------------------------------------

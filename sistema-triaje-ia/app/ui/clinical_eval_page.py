@@ -47,7 +47,7 @@ def render_clinical_evaluation():
                         st.markdown(f"**{nombre}** · {p.get('tipo_documento','')} {p.get('numero_documento','')} · {badge}")
                     with col_p2:
                         if activo:
-                            if st.button("📋 Cargar", key=f"p04load_{p['id_paciente'][:8]}", use_container_width=True):
+                            if st.button("📋 Cargar", key=f"p04load_{p['id_paciente'][:8]}", width='stretch'):
                                 st.session_state.triaje_activo = activo['id_triaje']
                                 st.rerun()
             else:
@@ -306,7 +306,7 @@ def render_clinical_evaluation():
         if st.button(
             "🧠 Guardar y Ejecutar IA",
             type="primary",
-            use_container_width=True,
+            width='stretch',
             disabled=not listo_para_ia,
         ):
             try:
@@ -359,12 +359,12 @@ def render_clinical_evaluation():
     # Botones secundarios
     col_back1, col_back2, _ = st.columns([1, 1, 2])
     with col_back1:
-        if st.button("⬅️ Volver a Signos Vitales", use_container_width=True):
+        if st.button("⬅️ Volver a Signos Vitales", width='stretch'):
             st.session_state.page = "signos_vitales"
             st.rerun()
     with col_back2:
         # Permitir saltar directamente a validación (modo demo sin IA)
-        if st.button("⏭️ Saltar a Validación (sin IA)", use_container_width=True):
+        if st.button("⏭️ Saltar a Validación (sin IA)", width='stretch'):
             try:
                 triage_svc.save_clinical_evaluation(
                     id_triaje=id_triaje,

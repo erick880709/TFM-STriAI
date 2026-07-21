@@ -47,7 +47,7 @@ def render_vital_signs():
                         st.markdown(f"**{nombre}** · {p.get('tipo_documento','')} {p.get('numero_documento','')} · {badge}")
                     with col_p2:
                         if activo:
-                            if st.button("📋 Cargar", key=f"load_{p['id_paciente'][:8]}", use_container_width=True):
+                            if st.button("📋 Cargar", key=f"load_{p['id_paciente'][:8]}", width='stretch'):
                                 st.session_state.triaje_activo = activo['id_triaje']
                                 st.rerun()
             else:
@@ -221,7 +221,7 @@ def render_vital_signs():
     col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
     with col_btn2:
         if st.button("💾 Guardar y Continuar a Evaluación Clínica",
-                    type="primary", use_container_width=True):
+                    type="primary", width='stretch'):
             # Validar campos obligatorios
             errores = _validar_obligatorios(spo2, fr, fc, temp, pa_sis, pa_dia)
             if errores:
@@ -276,7 +276,7 @@ def render_vital_signs():
                     st.error(f"❌ {ve}")
 
     # Botón para volver
-    if st.button("⬅️ Volver a Registro de Paciente", use_container_width=True):
+    if st.button("⬅️ Volver a Registro de Paciente", width='stretch'):
         st.session_state.page = "registro_paciente"
         st.rerun()
 

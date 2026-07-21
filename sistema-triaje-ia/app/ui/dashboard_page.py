@@ -138,7 +138,7 @@ def render_dashboard():
             })
             st.dataframe(
                 concord_data,
-                use_container_width=True,
+                width='stretch',
                 hide_index=True,
                 column_config={
                     "Eventos": st.column_config.ProgressColumn(
@@ -164,7 +164,7 @@ def render_dashboard():
         if triajes_7d:
             df_tendencia = pd.DataFrame(triajes_7d)
             if "dia" in df_tendencia.columns and "cnt" in df_tendencia.columns:
-                st.line_chart(df_tendencia.set_index("dia")["cnt"], use_container_width=True)
+                st.line_chart(df_tendencia.set_index("dia")["cnt"], width='stretch')
             else:
                 st.info("Datos insuficientes para mostrar tendencia.")
         else:
@@ -180,7 +180,7 @@ def render_dashboard():
     col_exp1, col_exp2, col_exp3 = st.columns(3)
 
     with col_exp1:
-        if st.button("📊 Exportar Dashboard (CSV)", use_container_width=True):
+        if st.button("📊 Exportar Dashboard (CSV)", width='stretch'):
             export_data = {
                 "Métrica": [
                     "Total Triajes", "Total Pacientes", "Tasa Concordancia",
@@ -198,11 +198,11 @@ def render_dashboard():
                 csv,
                 f"dashboard_{hoy}.csv",
                 "text/csv",
-                use_container_width=True,
+                width='stretch',
             )
 
     with col_exp2:
-        if st.button("📋 Exportar Resumen (Excel)", use_container_width=True):
+        if st.button("📋 Exportar Resumen (Excel)", width='stretch'):
             # Crear Excel con múltiples hojas
             buffer = io.BytesIO()
             try:
@@ -227,13 +227,13 @@ def render_dashboard():
                     buffer.getvalue(),
                     f"reporte_triaje_{hoy}.xlsx",
                     "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
-                    use_container_width=True,
+                    width='stretch',
                 )
             except ImportError:
                 st.warning("openpyxl necesario: `pip install openpyxl`")
 
     with col_exp3:
-        if st.button("📄 Exportar Datos (JSON)", use_container_width=True):
+        if st.button("📄 Exportar Datos (JSON)", width='stretch'):
             report_data = {
                 "fecha_generacion": hoy,
                 "total_triages": total_triages,
@@ -249,7 +249,7 @@ def render_dashboard():
                 json.dumps(report_data, indent=2, ensure_ascii=False),
                 f"dashboard_{hoy}.json",
                 "application/json",
-                use_container_width=True,
+                width='stretch',
             )
 
     # ==================================================================

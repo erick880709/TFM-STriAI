@@ -1,11 +1,11 @@
-﻿# p03 — Signos Vitales
+﻿# p11 — Gestión de Usuarios
 
 **Ruta Streamlit:** http://localhost:8501  
 **Ruta React:** http://localhost:8000  
 
 ## Descripción
 
-Paso 2. Layout 2 columnas: Prioridad Alta (SpO2, FR) en tarjeta roja izquierda + resto derecha.
+CRUD de usuarios, reset password con modal de copia, activación/desactivación con confirmación.
 
 ## Layout
 

@@ -1,74 +1,44 @@
-# Pantalla 1 — Login
+﻿# p01 — Login
 
-**Archivo:** `resources/diseno/mockups/p01-login.md`  
-**Checkpoint Excalidraw:** `b4eedc99c5784bae9e`  
-**Rol(es):** Todos  
-**Ubicación en flujo:** Punto de entrada al sistema
+**Ruta Streamlit:** http://localhost:8501  
+**Ruta React:** http://localhost:8000  
 
----
+## Descripción
 
-## Objetivo
-Autenticar al usuario con credenciales y asignar acceso según su rol (Administrador, Médico, Enfermera, Investigador, Auditor).
+Autenticación de usuarios con credenciales. Tarjeta 340px centrada.
 
-## Layout y Componentes
+## Layout
 
-```
-┌────────────────────────────────────────────┐
-│              Fondo: #ECFEFF                 │
-│   ┌──────────────────────────┐             │
-│   │   Tarjeta Login (blanca) │             │
-│   │   ┌────────────────────┐ │             │
-│   │   │ Sistema de Triaje  │ │  Lexend 22px
-│   │   │ Servicio Urgencias │ │  Source Sans 13px
-│   │   │     · Colombia     │ │
-│   │   └────────────────────┘ │             │
-│   │                          │             │
-│   │   Usuario                │  Label 13px │
-│   │   ┌────────────────────┐ │  Input 44px │
-│   │   │ enfermera.triaje@  │ │  Bg #F8FAFC │
-│   │   └────────────────────┘ │             │
-│   │                          │             │
-│   │   Contraseña             │             │
-│   │   ┌────────────────────┐ │             │
-│   │   │ ••••••••            │ │             │
-│   │   └────────────────────┘ │             │
-│   │                          │             │
-│   │   ┌────────────────────┐ │             │
-│   │   │  Iniciar Sesión    │ │  Primary #0891B2
-│   │   └────────────────────┘ │  Lexend 15px bold
-│   │                          │             │
-│   │   ¿Olvidó su contraseña? │  Link azul 12px
-│   └──────────────────────────┘             │
-│   TFM · UNIR · Máster en IA · v1.0 Demo    │
-└────────────────────────────────────────────┘
-```
+Ver mockups.html para el diseño visual completo.
 
-## Elementos de diseño
+## Dimensiones
 
-| Elemento | Propiedad | Valor |
-|---|---|---|
-| Tarjeta | Ancho × Alto | 300 × 380px |
-| Tarjeta | Border radius | 8px |
-| Inputs | Border color | `#A5F3FC` |
-| Botón Login | Background | `#0891B2` |
-| Botón Login | Texto | `#FFFFFF`, Lexend 600 |
-| Link recuperación | Color | `#0891B2` |
-
-## Interacciones
-
-| Acción | Respuesta |
-|---|---|
-| Click "Iniciar Sesión" | Valida credenciales → redirige según rol |
-| Credenciales incorrectas | Mensaje genérico "Usuario o contraseña inválidos" |
-| 5 intentos fallidos | Cuenta bloqueada 15 min |
-| Click "¿Olvidó su contraseña?" | Navega a flujo de recuperación (HU-E1-03) |
-| Sesión exitosa | Redirige a Pantalla 2 (Registro de Paciente) o Dashboard según rol |
+| Elemento | Valor |
+|----------|-------|
+| Sidebar | 256px (Desktop), 64px (Tablet), BottomNav (Mobile) |
+| Header | 56px con breadcrumb |
+| Contenido | max-width 1440px, centrado |
+| Inputs | 38px alto, border-radius 6px, bg #F8FAFC |
+| Cards | bg white, border 1px solid #A5F3FC, padding 16px |
+| Labels | 12px, Source Sans 3, 500 |
+| Body text | 13px, Source Sans 3, 400 |
+| Headings | 18px, Lexend, 600 |
 
 ## Estados
 
-| Estado | Descripción |
-|---|---|
-| Default | Formulario limpio con campos vacíos |
-| Error | Borde rojo en inputs + mensaje de error bajo el botón |
-| Bloqueado | Mensaje "Cuenta bloqueada. Intente de nuevo en 15 minutos" |
-| Cargando | Spinner en botón durante validación |
+- **Default:** Pantalla con datos cargados
+- **Empty:** Sin datos disponibles
+- **Loading:** Spinner durante carga
+- **Error:** Mensaje de error con opción de reintentar
+
+## Design Tokens
+
+| Token | Hex |
+|-------|-----|
+| Primary | #0891B2 |
+| Accent | #059669 |
+| Background | #ECFEFF |
+| Text | #164E63 |
+| Muted | #64748B |
+| Border | #A5F3FC |
+| Destructive | #DC2626 |

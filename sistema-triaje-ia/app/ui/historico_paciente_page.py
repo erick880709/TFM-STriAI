@@ -39,7 +39,7 @@ def render_historico_paciente():
             key="hist_doc",
         )
     with col_btn:
-        buscar = st.button("🔍 Buscar Historial", type="primary", use_container_width=True)
+        buscar = st.button("🔍 Buscar Historial", type="primary", width='stretch')
 
     if not buscar:
         st.info("💡 Ingrese un número de documento y presione **Buscar** para consultar el historial de visitas del paciente.")
@@ -99,7 +99,7 @@ def render_historico_paciente():
         })
 
     df = pd.DataFrame(rows)
-    st.dataframe(df, use_container_width=True, hide_index=True)
+    st.dataframe(df, width='stretch', hide_index=True)
 
     # Exportar CSV
     csv = df.to_csv(index=False).encode("utf-8")
@@ -108,7 +108,7 @@ def render_historico_paciente():
         data=csv,
         file_name=f"historico_{documento.strip()}.csv",
         mime="text/csv",
-        use_container_width=True,
+        width='stretch',
     )
 
 

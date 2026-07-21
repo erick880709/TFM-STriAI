@@ -134,7 +134,7 @@ def render_model_comparison():
 
     if rows:
         df_comparacion = pd.DataFrame(rows)
-        st.dataframe(df_comparacion, use_container_width=True, hide_index=True)
+        st.dataframe(df_comparacion, width='stretch', hide_index=True)
 
         # Determinar ganador
         a_wins = sum(1 for r in rows if "✅ A" in r["Mejor"])
@@ -179,7 +179,7 @@ def render_model_comparison():
 
     if recall_rows:
         df_recall = pd.DataFrame(recall_rows)
-        st.dataframe(df_recall, use_container_width=True, hide_index=True)
+        st.dataframe(df_recall, width='stretch', hide_index=True)
 
         # Destacar Recall I-II
         rec_i_a = metrics_a.get("recall_I", "—")
@@ -258,7 +258,7 @@ def render_model_comparison():
                 th_df = pd.DataFrame(
                     [{"Nivel": f"Nivel {k}", "Umbral": f"{v:.4f}"} for k, v in status["thresholds"].items()]
                 )
-                st.dataframe(th_df, use_container_width=True, hide_index=True)
+                st.dataframe(th_df, width='stretch', hide_index=True)
         else:
             st.info("Servicio de inferencia no inicializado.")
 

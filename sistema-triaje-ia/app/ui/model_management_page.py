@@ -79,7 +79,7 @@ def render_model_management():
                         except (ValueError, TypeError):
                             nivel = str(k)
                         umbral_data.append({"Nivel": nivel, "Umbral": float(v)})
-                    st.dataframe(umbral_data, use_container_width=True, hide_index=True)
+                    st.dataframe(umbral_data, width='stretch', hide_index=True)
                 else:
                     st.caption("No hay umbrales configurados.")
             
@@ -179,11 +179,11 @@ def render_model_management():
                         if meta.get("thresholds"):
                             with st.expander("🎯 Umbrales"):
                                 th_data = [{"Nivel": f"Nivel {k}", "Umbral": f"{v:.4f}"} for k, v in meta["thresholds"].items()]
-                                st.dataframe(th_data, use_container_width=True, hide_index=True)
+                                st.dataframe(th_data, width='stretch', hide_index=True)
 
                     with col4:
                         if not is_active:
-                            if st.button("🟢 Activar", key=f"activate_{i}", use_container_width=True):
+                            if st.button("🟢 Activar", key=f"activate_{i}", width='stretch'):
                                 try:
                                     # Actualizar active_version.txt
                                     with open(active_file, "w") as f:
@@ -341,7 +341,7 @@ def render_model_management():
         if status.get("thresholds"):
             st.markdown("**🎯 Umbrales de clasificación:**")
             th_data = [{"Nivel": f"Nivel {k}", "Umbral": f"{v:.4f}"} for k, v in status["thresholds"].items()]
-            st.dataframe(th_data, use_container_width=True, hide_index=True)
+            st.dataframe(th_data, width='stretch', hide_index=True)
 
 
 def _get_dir_size(path: Path) -> float:

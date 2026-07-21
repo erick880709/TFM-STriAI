@@ -42,7 +42,7 @@ def render_control_cambios():
         with col3:
             documento = st.text_input("Documento Paciente", placeholder="Número de documento", key="cc_doc")
 
-        buscar = st.button("🔍 Buscar Cambios", type="primary", use_container_width=True)
+        buscar = st.button("🔍 Buscar Cambios", type="primary", width='stretch')
 
     # ==================================================================
     # Resultados
@@ -76,7 +76,7 @@ def render_control_cambios():
                 })
 
             df = pd.DataFrame(rows)
-            st.dataframe(df, use_container_width=True, hide_index=True)
+            st.dataframe(df, width='stretch', hide_index=True)
 
             # Exportar CSV
             csv = df.to_csv(index=False).encode("utf-8")
@@ -85,5 +85,5 @@ def render_control_cambios():
                 data=csv,
                 file_name="control_cambios.csv",
                 mime="text/csv",
-                use_container_width=True,
+                width='stretch',
             )

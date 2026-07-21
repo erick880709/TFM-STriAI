@@ -47,7 +47,7 @@ def render_triage_validation():
                         st.markdown(f"**{nombre}** · {p.get('tipo_documento','')} {p.get('numero_documento','')} · {badge}")
                     with col_p2:
                         if activo:
-                            if st.button("📋 Cargar", key=f"p07load_{p['id_paciente'][:8]}", use_container_width=True):
+                            if st.button("📋 Cargar", key=f"p07load_{p['id_paciente'][:8]}", width='stretch'):
                                 st.session_state.triaje_activo = activo['id_triaje']
                                 st.rerun()
             else:
@@ -221,7 +221,7 @@ def render_triage_validation():
                 st.warning("⚠️ Complete todos los prerrequisitos para cerrar el evento.")
 
             if st.button("✅ Cerrar Evento de Triaje", type="primary",
-                        use_container_width=True,
+                        width='stretch',
                         disabled=not puede_cerrar,
                         key="p07_btn_cerrar"):
                 try:
@@ -282,13 +282,13 @@ def render_triage_validation():
                                 data=html_bytes,
                                 file_name=f"registro_triaje_{id_triaje}.html",
                                 mime="text/html",
-                                use_container_width=True,
+                                width='stretch',
                             )
                         except Exception as e:
                             st.caption(f"⚠️ No se pudo generar el reporte: {e}")
                     with col_dl2:
                         if st.button("📝 Iniciar Nuevo Triaje", type="primary",
-                                    use_container_width=True):
+                                    width='stretch'):
                             st.session_state.pop("triaje_activo", None)
                             st.session_state.pop("paciente_activo", None)
                             st.session_state.page = "registro_paciente"
@@ -334,7 +334,7 @@ def render_triage_validation():
                     f"Actual: `{estado_actual}`."
                 )
 
-            if st.button("🔄 Reclasificar", use_container_width=True,
+            if st.button("🔄 Reclasificar", width='stretch',
                         disabled=not puede_reclasificar,
                         key="p07_btn_reclasif"):
                 try:

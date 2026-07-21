@@ -95,7 +95,7 @@ def _render_edit_panel(auth: AuthService, admin_user: dict, u: dict):
 
     col1, col2 = st.columns(2)
     with col1:
-        if st.button("💾 Guardar", key=f"sv_{uid}", use_container_width=True):
+        if st.button("💾 Guardar", key=f"sv_{uid}", width='stretch'):
             ok = auth.update_user(
                 admin_user_id=admin_user["id_usuario"],
                 target_user_id=uid,
@@ -110,7 +110,7 @@ def _render_edit_panel(auth: AuthService, admin_user: dict, u: dict):
                 st.error("❌ Error al actualizar")
 
     with col2:
-        if st.button("🔑 Reset Password", key=f"rp_{uid}", use_container_width=True):
+        if st.button("🔑 Reset Password", key=f"rp_{uid}", width='stretch'):
             nueva = auth.reset_password(admin_user["id_usuario"], uid)
             if nueva:
                 st.success(
@@ -136,7 +136,7 @@ def _render_new_user_form(auth: AuthService, admin_user: dict):
 
         st.caption("💡 El rol Administrador solo se asigna por BD por seguridad.")
 
-        if st.button("➕ Crear Usuario", type="primary", use_container_width=True):
+        if st.button("➕ Crear Usuario", type="primary", width='stretch'):
             errs = []
             if not username or not username.strip():
                 errs.append("Nombre de usuario obligatorio.")

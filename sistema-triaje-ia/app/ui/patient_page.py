@@ -266,7 +266,7 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
         col_btn1, col_btn2, col_btn3 = st.columns([1, 2, 1])
         with col_btn2:
             if st.button("Registrar Paciente y Crear Triaje", type="primary",
-                         use_container_width=True, key="p02_btn_register"):
+                         width='stretch', key="p02_btn_register"):
                 errores = []
 
                 # Validaciones básicas
@@ -401,7 +401,7 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
                             col_a, col_b = st.columns(2)
                             with col_a:
                                 if st.button("📋 Usar este paciente (nuevo triaje)",
-                                            type="primary", use_container_width=True,
+                                            type="primary", width='stretch',
                                             key="dup_new_triage"):
                                     # Verificar triaje activo (HU-E8-06)
                                     bloqueado_d, ta_d = _verificar_triaje_activo(triage_svc, existente["id_paciente"])
@@ -420,7 +420,7 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
                                     st.rerun()
                             with col_b:
                                 if st.button("📜 Ver historial completo",
-                                            use_container_width=True, key="dup_hist"):
+                                            width='stretch', key="dup_hist"):
                                     st.session_state.paciente_consulta = existente["id_paciente"]
                                     st.session_state.paciente_consulta_doc = existente.get(
                                         "numero_documento"
@@ -458,7 +458,7 @@ def _render_patient_search(patient_svc: PatientService, triage_svc: TriageServic
             label_visibility="collapsed",
         )
     with col_btn:
-        buscar = st.button("Buscar", type="primary", use_container_width=True,
+        buscar = st.button("Buscar", type="primary", width='stretch',
                           key="p02_btn_search")
 
     st.caption("💡 **Tip:** Busque por documento, nombres o apellidos del paciente.")
@@ -490,7 +490,7 @@ def _render_patient_search(patient_svc: PatientService, triage_svc: TriageServic
     if not resultados:
         st.info("🔍 No se encontraron pacientes con ese documento.")
         # Sugerir registrar nuevo paciente
-        if st.button("📝 ¿Registrar nuevo paciente con este documento?", use_container_width=True):
+        if st.button("📝 ¿Registrar nuevo paciente con este documento?", width='stretch'):
             st.session_state.page = "registro_paciente"
             st.rerun()
         return
@@ -554,7 +554,7 @@ def _render_patient_card(paciente: dict, patient_svc: PatientService,
                 st.caption(f"Estado: **{ta_card.get('estado','')}**")
             else:
                 if st.button("📋 Nuevo Triaje", key=f"nt_{paciente['id_paciente']}",
-                        use_container_width=True):
+                        width='stretch'):
                     usuario = st.session_state.user.get("nombre_usuario", "Sistema")
                     triaje = triage_svc.create_triage_event(
                         id_paciente=paciente["id_paciente"],
@@ -567,7 +567,7 @@ def _render_patient_card(paciente: dict, patient_svc: PatientService,
                     st.rerun()
 
             if st.button("📜 Historial", key=f"hs_{paciente['id_paciente']}",
-                        use_container_width=True):
+                        width='stretch'):
                 st.session_state.paciente_consulta = paciente["id_paciente"]
                 st.rerun()
 
@@ -612,7 +612,7 @@ def _render_patient_detail(paciente: dict, patient_svc: PatientService,
         if bloqueado_det:
             st.warning(f"⚠️ Triaje activo: `{ta_det.get('id_triaje','')}` (Estado: {ta_det.get('estado','')})")
         else:
-            if st.button("📋 Nuevo Triaje", type="primary", use_container_width=True):
+            if st.button("📋 Nuevo Triaje", type="primary", width='stretch'):
                 usuario = st.session_state.user.get("nombre_usuario", "Sistema")
                 triaje = triage_svc.create_triage_event(
                     id_paciente=paciente["id_paciente"],
