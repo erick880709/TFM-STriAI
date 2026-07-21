@@ -5,11 +5,11 @@ import { useState } from 'react'
 
 const menuItems = [
   { group: '📋 Flujo Clínico', items: [
-    { to: '/pacientes', label: 'Registrar Paciente', icon: Stethoscope, perm: 'RegistroPaciente' },
-    { to: '/signos-vitales', label: 'Signos Vitales', icon: Activity, perm: 'SignosVitales' },
-    { to: '/evaluacion-clinica', label: 'Evaluación Clínica', icon: ClipboardCheck, perm: 'EvaluacionClinica' },
-    { to: '/clasificacion-ia', label: 'Clasificación IA', icon: Brain, perm: 'ClasificacionIA' },
-    { to: '/validacion', label: 'Validación y Cierre', icon: CheckCircle, perm: 'ClasificacionIA' },
+    { to: '/pacientes', label: 'Registrar Paciente', icon: Stethoscope, perm: 'RegistroPaciente', step: 1 },
+    { to: '/signos-vitales', label: 'Signos Vitales', icon: Activity, perm: 'SignosVitales', step: 2 },
+    { to: '/evaluacion-clinica', label: 'Evaluación Clínica', icon: ClipboardCheck, perm: 'EvaluacionClinica', step: 3 },
+    { to: '/clasificacion-ia', label: 'Clasificación IA', icon: Brain, perm: 'ClasificacionIA', step: 4 },
+    { to: '/validacion', label: 'Validación y Cierre', icon: CheckCircle, perm: 'ClasificacionIA', step: 5 },
   ]},
   { group: '📊 Soporte', items: [
     { to: '/dashboard', label: 'Dashboard', icon: LayoutDashboard, perm: 'Dashboard' },
@@ -65,7 +65,15 @@ export default function Sidebar() {
                   }
                   style={{minHeight:'44px'}}
                 >
-                  <item.icon size={collapsed ? 22 : 18} />
+                  {'step' in item ? (
+                    <span className={`flex items-center justify-center rounded-full text-xs font-bold shrink-0 ${
+                      collapsed ? 'w-7 h-7 text-sm' : 'w-6 h-6'
+                    } bg-white/20`}>
+                      {(item as typeof item & { step: number }).step}
+                    </span>
+                  ) : (
+                    <item.icon size={collapsed ? 22 : 18} />
+                  )}
                   {!collapsed && <span>{item.label}</span>}
                 </NavLink>
               ) : null

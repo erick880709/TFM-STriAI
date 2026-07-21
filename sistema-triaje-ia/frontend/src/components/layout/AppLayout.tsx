@@ -1,6 +1,7 @@
 import { Routes, Route, Navigate } from 'react-router-dom'
 import Sidebar from './Sidebar'
 import Header from './Header'
+import BottomNav from './BottomNav'
 import { ErrorBoundary } from '../shared/ErrorBoundary'
 import PatientRegistrationPage from '../../pages/PatientRegistrationPage'
 import VitalSignsPage from '../../pages/VitalSignsPage'
@@ -21,7 +22,7 @@ export default function AppLayout() {
       <Sidebar />
       <div className="flex-1 flex flex-col overflow-hidden">
         <Header />
-        <main className="flex-1 overflow-y-auto p-4 md:p-6">
+        <main className="flex-1 overflow-y-auto p-4 md:p-6 pb-20 md:pb-6">
           <div className="max-w-[1440px] mx-auto w-full">
           <ErrorBoundary>
             <Routes>
@@ -43,6 +44,7 @@ export default function AppLayout() {
           </div>
         </main>
       </div>
+      <BottomNav />
     </div>
   )
 }

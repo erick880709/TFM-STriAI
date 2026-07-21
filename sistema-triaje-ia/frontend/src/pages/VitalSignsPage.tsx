@@ -39,6 +39,25 @@ function statusLabelClass(status: string) {
   }
 }
 
+// Pulso Visual — firma del diseño Cian Quirúrgico
+function PulseDot({ status }: { status: string }) {
+  if (!status) return null
+  const isNormal = status === 'normal'
+  const isCritical = status === 'danger'
+  return (
+    <span className="relative flex items-center justify-center w-3.5 h-3.5" aria-hidden="true">
+      <span className={`absolute w-3 h-3 rounded-full ${
+        isNormal ? 'bg-green-500' : isCritical ? 'bg-red-500' : 'bg-amber-500'
+      }`} />
+      {!isNormal && (
+        <span className={`absolute w-3 h-3 rounded-full ${
+          isCritical ? 'bg-red-400 pulse-ring--critical' : 'bg-amber-400 pulse-ring'
+        }`} />
+      )}
+    </span>
+  )
+}
+
 export default function VitalSignsPage() {
   const navigate = useNavigate()
   const { user } = useAuth()
@@ -103,6 +122,7 @@ export default function VitalSignsPage() {
             return (
               <div key={key}>
                 <div className="flex items-center gap-2 mb-1">
+                  <PulseDot status={val ? status : ''} />
                   <label className="text-sm font-medium text-[#0F3D47]">
                     {cfg.label}
                   </label>
