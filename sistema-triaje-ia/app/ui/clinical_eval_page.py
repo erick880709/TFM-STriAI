@@ -28,11 +28,37 @@ def render_clinical_evaluation():
     patient_svc: PatientService = st.session_state.patient_service
 
     # ------------------------------------------------------------------
+    # Título y buscador de paciente (SIEMPRE visible)
+    # ------------------------------------------------------------------
+    st.title("🩺 Evaluación Clínica")
+
+    # Buscador de paciente por documento — permite retomar triajes pendientes
+    with st.expander("🔍 Buscar Paciente por Documento", expanded=False):
+        doc_search = st.text_input("Número de Documento", placeholder="Ingrese número de identificación", key="p04_search_doc")
+        if doc_search and st.button("🔍 Buscar", key="p04_search_btn"):
+            pacientes = patient_svc.search_patients(doc_search, None, limit=10)
+            if pacientes:
+                for p in pacientes:
+                    nombre = f"{p.get('nombres','')} {p.get('apellidos','')}".strip() or p.get('numero_documento','')
+                    activo = triage_svc.get_active_triage_for_patient(p['id_paciente'])
+                    badge = "🟢 Triaje activo" if activo else "⚪ Sin triaje"
+                    col_p1, col_p2 = st.columns([3,1])
+                    with col_p1:
+                        st.markdown(f"**{nombre}** · {p.get('tipo_documento','')} {p.get('numero_documento','')} · {badge}")
+                    with col_p2:
+                        if activo:
+                            if st.button("📋 Cargar", key=f"p04load_{p['id_paciente'][:8]}", use_container_width=True):
+                                st.session_state.triaje_activo = activo['id_triaje']
+                                st.rerun()
+            else:
+                st.info("No se encontraron pacientes.")
+
+    # ------------------------------------------------------------------
     # Verificar triaje activo
     # ------------------------------------------------------------------
     id_triaje = st.session_state.get("triaje_activo")
     if not id_triaje:
-        st.warning("⚠️ No hay un evento de triaje activo.")
+        st.warning("⚠️ No hay un evento de triaje activo. Use el buscador 🔍 arriba para encontrar un paciente con triaje pendiente, o registre uno nuevo.")
         if st.button("📝 Ir a Registro de Paciente"):
             st.session_state.page = "registro_paciente"
             st.rerun()
@@ -49,29 +75,6 @@ def render_clinical_evaluation():
     # ------------------------------------------------------------------
     # Cabecera con resumen de signos vitales
     # ------------------------------------------------------------------
-    st.title("🩺 Evaluación Clínica")    
-    # Buscador de paciente por documento (compartido en pantallas clínicas)
-    with st.expander("🔍 Buscar Paciente por Documento", expanded=False):
-        doc_search = st.text_input("Número de Documento", placeholder="Ingrese número de identificación", key="p04_search_doc")
-        if doc_search and st.button("🔍 Buscar", key="p04_search_btn"):
-            from app.services.patient_service import PatientService
-            ps = PatientService(st.session_state.db_path)
-            pacientes = ps.search_patients(doc_search, None, limit=10)
-            if pacientes:
-                for p in pacientes:
-                    nombre = f"{p.get('nombres','')} {p.get('apellidos','')}".strip() or p.get('numero_documento','')
-                    activo = triage_svc.get_active_triage_for_patient(p['id_paciente'])
-                    badge = "🟢 Triaje activo" if activo else "⚪ Sin triaje"
-                    col_p1, col_p2 = st.columns([3,1])
-                    with col_p1:
-                        st.markdown(f"**{nombre}** · {p.get('tipo_documento','')} {p.get('numero_documento','')} · {badge}")
-                    with col_p2:
-                        if activo:
-                            if st.button("📋 Cargar", key=f"p04load_{p['id_paciente'][:8]}", use_container_width=True):
-                                st.session_state.triaje_activo = activo['id_triaje']
-                                st.rerun()
-            else:
-                st.info("No se encontraron pacientes.")
     # Resumen compacto de signos vitales + documento del paciente (ampliado Épica 7)
     signos_parts = []
     num_doc = triaje.get("numero_documento", "")

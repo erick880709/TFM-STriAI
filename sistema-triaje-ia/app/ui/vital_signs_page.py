@@ -25,27 +25,11 @@ def render_vital_signs():
     patient_svc: PatientService = st.session_state.patient_service
 
     # ------------------------------------------------------------------
-    # Verificar triaje activo
-    # ------------------------------------------------------------------
-    id_triaje = st.session_state.get("triaje_activo")
-    if not id_triaje:
-        st.warning("⚠️ No hay un evento de triaje activo. Registre un paciente primero.")
-        if st.button("📝 Ir a Registro de Paciente"):
-            st.session_state.page = "registro_paciente"
-            st.rerun()
-        return
-
-    triaje = triage_svc.get_triage_event(id_triaje)
-    if not triaje:
-        st.error("❌ El evento de triaje no fue encontrado.")
-        return
-
-    # ------------------------------------------------------------------
-    # Cabecera con info del paciente + búsqueda por documento
+    # Título y buscador de paciente (SIEMPRE visible)
     # ------------------------------------------------------------------
     st.title("💓 Captura de Signos Vitales")
-    
-    # Buscador de paciente por documento (compartido en pantallas clínicas)
+
+    # Buscador de paciente por documento — permite retomar triajes pendientes
     with st.expander("🔍 Buscar Paciente por Documento", expanded=False):
         doc_search = st.text_input(
             "Número de Documento", placeholder="Ingrese número de identificación",
@@ -69,6 +53,25 @@ def render_vital_signs():
             else:
                 st.info("No se encontraron pacientes con ese documento.")
 
+    # ------------------------------------------------------------------
+    # Verificar triaje activo
+    # ------------------------------------------------------------------
+    id_triaje = st.session_state.get("triaje_activo")
+    if not id_triaje:
+        st.warning("⚠️ No hay un evento de triaje activo. Use el buscador 🔍 arriba para encontrar un paciente con triaje pendiente, o registre uno nuevo.")
+        if st.button("📝 Ir a Registro de Paciente"):
+            st.session_state.page = "registro_paciente"
+            st.rerun()
+        return
+
+    triaje = triage_svc.get_triage_event(id_triaje)
+    if not triaje:
+        st.error("❌ El evento de triaje no fue encontrado.")
+        return
+
+    # ------------------------------------------------------------------
+    # Cabecera con info del paciente
+    # ------------------------------------------------------------------
     # Construir línea de identificación del paciente
     nombre_pac = f"{triaje.get('nombres', '')} {triaje.get('apellidos', '')}".strip()
     doc_info = f"{triaje.get('tipo_documento', '')} {triaje.get('numero_documento', '')}".strip()

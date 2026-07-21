@@ -47,27 +47,11 @@ def render_ia_classification():
     inference_svc: InferenceService = st.session_state.inference_service
 
     # ------------------------------------------------------------------
-    # Verificar triaje activo
-    # ------------------------------------------------------------------
-    id_triaje = st.session_state.get("triaje_activo")
-    if not id_triaje:
-        st.warning("⚠️ No hay un evento de triaje activo.")
-        if st.button("📝 Ir a Registro de Paciente"):
-            st.session_state.page = "registro_paciente"
-            st.rerun()
-        return
-
-    triaje = triage_svc.get_triage_event(id_triaje)
-    if not triaje:
-        st.error("❌ Evento de triaje no encontrado.")
-        return
-
-    # ------------------------------------------------------------------
-    # Cabecera
+    # Título y buscador de paciente (SIEMPRE visible)
     # ------------------------------------------------------------------
     st.title("🧠 Resultado de Clasificación IA")
-    
-    # Buscador de paciente por documento
+
+    # Buscador de paciente por documento — permite retomar triajes pendientes
     with st.expander("🔍 Buscar Paciente por Documento", expanded=False):
         doc_search = st.text_input("Número de Documento", placeholder="Ingrese número de identificación", key="p05_search_doc")
         if doc_search and st.button("🔍 Buscar", key="p05_search_btn"):
@@ -87,7 +71,26 @@ def render_ia_classification():
                                 st.rerun()
             else:
                 st.info("No se encontraron pacientes.")
-    
+
+    # ------------------------------------------------------------------
+    # Verificar triaje activo
+    # ------------------------------------------------------------------
+    id_triaje = st.session_state.get("triaje_activo")
+    if not id_triaje:
+        st.warning("⚠️ No hay un evento de triaje activo. Use el buscador 🔍 arriba para encontrar un paciente con triaje pendiente, o registre uno nuevo.")
+        if st.button("📝 Ir a Registro de Paciente"):
+            st.session_state.page = "registro_paciente"
+            st.rerun()
+        return
+
+    triaje = triage_svc.get_triage_event(id_triaje)
+    if not triaje:
+        st.error("❌ Evento de triaje no encontrado.")
+        return
+
+    # ------------------------------------------------------------------
+    # Cabecera
+    # ------------------------------------------------------------------
     status = inference_svc.get_status()
     st.caption(
         f"Paso 4 de 7 · Modelo: {status['nombre_modelo']} v{status['version']}"
