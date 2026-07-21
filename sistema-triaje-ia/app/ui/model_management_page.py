@@ -85,13 +85,11 @@ def render_model_management():
             
             with col_d2:
                 st.markdown("**📋 Información del Modelo**")
-                st.json({
-                    "nombre": status.get("nombre_modelo", "N/A"),
-                    "version": status.get("version", "N/A"),
-                    "n_features": status.get("n_features", 0),
-                    "shap_disponible": status.get("shap_disponible", False),
-                    "directorio_modelos": status.get("models_dir", "N/A"),
-                })
+                st.markdown(f"- **Nombre:** {status.get('nombre_modelo', 'N/A')}")
+                st.markdown(f"- **Versión:** {status.get('version', 'N/A')}")
+                st.markdown(f"- **Features:** {status.get('n_features', 0)}")
+                st.markdown(f"- **SHAP disponible:** {'✅ Sí' if status.get('shap_disponible') else '❌ No'}")
+                st.markdown(f"- **Directorio:** `{status.get('models_dir', 'N/A')}`")
 
     st.markdown("---")
 
@@ -180,7 +178,8 @@ def render_model_management():
                     with col3:
                         if meta.get("thresholds"):
                             with st.expander("🎯 Umbrales"):
-                                st.json(meta["thresholds"])
+                                th_data = [{"Nivel": f"Nivel {k}", "Umbral": f"{v:.4f}"} for k, v in meta["thresholds"].items()]
+                                st.dataframe(th_data, use_container_width=True, hide_index=True)
 
                     with col4:
                         if not is_active:
@@ -195,14 +194,13 @@ def render_model_management():
                                     st.error(f"Error: {e}")
 
                         with st.expander("📋 Detalles"):
-                            st.json({
-                                "model_name": meta.get("model_name"),
-                                "version": meta.get("version"),
-                                "framework": meta.get("framework"),
-                                "serialized_at": meta.get("serialized_at"),
-                                "class_labels": meta.get("class_labels"),
-                                "n_features": meta.get("n_features"),
-                            })
+                            st.markdown(f"- **Nombre:** {meta.get('model_name', 'N/A')}")
+                            st.markdown(f"- **Versión:** {meta.get('version', 'N/A')}")
+                            st.markdown(f"- **Framework:** {meta.get('framework', 'N/A')}")
+                            st.markdown(f"- **Serializado:** {str(meta.get('serialized_at', 'N/A'))[:19]}")
+                            st.markdown(f"- **Features:** {meta.get('n_features', 'N/A')}")
+                            if meta.get('class_labels'):
+                                st.markdown(f"- **Clases:** {meta['class_labels']}")
 
     # --- TAB 2: Registro en BD ---
     with tab_db:
@@ -323,7 +321,27 @@ def render_model_management():
     # ==================================================================
     st.markdown("---")
     with st.expander("🔧 Estado del Servicio de Inferencia"):
-        st.json(status)
+        cols_st = st.columns(4)
+        modelo_ok = status.get("modelo_cargado", False)
+        with cols_st[0]:
+            if modelo_ok:
+                st.success("✅ Modelo Activo")
+            else:
+                st.error("❌ Sin modelo")
+        with cols_st[1]:
+            st.metric("Modelo", status.get("nombre_modelo", "N/D"))
+        with cols_st[2]:
+            st.metric("Versión", status.get("version", "N/D"))
+        with cols_st[3]:
+            st.metric("Features", status.get("n_features", "N/D"))
+        if status.get("error"):
+            st.warning(f"⚠️ {status['error']}")
+        if status.get("models_dir"):
+            st.caption(f"📁 Directorio: `{status['models_dir']}`")
+        if status.get("thresholds"):
+            st.markdown("**🎯 Umbrales de clasificación:**")
+            th_data = [{"Nivel": f"Nivel {k}", "Umbral": f"{v:.4f}"} for k, v in status["thresholds"].items()]
+            st.dataframe(th_data, use_container_width=True, hide_index=True)
 
 
 def _get_dir_size(path: Path) -> float:
