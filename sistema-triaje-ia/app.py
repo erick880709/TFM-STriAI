@@ -115,6 +115,9 @@ with st.sidebar:
         st.markdown("---")
         if st.button("🚪 Cerrar Sesión", use_container_width=True):
             auth.logout()
+            st.session_state.user = None
+            st.session_state.login_time = None
+            st.session_state.page = "login"
             st.rerun()
 
 # ---------------------------------------------------------------------------

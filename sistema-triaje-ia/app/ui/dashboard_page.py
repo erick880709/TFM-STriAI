@@ -9,7 +9,7 @@ import json
 from datetime import datetime, timedelta
 import io
 
-from app.data.database import get_connection, rows_to_dicts
+from app.services.dashboard_service import DashboardService
 
 # Colores de niveles
 NIVEL_COLORS = {"I": "#DC2626", "II": "#EA580C", "III": "#F59E0B", "IV": "#059669", "V": "#0891B2"}
@@ -22,69 +22,30 @@ def render_dashboard():
     st.title("📊 Dashboard Operativo")
     st.caption("Indicadores de desempeño del sistema de triaje")
 
-    db_path = st.session_state.db_path
-
     # ------------------------------------------------------------------
-    # MÉTRICAS DESDE LA BD
+    # MÉTRICAS DESDE EL SERVICIO (ya no SQL directo en UI)
     # ------------------------------------------------------------------
-    conn = get_connection(db_path)
-    try:
-        # Total de triajes
-        total_triages = conn.execute(
-            "SELECT COUNT(*) as cnt FROM EventoTriaje"
-        ).fetchone()["cnt"]
+    if "dashboard_service" not in st.session_state:
+        st.session_state.dashboard_service = DashboardService(st.session_state.db_path)
 
-        # Triajes por estado
-        estados_rows = conn.execute(
-            "SELECT Estado, COUNT(*) as cnt FROM EventoTriaje GROUP BY Estado"
-        ).fetchall()
-        estados = {r["Estado"]: r["cnt"] for r in estados_rows}
+    svc = st.session_state.dashboard_service
+    kpis = svc.get_kpis()
+    triajes_7d = svc.get_triages_7d()
 
-        # Distribución por nivel IA
-        niveles_rows = conn.execute(
-            "SELECT NivelSugeridoIA, COUNT(*) as cnt FROM EventoTriaje "
-            "WHERE NivelSugeridoIA IS NOT NULL GROUP BY NivelSugeridoIA"
-        ).fetchall()
-        niveles_ia = {r["NivelSugeridoIA"]: r["cnt"] for r in niveles_rows}
-        total_con_ia = sum(niveles_ia.values())
-
-        # Concordancia
-        concordancia_total = conn.execute(
-            "SELECT COUNT(*) as cnt FROM EventoTriaje WHERE Concordancia IS NOT NULL"
-        ).fetchone()["cnt"]
-        concordancia_si = conn.execute(
-            "SELECT COUNT(*) as cnt FROM EventoTriaje WHERE Concordancia = 1"
-        ).fetchone()["cnt"]
-        tasa_concordancia = (concordancia_si / concordancia_total * 100) if concordancia_total > 0 else 0
-
-        # Total pacientes
-        total_pacientes = conn.execute(
-            "SELECT COUNT(*) as cnt FROM Paciente"
-        ).fetchone()["cnt"]
-
-        # Tiempo promedio de inferencia
-        avg_time = conn.execute(
-            "SELECT AVG(TiempoInferencia) as avg_t FROM PrediccionIA"
-        ).fetchone()["avg_t"] or 0
-
-        # Triajes hoy
-        hoy = datetime.now().strftime("%Y-%m-%d")
-        triajes_hoy = conn.execute(
-            "SELECT COUNT(*) as cnt FROM EventoTriaje WHERE FechaHoraIngreso LIKE ?",
-            (f"{hoy}%",),
-        ).fetchone()["cnt"]
-
-        # Últimos 7 días
-        triajes_7d_rows = conn.execute(
-            "SELECT DATE(FechaHoraIngreso) as dia, COUNT(*) as cnt "
-            "FROM EventoTriaje "
-            "WHERE FechaHoraIngreso >= DATE('now', '-7 days') "
-            "GROUP BY dia ORDER BY dia"
-        ).fetchall()
-        triajes_7d = rows_to_dicts(triajes_7d_rows) if triajes_7d_rows else []
-
-    finally:
-        conn.close()
+    # Desempaquetar KPIs
+    total_triages = kpis["total_triages"]
+    total_pacientes = kpis["total_pacientes"]
+    triajes_hoy = kpis["triajes_hoy"]
+    tasa_concordancia = kpis["tasa_concordancia"]
+    concordancia_si = kpis["concordancia_si"]
+    concordancia_total = kpis["concordancia_total"]
+    avg_time = kpis["tiempo_inferencia_promedio"]
+    tasa_cierre = kpis["tasa_cierre"]
+    cerrados = kpis["cerrados"]
+    estados = kpis["triajes_por_estado"]
+    niveles_ia = kpis["triajes_por_nivel_ia"]
+    total_con_ia = kpis["total_con_ia"]
+    hoy = datetime.now().strftime("%Y-%m-%d")
 
     # ==================================================================
     # KPI CARDS — Fila 1

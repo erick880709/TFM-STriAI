@@ -11,7 +11,6 @@ from datetime import datetime, timedelta
 from typing import Optional, Dict, List
 
 import bcrypt
-import streamlit as st
 
 from app.data.database import get_connection, row_to_dict, rows_to_dicts
 
@@ -124,10 +123,16 @@ class AuthService:
             conn.close()
 
     def logout(self):
-        """Cierra la sesión del usuario."""
-        st.session_state.user = None
-        st.session_state.login_time = None
-        st.session_state.page = "login"
+        """
+        Cierra la sesión del usuario.
+        
+        Este método es puro — no depende de ningún framework de presentación.
+        La capa de presentación (Streamlit o FastAPI) es responsable de
+        limpiar el estado de sesión / invalidar el token.
+        """
+        # La limpieza de st.session_state se movió a app.py (Streamlit)
+        # y a la invalidación de JWT (FastAPI).
+        pass
 
     # ------------------------------------------------------------------
     # HU-E1-02: Roles y permisos
@@ -365,24 +370,33 @@ class AuthService:
     # ------------------------------------------------------------------
     # HU-E1-04: Cierre automático de sesión por inactividad
     # ------------------------------------------------------------------
-    def check_session_timeout(self) -> bool:
+    def check_session_timeout(
+        self, login_time: Optional[datetime], timeout_minutes: int = 15
+    ) -> bool:
         """
         Verifica si la sesión ha expirado por inactividad.
-        Retorna True si la sesión sigue activa, False si expiró.
+        
+        Args:
+            login_time: datetime del último acceso. None = no hay sesión.
+            timeout_minutes: minutos de inactividad permitidos.
+            
+        Returns:
+            True si la sesión sigue activa, False si expiró o no hay sesión.
         """
-        if "login_time" not in st.session_state:
+        if login_time is None:
             return False
 
-        timeout = st.session_state.app_config.get("session_timeout_minutes", 15)
-        elapsed = datetime.utcnow() - st.session_state.login_time
-        if elapsed > timedelta(minutes=timeout):
-            self.logout()
-            return False
+        elapsed = datetime.utcnow() - login_time
+        return elapsed <= timedelta(minutes=timeout_minutes)
 
-        # Renovar timestamp de actividad
-        st.session_state.login_time = datetime.utcnow()
-        return True
-
-    def get_timeout_minutes(self) -> int:
-        """Retorna el tiempo de inactividad configurado."""
-        return st.session_state.app_config.get("session_timeout_minutes", 15)
+    def get_timeout_minutes(self, config: Optional[Dict] = None) -> int:
+        """
+        Retorna el tiempo de inactividad configurado.
+        
+        Args:
+            config: diccionario de configuración con clave 'session_timeout_minutes'.
+                    Si es None, retorna el default.
+        """
+        if config is None:
+            return 15
+        return config.get("session_timeout_minutes", 15)

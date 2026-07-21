@@ -22,6 +22,15 @@ def load_config() -> dict:
         "active_model": os.getenv("ACTIVE_MODEL", "xgboost_early_fusion_v1"),
         "env": os.getenv("ENV", "development"),
         "log_level": os.getenv("LOG_LEVEL", "INFO"),
+        # FastAPI / JWT
+        "jwt_secret": os.getenv("JWT_SECRET", "cambiar-por-secreto-seguro-en-produccion"),
+        "jwt_algorithm": os.getenv("JWT_ALGORITHM", "HS256"),
+        "jwt_expiration_minutes": int(os.getenv("JWT_EXPIRATION_MINUTES", "15")),
+        # CORS
+        "cors_origins": os.getenv(
+            "CORS_ORIGINS",
+            "http://localhost:5173,http://localhost:8501"
+        ).split(","),
     }
 
 

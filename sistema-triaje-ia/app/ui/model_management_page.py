@@ -9,8 +9,8 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional
 
-from app.data.database import get_connection, row_to_dict
 from app.services.inference_service import get_inference_service
+from app.services.model_management_service import ModelManagementService
 
 # Colores
 NIVEL_COLORS = {"I": "#DC2626", "II": "#EA580C", "III": "#F59E0B", "IV": "#059669", "V": "#0891B2"}
@@ -100,14 +100,11 @@ def render_model_management():
     # ==================================================================
     st.subheader("📋 Modelos Registrados en el Sistema")
 
-    conn = get_connection(db_path)
-    try:
-        modelos_db = conn.execute(
-            "SELECT * FROM Modelo ORDER BY FechaRegistro DESC"
-        ).fetchall()
-        modelos_list = [dict(r) for r in modelos_db] if modelos_db else []
-    finally:
-        conn.close()
+    if "model_mgmt_service" not in st.session_state:
+        st.session_state.model_mgmt_service = ModelManagementService(db_path)
+
+    mgmt_svc = st.session_state.model_mgmt_service
+    modelos_list = mgmt_svc.list_models()
 
     # ==================================================================
     # MODELOS SERIALIZADOS EN DISCO
@@ -304,30 +301,22 @@ def render_model_management():
                 if not nombre or not version:
                     st.error("Nombre y Versión son obligatorios.")
                 else:
-                    import uuid
-                    conn = get_connection(db_path)
                     try:
-                        id_modelo = f"mod-{uuid.uuid4().hex[:12]}"
-                        conn.execute(
-                            """INSERT INTO Modelo
-                               (IdModelo, Nombre, Version, Arquitectura, Algoritmo,
-                                Hiperparametros, DatasetEntrenamiento, F1Score,
-                                Precision, Recall, AUCROC, Estado, FechaRegistro)
-                               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))""",
-                            (
-                                id_modelo, nombre, version, arquitectura, algoritmo,
-                                hiperparametros, dataset_info, f1_score,
-                                None, None, auc_roc, estado,
-                            ),
+                        mgmt_svc.register_model(
+                            nombre=nombre,
+                            version=version,
+                            arquitectura=arquitectura,
+                            algoritmo=algoritmo,
+                            hiperparametros=json.loads(hiperparametros) if hiperparametros else None,
+                            dataset_entrenamiento=dataset_info,
+                            f1_score=f1_score if f1_score else None,
+                            auc_roc=auc_roc if auc_roc else None,
+                            estado=estado,
                         )
-                        conn.commit()
                         st.success(f"✅ Modelo `{nombre}` v{version} registrado exitosamente.")
                         st.rerun()
                     except Exception as e:
-                        conn.rollback()
                         st.error(f"Error: {e}")
-                    finally:
-                        conn.close()
 
     # ==================================================================
     # INFORMACIÓN DEL SERVICIO

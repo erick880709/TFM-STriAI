@@ -66,20 +66,6 @@ def render_login(auth: AuthService):
             with col_btn2:
                 if st.button("Iniciar Sesión", type="primary", use_container_width=True):
                     user = auth.login(username, password)
-                    # Fallback directo si auth.login falla (demo)
-                    if not user and username == "admin" and password == "admin123":
-                        from app.data.database import get_connection
-                        c = get_connection(st.session_state.db_path)
-                        r = c.execute("SELECT * FROM Usuario WHERE NombreUsuario=?", (username,)).fetchone()
-                        if r:
-                            user = {
-                                "id_usuario": r["IdUsuario"],
-                                "nombre_usuario": r["NombreUsuario"],
-                                "rol": r["Rol"],
-                                "email": r["Email"],
-                                "ultimo_acceso": datetime.utcnow().isoformat(),
-                            }
-                        c.close()
                     if user:
                         st.session_state.user = user
                         st.session_state.login_time = datetime.utcnow()
@@ -106,9 +92,18 @@ def render_login(auth: AuthService):
     # Verificación de sesión activa (HU-E1-04)
     # ------------------------------------------------------------------
     if "user" in st.session_state and st.session_state.user is not None:
-        if not auth.check_session_timeout():
+        login_time = st.session_state.get("login_time")
+        timeout_config = st.session_state.get("app_config", {})
+        timeout_minutes = auth.get_timeout_minutes(timeout_config)
+        if not auth.check_session_timeout(login_time, timeout_minutes):
+            auth.logout()
+            st.session_state.user = None
+            st.session_state.login_time = None
+            st.session_state.page = "login"
             st.query_params["expired"] = "1"
             st.rerun()
+        # Renovar timestamp de actividad
+        st.session_state.login_time = datetime.utcnow()
 
 
 def _render_password_recovery(auth: AuthService):
