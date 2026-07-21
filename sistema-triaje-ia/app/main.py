@@ -98,13 +98,31 @@ def create_app() -> FastAPI:
     async def health():
         return {"status": "ok", "version": "2.0.0"}
 
-    # Servir frontend React en producción (solo rutas no-API)
+    # Servir frontend React en producción
     if FRONTEND_DIST.exists() and (FRONTEND_DIST / "index.html").exists():
         from fastapi.responses import FileResponse
 
+        # 1. Montar assets estáticos (JS, CSS, imágenes, fuentes)
+        assets_dir = FRONTEND_DIST / "assets"
+        if assets_dir.exists():
+            app.mount("/assets", StaticFiles(directory=assets_dir), name="spa_assets")
+
+        # 2. Servir archivos sueltos en raíz de dist/ (favicon, icons, etc.)
+        @app.get("/{filename}")
+        async def serve_root_static(filename: str):
+            file_path = FRONTEND_DIST / filename
+            if file_path.is_file() and filename not in ("index.html",):
+                return FileResponse(file_path)
+
+        # 3. SPA catch-all: todo lo demás → index.html
         @app.get("/{full_path:path}")
         async def serve_react(full_path: str = ""):
             """Sirve el SPA de React para rutas no-API."""
+            # Intentar servir archivo estático suelto
+            file_path = FRONTEND_DIST / full_path
+            if file_path.is_file():
+                return FileResponse(file_path)
+            # Fallback SPA: index.html para client-side routing
             index_path = FRONTEND_DIST / "index.html"
             if index_path.exists():
                 return FileResponse(index_path)
