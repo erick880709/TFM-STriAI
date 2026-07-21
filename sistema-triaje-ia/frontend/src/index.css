@@ -2,3 +2,44 @@
 *, *::before, *::after { box-sizing: border-box; }
 body { margin: 0; font-family: system-ui, sans-serif; background: #F8FAFC; color: #1E293B; }
 #root { min-height: 100vh; }
+
+/* Clase base para inputs usada en PatientRegistration, ModelManagement, UserManagement */
+.input {
+  width: 100%;
+  padding: 0.5rem 0.75rem;
+  font-size: 0.875rem;
+  line-height: 1.5;
+  color: #1E293B;
+  background-color: #FFFFFF;
+  border: 1px solid #CBD5E1;
+  border-radius: 0.5rem;
+  outline: none;
+  transition: border-color 0.15s ease, box-shadow 0.15s ease;
+}
+.input:focus {
+  border-color: #3B82F6;
+  box-shadow: 0 0 0 2px rgba(59, 130, 246, 0.2);
+}
+.input:disabled {
+  background-color: #F1F5F9;
+  color: #94A3B8;
+  cursor: not-allowed;
+}
+
+/* Accesibilidad: foco visible global */
+:focus-visible {
+  outline: 2px solid #3B82F6;
+  outline-offset: 2px;
+}
+
+/* Scrollbar estilizada */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #F1F5F9; }
+::-webkit-scrollbar-thumb { background: #CBD5E1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+
+/* Impresión — ocultar sidebar y header */
+@media print {
+  aside, header, nav { display: none !important; }
+  main { margin: 0 !important; padding: 1cm !important; }
+}

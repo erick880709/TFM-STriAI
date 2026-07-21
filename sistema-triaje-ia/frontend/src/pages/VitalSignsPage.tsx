@@ -16,9 +16,27 @@ const RANGOS: Record<string, { min: number; max: number; unit: string; normal: [
 }
 
 function alertClass(value: number, normal: [number, number]) {
-  if (value >= normal[0] && value <= normal[1]) return 'text-green-600'
-  if (value >= normal[0] * 0.9 && value <= normal[1] * 1.1) return 'text-amber-600'
-  return 'text-red-600'
+  if (value >= normal[0] && value <= normal[1]) return 'normal'
+  if (value >= normal[0] * 0.9 && value <= normal[1] * 1.1) return 'warning'
+  return 'danger'
+}
+
+function inputBorderClass(status: string) {
+  switch (status) {
+    case 'normal': return 'border-green-400 ring-green-300'
+    case 'warning': return 'border-amber-400 ring-amber-300'
+    case 'danger': return 'border-red-400 ring-red-300'
+    default: return 'border-slate-300 ring-blue-300'
+  }
+}
+
+function statusLabelClass(status: string) {
+  switch (status) {
+    case 'normal': return 'text-green-600'
+    case 'warning': return 'text-amber-600'
+    case 'danger': return 'text-red-600'
+    default: return ''
+  }
 }
 
 export default function VitalSignsPage() {
@@ -81,7 +99,7 @@ export default function VitalSignsPage() {
         <div className="space-y-4">
           {Object.entries(RANGOS).map(([key, cfg]) => {
             const val = parseFloat(signs[key as keyof typeof signs]) || 0
-            const cls = val ? alertClass(val, cfg.normal) : ''
+            const status = val ? alertClass(val, cfg.normal) : ''
             return (
               <div key={key}>
                 <label className="block text-sm font-medium text-slate-600 mb-1 capitalize">
@@ -92,13 +110,12 @@ export default function VitalSignsPage() {
                     type="number" step="0.1" min={cfg.min} max={cfg.max}
                     value={signs[key as keyof typeof signs]}
                     onChange={(e) => handleChange(key, e.target.value)}
-                    className={`flex-1 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 ${
-                      val ? `border-${cls.replace('text-', '').replace('600', '400')} ring-${cls.replace('text-', '').replace('600', '300')}` : 'border-slate-300 ring-blue-300'
-                    }`}
+                    className={`flex-1 px-3 py-2 border rounded-lg text-sm outline-none focus:ring-2 ${inputBorderClass(status)}`}
+                    aria-valuemin={cfg.min} aria-valuemax={cfg.max}
                     required
                   />
                   {val > 0 && (
-                    <span className={`text-xs font-medium w-20 ${cls}`}>
+                    <span className={`text-xs font-medium w-20 ${statusLabelClass(status)}`}>
                       {val < cfg.normal[0] ? '↓ Bajo' : val > cfg.normal[1] ? '↑ Alto' : '✓ Normal'}
                     </span>
                   )}

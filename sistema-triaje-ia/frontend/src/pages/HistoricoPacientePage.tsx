@@ -1,7 +1,7 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { patientsApi } from '../api/patients'
-import { LoadingSpinner } from '../components/shared'
+import { LoadingSpinner, ErrorAlert, EmptyState } from '../components/shared'
 import type { Patient } from '../types/patient'
 
 export default function HistoricoPacientePage() {
@@ -28,13 +28,14 @@ export default function HistoricoPacientePage() {
       <p className="text-sm text-slate-500 mb-6">Consulta del historial de triajes por documento</p>
 
       <div className="flex gap-3 mb-6 max-w-md">
-        <input type="text" placeholder="Número de documento" value={doc}
+        <input type="text" placeholder="Número de documento" value={doc} aria-label="Buscar paciente por documento"
           onChange={e => setDoc(e.target.value)} onKeyDown={e => e.key === 'Enter' && handleSearch()}
           className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500" />
         <button onClick={handleSearch} className="px-4 py-2 bg-blue-600 text-white text-sm rounded-lg hover:bg-blue-700">Buscar</button>
       </div>
 
-      {patientQuery.isLoading && <LoadingSpinner />}
+      {patientQuery.isLoading && <LoadingSpinner message="Buscando paciente..." />}
+      {patientQuery.isError && <ErrorAlert error="No se encontró el paciente. Verifica el número de documento." />}
 
       {patientQuery.data && (
         <div className="bg-green-50 border border-green-200 rounded-lg p-4 mb-6">
@@ -43,23 +44,30 @@ export default function HistoricoPacientePage() {
         </div>
       )}
 
-      {triagesQuery.data && (
+      {triagesQuery.isLoading && <LoadingSpinner message="Cargando historial de triajes..." />}
+      {triagesQuery.isError && <ErrorAlert error="Error al cargar el historial de triajes." onRetry={() => triagesQuery.refetch()} />}
+
+      {triagesQuery.data && triagesQuery.data.length === 0 && <EmptyState message="El paciente no tiene triajes registrados." />}
+
+      {triagesQuery.data && triagesQuery.data.length > 0 && (
         <div className="overflow-x-auto">
           <table className="w-full bg-white border border-slate-200 rounded-lg text-sm">
+            <caption className="sr-only">Historial de triajes del paciente</caption>
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium text-slate-500 uppercase">
-                <th className="px-4 py-3">Fecha</th><th className="px-4 py-3">Nivel IA</th><th className="px-4 py-3">Nivel Prof.</th><th className="px-4 py-3">Concordancia</th><th className="px-4 py-3">Estado</th>
+                <th scope="col" className="px-4 py-3">Fecha</th><th scope="col" className="px-4 py-3">Nivel IA</th><th scope="col" className="px-4 py-3">Nivel Prof.</th><th scope="col" className="px-4 py-3">Concordancia</th><th scope="col" className="px-4 py-3">Estado</th>
               </tr>
             </thead>
             <tbody>
               {(triagesQuery.data as unknown[]).map((t: unknown, i: number) => {
                 const triage = t as Record<string, unknown>
+                const concordancia = triage.Concordancia || triage.concordancia
                 return (
                   <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
                     <td className="px-4 py-3 text-slate-500 text-xs">{String(triage.FechaHoraIngreso || triage.fecha_inicio || '').slice(0, 16)}</td>
                     <td className="px-4 py-3">{String(triage.NivelSugeridoIA || triage.nivel_sugerido_ia || '—')}</td>
                     <td className="px-4 py-3">{String(triage.NivelProfesional || triage.nivel_profesional || '—')}</td>
-                    <td className="px-4 py-3">{triage.Concordancia || triage.concordancia ? '✅' : '⚠️'}</td>
+                    <td className="px-4 py-3">{concordancia ? 'Coincide ✅' : 'Difiere ⚠️'}</td>
                     <td className="px-4 py-3">{String(triage.Estado || triage.estado || '—')}</td>
                   </tr>
                 )

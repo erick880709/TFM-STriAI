@@ -29,7 +29,7 @@ export default function DashboardPage() {
       <h1 className="text-2xl font-bold text-slate-800 mb-1">📊 Dashboard Operativo</h1>
       <p className="text-sm text-slate-500 mb-6">Indicadores de desempeño del sistema de triaje</p>
 
-      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8" role="list" aria-label="Indicadores clave de desempeño">
         <KpiCard label="Total Triajes" value={d.total_triages?.toLocaleString() || '0'} sub={`Hoy: ${d.triajes_hoy || 0}`} />
         <KpiCard label="Pacientes" value={d.total_pacientes?.toLocaleString() || '0'} />
         <KpiCard label="Concordancia" value={`${d.tasa_concordancia?.toFixed(1) || 0}%`} sub={`${d.concordancia_si || 0}/${d.concordancia_total || 0}`} />
@@ -42,7 +42,7 @@ export default function DashboardPage() {
           <h2 className="font-semibold text-slate-700 mb-4">Distribución por Nivel IA</h2>
           {nivelData.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
-              <BarChart data={nivelData}>
+              <BarChart data={nivelData} aria-label="Gráfico de barras: distribución de triajes por nivel IA">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="nivel" />
                 <YAxis />
@@ -55,9 +55,11 @@ export default function DashboardPage() {
 
         <div className="bg-white border border-slate-200 rounded-lg p-5">
           <h2 className="font-semibold text-slate-700 mb-4">Tendencia 7 Días</h2>
-          {trend.data && trend.data.length > 0 ? (
+          {trend.isLoading ? <LoadingSpinner message="Cargando tendencia..." /> :
+           trend.isError ? <ErrorAlert error="Error al cargar tendencia" onRetry={() => trend.refetch()} /> :
+           trend.data && trend.data.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
-              <LineChart data={trend.data}>
+              <LineChart data={trend.data} aria-label="Gráfico de línea: tendencia de triajes en los últimos 7 días">
                 <CartesianGrid strokeDasharray="3 3" />
                 <XAxis dataKey="dia" tick={{ fontSize: 12 }} />
                 <YAxis />

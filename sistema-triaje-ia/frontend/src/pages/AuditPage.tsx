@@ -1,11 +1,11 @@
 import { useState } from 'react'
 import { useQuery } from '@tanstack/react-query'
 import { auditApi, type AuditEntry } from '../api/audit'
-import { LoadingSpinner } from '../components/shared'
+import { LoadingSpinner, ErrorAlert, EmptyState } from '../components/shared'
 
 export default function AuditPage() {
   const [filters, setFilters] = useState({ fecha_desde: '', fecha_hasta: '', accion: '', entidad: '', usuario: '', page: 1 })
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error, refetch } = useQuery({
     queryKey: ['audit', filters],
     queryFn: () => auditApi.query(filters).then(r => r.data),
   })
@@ -17,6 +17,11 @@ export default function AuditPage() {
     const a = document.createElement('a'); a.href = url; a.download = 'auditoria.csv'; a.click()
   }
 
+  if (isLoading) return <LoadingSpinner message="Cargando registros de auditoría..." />
+  if (isError) return <ErrorAlert error={`Error al cargar auditoría: ${(error as Error)?.message || 'Error desconocido'}`} onRetry={() => refetch()} />
+
+  const items = (data as { items?: AuditEntry[] })?.items || []
+
   return (
     <div>
       <h1 className="text-2xl font-bold text-slate-800 mb-1">🔍 Auditoría</h1>
@@ -24,26 +29,27 @@ export default function AuditPage() {
 
       <div className="flex flex-wrap gap-3 mb-6">
         <input type="date" value={filters.fecha_desde} onChange={e => setFilters(p => ({ ...p, fecha_desde: e.target.value, page: 1 }))}
-          className="px-3 py-2 border border-slate-300 rounded-lg text-sm" />
+          className="px-3 py-2 border border-slate-300 rounded-lg text-sm" aria-label="Fecha desde" />
         <input type="date" value={filters.fecha_hasta} onChange={e => setFilters(p => ({ ...p, fecha_hasta: e.target.value, page: 1 }))}
-          className="px-3 py-2 border border-slate-300 rounded-lg text-sm" />
+          className="px-3 py-2 border border-slate-300 rounded-lg text-sm" aria-label="Fecha hasta" />
         <input type="text" placeholder="Acción" value={filters.accion} onChange={e => setFilters(p => ({ ...p, accion: e.target.value, page: 1 }))}
-          className="px-3 py-2 border border-slate-300 rounded-lg text-sm w-32" />
+          className="px-3 py-2 border border-slate-300 rounded-lg text-sm w-32" aria-label="Filtrar por acción" />
         <input type="text" placeholder="Entidad" value={filters.entidad} onChange={e => setFilters(p => ({ ...p, entidad: e.target.value, page: 1 }))}
-          className="px-3 py-2 border border-slate-300 rounded-lg text-sm w-32" />
+          className="px-3 py-2 border border-slate-300 rounded-lg text-sm w-32" aria-label="Filtrar por entidad" />
         <button onClick={handleExport} className="px-4 py-2 bg-green-600 text-white text-sm rounded-lg hover:bg-green-700">📥 CSV</button>
       </div>
 
-      {isLoading ? <LoadingSpinner /> : (
+      {items.length === 0 ? <EmptyState message="No se encontraron registros de auditoría con los filtros seleccionados." /> : (
         <div className="overflow-x-auto">
           <table className="w-full bg-white border border-slate-200 rounded-lg text-sm">
+            <caption className="sr-only">Registros de auditoría del sistema</caption>
             <thead>
               <tr className="border-b border-slate-200 bg-slate-50 text-left text-xs font-medium text-slate-500 uppercase">
-                <th className="px-4 py-3">Fecha</th><th className="px-4 py-3">Usuario</th><th className="px-4 py-3">Acción</th><th className="px-4 py-3">Entidad</th><th className="px-4 py-3">Detalle</th>
+                <th scope="col" className="px-4 py-3">Fecha</th><th scope="col" className="px-4 py-3">Usuario</th><th scope="col" className="px-4 py-3">Acción</th><th scope="col" className="px-4 py-3">Entidad</th><th scope="col" className="px-4 py-3">Detalle</th>
               </tr>
             </thead>
             <tbody>
-              {((data as { items?: AuditEntry[] })?.items || []).map((e, i) => (
+              {items.map((e, i) => (
                 <tr key={i} className="border-b border-slate-100 hover:bg-slate-50">
                   <td className="px-4 py-3 text-slate-500 text-xs">{e.FechaHora?.slice(0, 16)}</td>
                   <td className="px-4 py-3 font-medium">{e.Usuario}</td>
