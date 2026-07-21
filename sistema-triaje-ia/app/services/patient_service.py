@@ -28,6 +28,20 @@ REGIMENES_SALUD = ["Contributivo", "Subsidiado", "Especial", "No afiliado"]
 SEXOS = ["M", "F"]
 SEXO_LABELS = {"M": "Masculino", "F": "Femenino"}
 
+# Grupos sanguíneos
+GRUPOS_SANGUINEOS = ["A+", "A-", "B+", "B-", "AB+", "AB-", "O+", "O-"]
+
+# EPS habilitadas en Colombia (lista oficial)
+EPS_COLOMBIA = [
+    "Aliansalud EPS", "Anas Wayuu EPSI", "Asmet Salud EPS",
+    "Cajacopi EPS", "Capital Salud EPS", "Comfamiliar EPS",
+    "Compensar EPS", "Coosalud EPS", "Dusakawi EPSI",
+    "Emssanar EPS", "EPS Familiar de Colombia", "EPS Sura",
+    "Famisanar EPS", "Mallamas EPSI", "Mutual Ser EPS",
+    "Nueva EPS", "Pijaos Salud EPSI", "Salud Total EPS",
+    "Sanitas EPS", "Savia Salud EPS", "Ninguna / Particular",
+]
+
 # ---------------------------------------------------------------------------
 # Catálogos de geografía colombiana (Épica 7)
 # ---------------------------------------------------------------------------
@@ -105,6 +119,9 @@ class PatientService:
         departamento: str = "",
         ciudad: str = "",
         direccion_residencia: str = "",
+        # -- Campos clínicos adicionales --
+        grupo_sanguineo: str = "",
+        alergias: str = "",
     ) -> Dict:
         """
         Registra un nuevo paciente.
@@ -121,6 +138,10 @@ class PatientService:
             raise ValueError(f"Vía de llegada inválida: {via_llegada}")
         if regimen_salud and regimen_salud not in REGIMENES_SALUD:
             raise ValueError(f"Régimen de salud inválido: {regimen_salud}")
+        if grupo_sanguineo and grupo_sanguineo not in GRUPOS_SANGUINEOS:
+            raise ValueError(f"Grupo sanguíneo inválido: {grupo_sanguineo}")
+        if eps and eps not in EPS_COLOMBIA:
+            raise ValueError(f"EPS no válida: {eps}")
 
         # Validar campos ampliados (Épica 7)
         if telefono and not self._validar_telefono(telefono):
@@ -182,9 +203,11 @@ class PatientService:
                     EpisodiosPreviosUrgencias, FechaRegistro,
                     Nombres, Apellidos, Telefono, Correo,
                     ContactoEmergencia, NumeroContactoEmergencia,
-                    Departamento, Ciudad, DireccionResidencia)
+                    Departamento, Ciudad, DireccionResidencia,
+                    GrupoSanguineo, Alergias)
                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?,
-                           ?, ?, ?, ?, ?, ?, ?, ?, ?)""",
+                           ?, ?, ?, ?, ?, ?, ?, ?, ?,
+                           ?, ?)""",
                 (
                     id_paciente, tipo_documento, numero_documento, fecha_nacimiento,
                     edad, sexo, regimen_salud, eps, via_llegada,
@@ -192,6 +215,7 @@ class PatientService:
                     nombres, apellidos, telefono, correo,
                     contacto_emergencia, numero_contacto_emergencia,
                     departamento, ciudad, direccion_residencia,
+                    grupo_sanguineo, alergias,
                 ),
             )
             conn.commit()
@@ -218,6 +242,8 @@ class PatientService:
                 "departamento": departamento,
                 "ciudad": ciudad,
                 "direccion_residencia": direccion_residencia,
+                "grupo_sanguineo": grupo_sanguineo,
+                "alergias": alergias,
             }
         except DuplicatePatientError:
             raise

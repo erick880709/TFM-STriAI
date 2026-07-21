@@ -34,7 +34,10 @@ CREATE TABLE IF NOT EXISTS Paciente (
     NumeroContactoEmergencia TEXT NOT NULL DEFAULT '',
     Departamento TEXT NOT NULL DEFAULT '',
     Ciudad TEXT NOT NULL DEFAULT '',
-    DireccionResidencia TEXT NOT NULL DEFAULT ''
+    DireccionResidencia TEXT NOT NULL DEFAULT '',
+    -- Campos clínicos adicionales
+    GrupoSanguineo TEXT NOT NULL DEFAULT '' CHECK(GrupoSanguineo IN ('','A+','A-','B+','B-','AB+','AB-','O+','O-')),
+    Alergias TEXT NOT NULL DEFAULT ''
 );
 
 CREATE TABLE IF NOT EXISTS EventoTriaje (
@@ -261,6 +264,9 @@ def _apply_migrations(conn: sqlite3.Connection) -> None:
         "ALTER TABLE Paciente ADD COLUMN Departamento TEXT NOT NULL DEFAULT ''",
         "ALTER TABLE Paciente ADD COLUMN Ciudad TEXT NOT NULL DEFAULT ''",
         "ALTER TABLE Paciente ADD COLUMN DireccionResidencia TEXT NOT NULL DEFAULT ''",
+        # Campos clínicos adicionales
+        "ALTER TABLE Paciente ADD COLUMN GrupoSanguineo TEXT NOT NULL DEFAULT ''",
+        "ALTER TABLE Paciente ADD COLUMN Alergias TEXT NOT NULL DEFAULT ''",
     ]
     for sql in migraciones:
         try:

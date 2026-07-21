@@ -41,9 +41,33 @@ def render_vital_signs():
         return
 
     # ------------------------------------------------------------------
-    # Cabecera con info del paciente (ampliado Épica 7)
+    # Cabecera con info del paciente + búsqueda por documento
     # ------------------------------------------------------------------
     st.title("💓 Captura de Signos Vitales")
+    
+    # Buscador de paciente por documento (compartido en pantallas clínicas)
+    with st.expander("🔍 Buscar Paciente por Documento", expanded=False):
+        doc_search = st.text_input(
+            "Número de Documento", placeholder="Ingrese número de identificación",
+            key="p03_search_doc"
+        )
+        if doc_search and st.button("🔍 Buscar", key="p03_search_btn"):
+            pacientes = patient_svc.search_patients(doc_search, None, limit=10)
+            if pacientes:
+                for p in pacientes:
+                    nombre = f"{p.get('nombres','')} {p.get('apellidos','')}".strip() or p.get('numero_documento','')
+                    activo = triage_svc.get_active_triage_for_patient(p['id_paciente'])
+                    badge = "🟢 Triaje activo" if activo else "⚪ Sin triaje"
+                    col_p1, col_p2 = st.columns([3, 1])
+                    with col_p1:
+                        st.markdown(f"**{nombre}** · {p.get('tipo_documento','')} {p.get('numero_documento','')} · {badge}")
+                    with col_p2:
+                        if activo:
+                            if st.button("📋 Cargar", key=f"load_{p['id_paciente'][:8]}", use_container_width=True):
+                                st.session_state.triaje_activo = activo['id_triaje']
+                                st.rerun()
+            else:
+                st.info("No se encontraron pacientes con ese documento.")
 
     # Construir línea de identificación del paciente
     nombre_pac = f"{triaje.get('nombres', '')} {triaje.get('apellidos', '')}".strip()

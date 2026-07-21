@@ -11,6 +11,7 @@ from app.services.patient_service import (
     TIPOS_DOCUMENTO, TIPOS_DOC_LABELS, VIAS_LLEGADA,
     REGIMENES_SALUD, SEXOS, SEXO_LABELS,
     DEPARTAMENTOS_COLOMBIA, CIUDADES_POR_DEPARTAMENTO,
+    GRUPOS_SANGUINEOS, EPS_COLOMBIA,
 )
 from app.services.triage_service import TriageService, NIVELES_LABELS
 
@@ -230,13 +231,31 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
                 options=[""] + REGIMENES_SALUD,
                 key="p02_regimen",
             )
+            grupo_sanguineo = st.selectbox(
+                "Grupo Sanguíneo *",
+                options=[""] + GRUPOS_SANGUINEOS,
+                key="p02_grupo_sanguineo",
+                help="Seleccione el grupo sanguíneo y factor Rh del paciente.",
+            )
         with col_clin2:
-            eps = st.text_input("EPS", placeholder="Nombre de la EPS", key="p02_eps")
+            eps = st.selectbox(
+                "EPS *",
+                options=[""] + EPS_COLOMBIA,
+                key="p02_eps",
+                help="EPS a la que está afiliado el paciente.",
+            )
             episodios = st.number_input(
                 "Episodios Previos en Urgencias ⚠ Variable predictiva",
                 min_value=0, max_value=99, value=0, step=1,
                 key="p02_episodios",
                 help="Número de visitas a urgencias en los últimos 12 meses.",
+            )
+            alergias = st.text_area(
+                "Alergias (Opcional)",
+                placeholder="Describa alergias conocidas del paciente a medicamentos, alimentos u otros...",
+                key="p02_alergias",
+                help="Información sobre alergias del paciente (opcional).",
+                height=80,
             )
 
         st.markdown("---")
@@ -276,6 +295,10 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
                         errores.append("El teléfono del contacto de emergencia debe tener al menos 10 dígitos.")
                 if ciudad and departamento and ciudad not in CIUDADES_POR_DEPARTAMENTO.get(departamento, []):
                     errores.append(f"La ciudad '{ciudad}' no pertenece al departamento '{departamento}'.")
+                if not grupo_sanguineo:
+                    errores.append("El grupo sanguíneo es obligatorio.")
+                if not eps:
+                    errores.append("La EPS es obligatoria.")
 
                 if errores:
                     for e in errores:
@@ -290,7 +313,7 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
                             sexo=sexo,
                             via_llegada=via_llegada,
                             regimen_salud=regimen if regimen else None,
-                            eps=eps.strip() if eps else None,
+                            eps=eps if eps else None,
                             episodios_previos=episodios,
                             nombres=nombres.strip(),
                             apellidos=apellidos.strip(),
@@ -301,6 +324,8 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
                             departamento=departamento,
                             ciudad=ciudad,
                             direccion_residencia=direccion_residencia.strip(),
+                            grupo_sanguineo=grupo_sanguineo if grupo_sanguineo else "",
+                            alergias=alergias.strip() if alergias else "",
                         )
                         # Mostrar nombre completo si está disponible
                         nombre_mostrar = (

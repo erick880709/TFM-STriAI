@@ -25,15 +25,29 @@ def render_model_management():
     db_path = st.session_state.db_path
 
     # ------------------------------------------------------------------
+    # Inicializar servicio de inferencia (forzar carga del modelo)
+    # ------------------------------------------------------------------
+    if "inference_service" not in st.session_state:
+        with st.spinner("🔧 Inicializando motor de IA y cargando modelo..."):
+            st.session_state.inference_service = get_inference_service()
+    
+    inference_svc = st.session_state.inference_service
+    status = inference_svc.get_status()
+    
+    # Si no está cargado, intentar cargar
+    if not status.get("modelo_cargado"):
+        with st.spinner("🔧 Cargando modelo desde models/..."):
+            loaded = inference_svc.load_model()
+            if loaded:
+                status = inference_svc.get_status()
+                st.success("✅ Modelo cargado exitosamente")
+                st.rerun()
+    
+    # ------------------------------------------------------------------
     # Estado del servicio de inferencia
     # ------------------------------------------------------------------
-    if "inference_service" in st.session_state:
-        status = st.session_state.inference_service.get_status()
-    else:
-        status = {"modelo_cargado": False, "error": "Servicio no inicializado"}
-
     with st.container(border=True):
-        cols = st.columns(3)
+        cols = st.columns(4)
         with cols[0]:
             if status.get("modelo_cargado"):
                 st.success("✅ Modelo Activo")
@@ -43,6 +57,36 @@ def render_model_management():
             st.metric("Modelo", status.get("nombre_modelo", "N/A"))
         with cols[2]:
             st.metric("Versión", status.get("version", "N/A"))
+        with cols[3]:
+            st.metric("Features", status.get("n_features", 0))
+        
+        if status.get("error"):
+            st.warning(f"⚠️ {status['error']}")
+        
+        # Mostrar detalles en popup expander
+        with st.expander("📊 Umbrales y Detalles del Modelo Activo", expanded=False):
+            col_d1, col_d2 = st.columns(2)
+            with col_d1:
+                st.markdown("**🎯 Umbrales de Clasificación**")
+                thresholds = status.get("thresholds", {})
+                if thresholds:
+                    umbral_data = []
+                    for k, v in thresholds.items():
+                        nivel = ["I", "II", "III", "IV", "V"][int(k)] if k.isdigit() else k
+                        umbral_data.append({"Nivel": nivel, "Umbral": float(v)})
+                    st.dataframe(umbral_data, use_container_width=True, hide_index=True)
+                else:
+                    st.caption("No hay umbrales configurados.")
+            
+            with col_d2:
+                st.markdown("**📋 Información del Modelo**")
+                st.json({
+                    "nombre": status.get("nombre_modelo", "N/A"),
+                    "version": status.get("version", "N/A"),
+                    "n_features": status.get("n_features", 0),
+                    "shap_disponible": status.get("shap_disponible", False),
+                    "directorio_modelos": status.get("models_dir", "N/A"),
+                })
 
     st.markdown("---")
 

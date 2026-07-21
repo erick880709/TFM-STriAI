@@ -29,7 +29,18 @@ logger = logging.getLogger(__name__)
 # ---------------------------------------------------------------------------
 # Configuración
 # ---------------------------------------------------------------------------
-MODELS_DIR = Path(__file__).resolve().parent.parent.parent.parent / "models"
+# Resolver ruta a models/ de forma robusta (prueba múltiples ubicaciones)
+_MODULE_DIR = Path(__file__).resolve().parent  # .../app/services/
+_APP_DIR = _MODULE_DIR.parent.parent  # sistema-triaje-ia/
+_REPO_ROOT = _APP_DIR.parent  # TFM-FINAL/
+
+# Intentar varias ubicaciones en orden de preferencia
+_MODEL_CANDIDATES = [
+    _REPO_ROOT / "models",                    # TFM-FINAL/models/
+    _APP_DIR / "models",                       # sistema-triaje-ia/models/
+    _MODULE_DIR.parent.parent.parent.parent / "models",  # fallback original
+]
+MODELS_DIR = next((d for d in _MODEL_CANDIDATES if d.exists()), _MODEL_CANDIDATES[0])
 
 # Variables requeridas para inferencia
 REQUIRED_FIELDS = [
