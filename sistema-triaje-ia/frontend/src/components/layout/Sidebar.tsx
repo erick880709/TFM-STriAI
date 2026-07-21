@@ -60,7 +60,7 @@ export default function Sidebar() {
                     `flex items-center gap-3 px-3 py-2 rounded-lg text-sm transition-colors ${
                       isActive
                         ? 'bg-[#0891B2] text-white shadow-sm'
-                        : 'text-[#CFFAFE] hover:bg-[#0E7490] hover:text-white'
+                        : 'text-[#CFFAFE] hover:bg-[#0E6B7A] hover:text-white'
                     } ${collapsed ? 'justify-center' : ''}`
                   }
                   style={{minHeight:'44px'}}
@@ -74,7 +74,7 @@ export default function Sidebar() {
         ))}
       </nav>
 
-      <div className="p-3 border-t border-[#0E7490]">
+      <div className="p-3 border-t border-[#0E6B7A]">
         <div className={`flex items-center gap-3 ${collapsed ? 'justify-center' : 'px-3'} py-2 text-sm text-[#CFFAFE]`}>
           <div className="w-8 h-8 rounded-full bg-[#0891B2] flex items-center justify-center text-xs font-bold shrink-0">
             {user?.username?.charAt(0).toUpperCase()}

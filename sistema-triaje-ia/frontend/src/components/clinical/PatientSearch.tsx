@@ -28,7 +28,7 @@ export default function PatientSearch({ onSelect }: PatientSearchProps) {
   }
 
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-4">
+    <div className="bg-white border border-[#CFFAFE] rounded-lg p-4">
       <div className="flex gap-3">
         <input
           type="text"
@@ -36,7 +36,7 @@ export default function PatientSearch({ onSelect }: PatientSearchProps) {
           value={doc}
           onChange={(e) => setDoc(e.target.value)}
           onKeyDown={(e) => e.key === 'Enter' && handleSearch()}
-          className="flex-1 px-3 py-2 border border-slate-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+          className="flex-1 px-3 py-2 border border-[#A5F3FC] rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
         />
         <button
           onClick={handleSearch}

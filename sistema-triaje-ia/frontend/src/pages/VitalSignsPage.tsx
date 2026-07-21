@@ -26,7 +26,7 @@ function inputBorderClass(status: string) {
     case 'normal': return 'border-green-400 ring-green-300'
     case 'warning': return 'border-amber-400 ring-amber-300'
     case 'danger': return 'border-red-400 ring-red-300'
-    default: return 'border-slate-300 ring-blue-300'
+    default: return 'border-[#A5F3FC] ring-blue-300'
   }
 }
 

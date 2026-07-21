@@ -6,10 +6,10 @@ import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContaine
 
 function KpiCard({ label, value, sub }: { label: string; value: string; sub?: string }) {
   return (
-    <div className="bg-white border border-slate-200 rounded-lg p-4">
-      <p className="text-xs text-slate-500 uppercase tracking-wider">{label}</p>
-      <p className="text-2xl font-bold text-slate-800 mt-1">{value}</p>
-      {sub && <p className="text-xs text-slate-400 mt-1">{sub}</p>}
+    <div className="bg-white border border-[#CFFAFE] rounded-lg p-4">
+      <p className="text-xs text-[#526771] uppercase tracking-wider">{label}</p>
+      <p className="text-2xl font-bold text-[#0F3D47] mt-1">{value}</p>
+      {sub && <p className="text-xs text-[#526771] mt-1">{sub}</p>}
     </div>
   )
 }
@@ -26,8 +26,8 @@ export default function DashboardPage() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-slate-800 mb-1">📊 Dashboard Operativo</h1>
-      <p className="text-sm text-slate-500 mb-6">Indicadores de desempeño del sistema de triaje</p>
+      <h1 className="text-2xl font-bold text-[#0F3D47] mb-1">📊 Dashboard Operativo</h1>
+      <p className="text-sm text-[#526771] mb-6">Indicadores de desempeño del sistema de triaje</p>
 
       <div className="grid grid-cols-2 md:grid-cols-5 gap-4 mb-8" role="list" aria-label="Indicadores clave de desempeño">
         <KpiCard label="Total Triajes" value={d.total_triages?.toLocaleString() || '0'} sub={`Hoy: ${d.triajes_hoy || 0}`} />
@@ -38,8 +38,8 @@ export default function DashboardPage() {
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-        <div className="bg-white border border-slate-200 rounded-lg p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">Distribución por Nivel IA</h2>
+        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
+          <h2 className="font-semibold text-[#0F3D47] mb-4">Distribución por Nivel IA</h2>
           {nivelData.length > 0 ? (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={nivelData} aria-label="Gráfico de barras: distribución de triajes por nivel IA">
@@ -50,11 +50,11 @@ export default function DashboardPage() {
                 <Bar dataKey="triajes" fill="#3B82F6" radius={[4,4,0,0]} />
               </BarChart>
             </ResponsiveContainer>
-          ) : <p className="text-slate-400 text-sm">Sin datos</p>}
+          ) : <p className="text-[#526771] text-sm">Sin datos</p>}
         </div>
 
-        <div className="bg-white border border-slate-200 rounded-lg p-5">
-          <h2 className="font-semibold text-slate-700 mb-4">Tendencia 7 Días</h2>
+        <div className="bg-white border border-[#CFFAFE] rounded-lg p-5">
+          <h2 className="font-semibold text-[#0F3D47] mb-4">Tendencia 7 Días</h2>
           {trend.isLoading ? <LoadingSpinner message="Cargando tendencia..." /> :
            trend.isError ? <ErrorAlert error="Error al cargar tendencia" onRetry={() => trend.refetch()} /> :
            trend.data && trend.data.length > 0 ? (
@@ -67,7 +67,7 @@ export default function DashboardPage() {
                 <Line type="monotone" dataKey="cnt" stroke="#059669" strokeWidth={2} dot={{ r: 4 }} />
               </LineChart>
             </ResponsiveContainer>
-          ) : <p className="text-slate-400 text-sm">Sin datos</p>}
+          ) : <p className="text-[#526771] text-sm">Sin datos</p>}
         </div>
       </div>
     </div>

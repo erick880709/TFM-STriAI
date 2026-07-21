@@ -107,21 +107,20 @@ def create_app() -> FastAPI:
         if assets_dir.exists():
             app.mount("/assets", StaticFiles(directory=assets_dir), name="spa_assets")
 
-        # 2. Servir archivos sueltos en raíz de dist/ (favicon, icons, etc.)
-        @app.get("/{filename}")
-        async def serve_root_static(filename: str):
-            file_path = FRONTEND_DIST / filename
-            if file_path.is_file() and filename not in ("index.html",):
-                return FileResponse(file_path)
-
-        # 3. SPA catch-all: todo lo demás → index.html
+        # 2. SPA catch-all: todo → verifica archivo estático o devuelve index.html
         @app.get("/{full_path:path}")
         async def serve_react(full_path: str = ""):
-            """Sirve el SPA de React para rutas no-API."""
-            # Intentar servir archivo estático suelto
+            """Sirve archivos estáticos de raíz o fallback SPA index.html."""
+            # Saltar rutas de API que ya manejan otros routers
+            if full_path.startswith("api/") or full_path == "health":
+                from fastapi.responses import JSONResponse
+                return JSONResponse({"detail": "Not found"}, status_code=404)
+
+            # Intentar servir archivo estático suelto de dist/
             file_path = FRONTEND_DIST / full_path
             if file_path.is_file():
                 return FileResponse(file_path)
+
             # Fallback SPA: index.html para client-side routing
             index_path = FRONTEND_DIST / "index.html"
             if index_path.exists():
