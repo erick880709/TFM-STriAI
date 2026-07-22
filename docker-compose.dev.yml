@@ -1,0 +1,37 @@
+# =============================================================================
+# docker-compose.dev.yml — Override de desarrollo para STriAI
+# =============================================================================
+# Uso:  docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+#
+# En modo desarrollo:
+#   - El código se monta desde el host (cambios en vivo con Streamlit hot-reload)
+#   - La BD se persiste en volumen nombrado
+#   - Los modelos se montan como lectura
+# =============================================================================
+
+version: "3.9"
+
+services:
+  striai:
+    image: striai:dev
+    container_name: striai-dev
+
+    # Sobreescribir entrypoint para desarrollo
+    environment:
+      - ENV=development
+      - LOG_LEVEL=DEBUG
+      - STREAMLIT_SERVER_RUN_ON_SAVE=true
+
+    # Montar código fuente desde host para hot-reload
+    volumes:
+      - ./sistema-triaje-ia:/app/sistema-triaje-ia
+      - ./src:/app/src
+      - ./models:/app/models:ro
+      - striai_data:/app/sistema-triaje-ia/data
+
+    # Sin límites estrictos en desarrollo
+    deploy:
+      resources:
+        limits:
+          memory: 8G
+          cpus: "4"

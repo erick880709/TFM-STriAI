@@ -1,6 +1,6 @@
 """
 Aplicación FastAPI — Punto de entrada del backend REST.
-Sirve también el frontend React en producción.
+Frontend servido por Streamlit (puerto 8501).
 
 Uso:
     uvicorn app.main:app --reload --port 8000
@@ -9,16 +9,12 @@ from contextlib import asynccontextmanager
 from pathlib import Path
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.staticfiles import StaticFiles
+from fastapi.responses import RedirectResponse
 
 from app.config.settings import load_config, get_db_path, REPO_ROOT
 from app.data.database import init_db
 from app.services.auth_service import AuthService
 from app.services.inference_service import get_inference_service
-
-
-# Ruta al build de React
-FRONTEND_DIST = REPO_ROOT / "sistema-triaje-ia" / "frontend" / "dist"
 
 
 # ---------------------------------------------------------------------------
@@ -93,39 +89,16 @@ def create_app() -> FastAPI:
     app.include_router(users.router, prefix="/api/users", tags=["Usuarios"])
     app.include_router(control_cambios.router, prefix="/api/control-cambios", tags=["Control de Cambios"])
 
-    # Health check (debe ir antes del catch-all del SPA)
+    # Health check
     @app.get("/health")
     async def health():
-        return {"status": "ok", "version": "2.0.0"}
+        return {"status": "ok", "version": "2.0.0", "frontend": "streamlit"}
 
-    # Servir frontend React en producción
-    if FRONTEND_DIST.exists() and (FRONTEND_DIST / "index.html").exists():
-        from fastapi.responses import FileResponse
-
-        # 1. Montar assets estáticos (JS, CSS, imágenes, fuentes)
-        assets_dir = FRONTEND_DIST / "assets"
-        if assets_dir.exists():
-            app.mount("/assets", StaticFiles(directory=assets_dir), name="spa_assets")
-
-        # 2. SPA catch-all: todo → verifica archivo estático o devuelve index.html
-        @app.get("/{full_path:path}")
-        async def serve_react(full_path: str = ""):
-            """Sirve archivos estáticos de raíz o fallback SPA index.html."""
-            # Saltar rutas de API que ya manejan otros routers
-            if full_path.startswith("api/") or full_path == "health":
-                from fastapi.responses import JSONResponse
-                return JSONResponse({"detail": "Not found"}, status_code=404)
-
-            # Intentar servir archivo estático suelto de dist/
-            file_path = FRONTEND_DIST / full_path
-            if file_path.is_file():
-                return FileResponse(file_path)
-
-            # Fallback SPA: index.html para client-side routing
-            index_path = FRONTEND_DIST / "index.html"
-            if index_path.exists():
-                return FileResponse(index_path)
-            return {"message": "Frontend no disponible"}
+    # Redirigir raíz a Streamlit
+    @app.get("/")
+    async def root():
+        """Redirige al frontend Streamlit."""
+        return RedirectResponse(url="http://localhost:8501")
 
     return app
 

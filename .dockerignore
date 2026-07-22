@@ -1,0 +1,75 @@
+# =============================================================================
+# .dockerignore — STriAI (Sistema de Triaje Multimodal IA)
+# =============================================================================
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Entornos virtuales
+.venv/
+venv/
+env/
+*.venv
+
+# Variables de entorno (se configura en docker-compose)
+.env
+.env.*
+
+# Base de datos local (se crea en runtime)
+*.db
+*.db-journal
+*.db-wal
+*.sqlite3
+
+# Modelos (se montan como volumen o se copian)
+models/*.joblib
+models/*.pkl
+models/*.h5
+
+# Notebooks y checkpoints
+notebooks/.ipynb_checkpoints/
+*.ipynb_checkpoints/
+
+# IDE y editores
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Sistema operativo
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# Node (frontend React — no necesario para contenedor Streamlit)
+sistema-triaje-ia/frontend/node_modules/
+sistema-triaje-ia/frontend/dist/
+
+# Testing
+.pytest_cache/
+htmlcov/
+.coverage
+*.cover
+
+# Documentación y recursos (no necesarios en runtime)
+resources/
+context/
+datasets/
+*.md
+!sistema-triaje-ia/README.md
+
+# Archivos temporales
+*.tmp
+*.log
+*.bak

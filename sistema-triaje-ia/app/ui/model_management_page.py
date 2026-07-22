@@ -9,8 +9,8 @@ from pathlib import Path
 from datetime import datetime
 from typing import Optional
 
-from app.services.inference_service import get_inference_service
-from app.services.model_management_service import ModelManagementService
+# (servicios obtenidos vía cached module — imports lazy para evitar carga de torch/shap en páginas sin IA)
+from app.services.cached import get_model_management_service, get_cached_inference_service
 
 # Colores
 NIVEL_COLORS = {"I": "#DC2626", "II": "#EA580C", "III": "#F59E0B", "IV": "#059669", "V": "#0891B2"}
@@ -25,13 +25,10 @@ def render_model_management():
     db_path = st.session_state.db_path
 
     # ------------------------------------------------------------------
-    # Inicializar servicio de inferencia (forzar carga del modelo)
+    # Inicializar servicio de inferencia (cacheado, carga una sola vez)
     # ------------------------------------------------------------------
-    if "inference_service" not in st.session_state:
-        with st.spinner("🔧 Inicializando motor de IA y cargando modelo..."):
-            st.session_state.inference_service = get_inference_service()
-    
-    inference_svc = st.session_state.inference_service
+    from app.services.cached import get_cached_inference_service
+    inference_svc = get_cached_inference_service()
     status = inference_svc.get_status()
     
     # Si no está cargado, intentar cargar
@@ -98,10 +95,7 @@ def render_model_management():
     # ==================================================================
     st.subheader("📋 Modelos Registrados en el Sistema")
 
-    if "model_mgmt_service" not in st.session_state:
-        st.session_state.model_mgmt_service = ModelManagementService(db_path)
-
-    mgmt_svc = st.session_state.model_mgmt_service
+    mgmt_svc = get_model_management_service(db_path)
     modelos_list = mgmt_svc.list_models()
 
     # ==================================================================

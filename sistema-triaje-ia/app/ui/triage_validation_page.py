@@ -7,9 +7,8 @@ Cubre: HU-E2-06 (Flujo de estados), HU-E2-07 (Reclasificación),
 import streamlit as st
 
 from app.services.triage_service import (
-    TriageService, NIVELES_TRIAGE, NIVELES_LABELS, ESTADOS_TRIAGE,
+    NIVELES_TRIAGE, NIVELES_LABELS, ESTADOS_TRIAGE,
 )
-from app.services.patient_service import PatientService
 
 
 def render_triage_validation():
@@ -19,13 +18,9 @@ def render_triage_validation():
     # Inicialización de servicios
     # ------------------------------------------------------------------
     db_path = st.session_state.db_path
-    if "triage_service" not in st.session_state:
-        st.session_state.triage_service = TriageService(db_path)
-    if "patient_service" not in st.session_state:
-        st.session_state.patient_service = PatientService(db_path)
-
-    triage_svc: TriageService = st.session_state.triage_service
-    patient_svc: PatientService = st.session_state.patient_service
+    from app.services.cached import get_triage_service, get_patient_service
+    triage_svc = get_triage_service(db_path)
+    patient_svc = get_patient_service(db_path)
 
     # ------------------------------------------------------------------
     # Título y buscador de paciente (SIEMPRE visible)

@@ -149,31 +149,40 @@ class SHAPExplainer:
                 }
             return {"error": f"SHAP no disponible: {str(e)[:200]}"}
 
-        # Si es clasificación multiclase, shap_values tiene shape (n_clases, n_samples, n_features)
+        # Determinar el formato de shap_values y calcular importancia media
         if isinstance(self.shap_values, list):
             self.shap_values = np.array(self.shap_values)
 
-        result = {
-            "shap_values": self.shap_values,
-            "base_value": float(self.explainer.expected_value[0])
-            if isinstance(self.explainer.expected_value, (list, np.ndarray))
-            else float(self.explainer.expected_value),
-            "feature_names": self.feature_names,
-        }
-
-        # Calcular importancia media por feature (mean |SHAP|)
-        if self.shap_values.ndim == 3:
-            # Promedio sobre todas las clases
-            mean_abs_shap = np.mean(np.abs(self.shap_values), axis=(0, 1))
-        else:
+        # Nuevo SHAP (≥0.46): (n_samples, n_features, n_classes)
+        # Viejo SHAP: (n_classes, n_samples, n_features) o lista de arrays
+        if isinstance(self.shap_values, np.ndarray) and self.shap_values.ndim == 3:
+            # Detectar orientación: si el último eje tiene tamaño 5 (n_clases), es (n_samples, n_features, n_classes)
+            if self.shap_values.shape[-1] == len(self.class_labels):
+                # Formato (n_samples, n_features, n_classes)
+                # Promedio sobre muestras y clases → importancia por feature
+                mean_abs_shap = np.mean(np.abs(self.shap_values), axis=(0, 2))
+            else:
+                # Formato (n_classes, n_samples, n_features)
+                mean_abs_shap = np.mean(np.abs(self.shap_values), axis=(0, 1))
+        elif isinstance(self.shap_values, np.ndarray) and self.shap_values.ndim == 2:
             mean_abs_shap = np.mean(np.abs(self.shap_values), axis=0)
+        else:
+            mean_abs_shap = np.zeros(len(self.feature_names))
 
-        # Top features
+        # Top features (con bounds checking para feature_names incompletos)
+        n_actual_features = len(mean_abs_shap)
         top_indices = np.argsort(mean_abs_shap)[::-1][:max_display]
         result["top_features"] = [
             {
-                "feature": self.feature_names[i],
-                "nombre_clinico": NOMBRES_CLINICOS.get(self.feature_names[i], self.feature_names[i]),
+                "feature": (
+                    self.feature_names[i] if i < len(self.feature_names)
+                    else f"nlp_feature_{i}"
+                ),
+                "nombre_clinico": (
+                    NOMBRES_CLINICOS.get(self.feature_names[i], self.feature_names[i])
+                    if i < len(self.feature_names)
+                    else f"Embedding NLP dim {i - len(self.feature_names)}"
+                ),
                 "shap_importance": float(mean_abs_shap[i]),
             }
             for i in top_indices
@@ -197,24 +206,46 @@ class SHAPExplainer:
 
         # Para la clase predicha
         y_pred = int(np.argmax(self.model.predict_proba(x_reshaped)[0]))
-        sv_class = sv[y_pred][0] if isinstance(sv, (list, np.ndarray)) and sv.ndim == 3 else sv[0]
+
+        # Determinar el formato de shap_values y extraer la clase correcta
+        if isinstance(sv, list):
+            # Formato antiguo: lista de arrays por clase, cada uno (n_samples, n_features)
+            sv_class = np.array(sv[y_pred][0])
+        elif isinstance(sv, np.ndarray) and sv.ndim == 3:
+            # Formato nuevo: array 3D (n_samples, n_features, n_classes)
+            # Acceder: muestra 0, todas las features, clase y_pred
+            sv_class = sv[0, :, y_pred]
+        elif isinstance(sv, np.ndarray) and sv.ndim == 2:
+            # Clasificación binaria o regresión: (n_samples, n_features)
+            sv_class = sv[0]
+        else:
+            sv_class = np.array(sv).flatten()
 
         base = (
             self.explainer.expected_value[y_pred]
             if isinstance(self.explainer.expected_value, (list, np.ndarray))
+            and len(self.explainer.expected_value) > y_pred
             else self.explainer.expected_value
         )
 
         # Ranking de variables por contribución absoluta
+        n_features = len(sv_class)
         ranking = sorted(
             [
                 {
-                    "feature": self.feature_names[i],
-                    "nombre_clinico": NOMBRES_CLINICOS.get(self.feature_names[i], self.feature_names[i]),
+                    "feature": self.feature_names[i] if i < len(self.feature_names) else f"feature_{i}",
+                    "nombre_clinico": (
+                        NOMBRES_CLINICOS.get(self.feature_names[i], self.feature_names[i])
+                        if i < len(self.feature_names) else f"Feature {i}"
+                    ),
                     "shap_value": float(sv_class[i]),
-                    "direction": "aumenta" if sv_class[i] > 0 else "disminuye" if sv_class[i] < 0 else "neutro",
+                    "direction": (
+                        "aumenta" if sv_class[i] > 0
+                        else "disminuye" if sv_class[i] < 0
+                        else "neutro"
+                    ),
                 }
-                for i in range(len(self.feature_names))
+                for i in range(n_features)
             ],
             key=lambda x: abs(x["shap_value"]),
             reverse=True,

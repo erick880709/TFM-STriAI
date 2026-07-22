@@ -5,8 +5,8 @@ Cubre: HU-E2-04 (Captura de 8 signos vitales).
 """
 import streamlit as st
 
-from app.services.triage_service import TriageService, RANGOS_VITALES, ALERTAS_VITALES
-from app.services.patient_service import PatientService, SEXO_LABELS
+from app.services.triage_service import RANGOS_VITALES, ALERTAS_VITALES
+from app.services.patient_service import SEXO_LABELS
 
 
 def render_vital_signs():
@@ -16,13 +16,9 @@ def render_vital_signs():
     # Inicialización de servicios
     # ------------------------------------------------------------------
     db_path = st.session_state.db_path
-    if "triage_service" not in st.session_state:
-        st.session_state.triage_service = TriageService(db_path)
-    if "patient_service" not in st.session_state:
-        st.session_state.patient_service = PatientService(db_path)
-
-    triage_svc: TriageService = st.session_state.triage_service
-    patient_svc: PatientService = st.session_state.patient_service
+    from app.services.cached import get_triage_service, get_patient_service
+    triage_svc = get_triage_service(db_path)
+    patient_svc = get_patient_service(db_path)
 
     # ------------------------------------------------------------------
     # Título y buscador de paciente (SIEMPRE visible)

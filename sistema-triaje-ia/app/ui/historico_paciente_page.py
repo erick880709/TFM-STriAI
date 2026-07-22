@@ -5,7 +5,6 @@ Acceso: todos los roles.
 """
 import streamlit as st
 import pandas as pd
-from app.services.patient_service import PatientService
 from app.services.triage_service import NIVELES_LABELS
 
 MOTIVOS_LABELS = {
@@ -28,7 +27,8 @@ def render_historico_paciente():
     st.caption("Consulta de visitas previas por número de documento")
 
     db_path = st.session_state.db_path
-    patient_svc = PatientService(db_path)
+    from app.services.cached import get_patient_service
+    patient_svc = get_patient_service(db_path)
 
     # Búsqueda por documento
     col_doc, col_btn = st.columns([3, 1])
@@ -112,7 +112,7 @@ def render_historico_paciente():
     )
 
 
-def _get_triages_with_motivo(patient_svc: PatientService, documento: str, limit: int = 100):
+def _get_triages_with_motivo(patient_svc, documento: str, limit: int = 100):
     """
     Obtiene triajes del paciente con el motivo de consulta (MotivoCategoria).
     Usa acceso directo a BD para incluir la EvaluacionClinica.

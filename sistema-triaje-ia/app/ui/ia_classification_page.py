@@ -8,9 +8,7 @@ import streamlit as st
 import time
 import json
 
-from app.services.inference_service import InferenceService, get_inference_service
-from app.services.triage_service import TriageService, NIVELES_TRIAGE, NIVELES_LABELS
-from app.services.patient_service import PatientService
+from app.services.triage_service import NIVELES_TRIAGE, NIVELES_LABELS
 
 # Colores de niveles de triaje (Resolución 5596/2015)
 NIVEL_COLORS = {
@@ -28,23 +26,13 @@ def render_ia_classification():
     """Renderiza la pantalla P05/P06 — Clasificación IA y Explicación SHAP."""
 
     # ------------------------------------------------------------------
-    # Inicialización de servicios
+    # Inicialización de servicios (cacheados con @st.cache_resource)
     # ------------------------------------------------------------------
     db_path = st.session_state.db_path
-    if "triage_service" not in st.session_state:
-        st.session_state.triage_service = TriageService(db_path)
-    if "patient_service" not in st.session_state:
-        st.session_state.patient_service = PatientService(db_path)
-
-    triage_svc: TriageService = st.session_state.triage_service
-    patient_svc: PatientService = st.session_state.patient_service
-
-    # Inicializar servicio de inferencia (singleton)
-    if "inference_service" not in st.session_state:
-        with st.spinner("🔧 Inicializando motor de IA..."):
-            st.session_state.inference_service = get_inference_service()
-
-    inference_svc: InferenceService = st.session_state.inference_service
+    from app.services.cached import get_triage_service, get_patient_service, get_cached_inference_service
+    triage_svc = get_triage_service(db_path)
+    patient_svc = get_patient_service(db_path)
+    inference_svc = get_cached_inference_service()
 
     # ------------------------------------------------------------------
     # Título y buscador de paciente (SIEMPRE visible)
@@ -427,7 +415,7 @@ def _render_fallback_importance(alerts: list):
         )
 
 
-def _render_degraded_mode(status: dict, triage_svc: TriageService, id_triaje: str):
+def _render_degraded_mode(status: dict, triage_svc, id_triaje: str):
     """Modo degradado: modelo no disponible."""
     st.warning("⚠️ **Modo Degradado:** El modelo de IA no está disponible.")
     st.info(

@@ -13,10 +13,10 @@ from app.services.patient_service import (
     DEPARTAMENTOS_COLOMBIA, CIUDADES_POR_DEPARTAMENTO,
     GRUPOS_SANGUINEOS, EPS_COLOMBIA,
 )
-from app.services.triage_service import TriageService, NIVELES_LABELS
+from app.services.triage_service import NIVELES_LABELS
 
 
-def _verificar_triaje_activo(triage_svc: TriageService, id_paciente: str):
+def _verificar_triaje_activo(triage_svc, id_paciente: str):
     """
     Verifica si el paciente tiene un triaje activo (no cerrado ni cancelado).
     Retorna (bloqueado: bool, triaje_activo: dict | None).
@@ -34,13 +34,9 @@ def render_patient_registration():
     # Inicialización de servicios
     # ------------------------------------------------------------------
     db_path = st.session_state.db_path
-    if "patient_service" not in st.session_state:
-        st.session_state.patient_service = PatientService(db_path)
-    if "triage_service" not in st.session_state:
-        st.session_state.triage_service = TriageService(db_path)
-
-    patient_svc: PatientService = st.session_state.patient_service
-    triage_svc: TriageService = st.session_state.triage_service
+    from app.services.cached import get_triage_service, get_patient_service
+    triage_svc = get_triage_service(db_path)
+    patient_svc = get_patient_service(db_path)
 
     # ------------------------------------------------------------------
     # Cabecera
@@ -73,8 +69,17 @@ def render_patient_registration():
 # FORMULARIO NUEVO PACIENTE (HU-E2-01)
 # ======================================================================
 
-def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageService):
-    """Formulario de registro de nuevo paciente (HU-E2-01, ampliado Épica 7)."""
+def _render_new_patient_form(patient_svc, triage_svc):
+    """Formulario de registro de nuevo paciente (HU-E2-01, ampliado Épica 7).
+    
+    Si el paciente ya existe (por número de documento), precarga sus datos
+    en el formulario de forma editable. Los datos se cargan directamente
+    en st.session_state[key] de cada widget para que Streamlit los muestre.
+    """
+    
+    # Inicializar estado de precarga
+    if "p02_preload_msg" not in st.session_state:
+        st.session_state.p02_preload_msg = None
 
     with st.container(border=True):
         # ================================================================
@@ -90,11 +95,75 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
                 format_func=lambda x: TIPOS_DOC_LABELS.get(x, x),
                 key="p02_tipo_doc",
             )
-            num_doc = st.text_input(
-                "Número de Documento *",
-                placeholder="Ingrese sin puntos ni guiones",
-                key="p02_num_doc",
-            )
+            
+            # Número de documento con buscador de paciente existente
+            col_doc, col_btn = st.columns([3, 1])
+            with col_doc:
+                num_doc = st.text_input(
+                    "Número de Documento *",
+                    placeholder="Ingrese sin puntos ni guiones",
+                    key="p02_num_doc",
+                )
+            with col_btn:
+                buscar_clicked = st.button("🔍", key="p02_search_doc", 
+                                           help="Buscar paciente por documento para precargar datos",
+                                           width='stretch')
+            
+            # Lógica de búsqueda y precarga: carga directa en st.session_state
+            if buscar_clicked and num_doc and num_doc.strip():
+                paciente_existente = patient_svc.get_patient_by_document(num_doc.strip())
+                if paciente_existente:
+                    # Cargar datos directamente en los keys de cada widget
+                    st.session_state.p02_tipo_doc = paciente_existente.get("tipo_documento", TIPOS_DOCUMENTO[0])
+                    st.session_state.p02_num_doc = paciente_existente.get("numero_documento", "")
+                    st.session_state.p02_nombres = paciente_existente.get("nombres", "")
+                    st.session_state.p02_apellidos = paciente_existente.get("apellidos", "")
+                    st.session_state.p02_fecha_nac = paciente_existente.get("fecha_nacimiento", "")
+                    st.session_state.p02_sexo = paciente_existente.get("sexo", SEXOS[0])
+                    st.session_state.p02_telefono = paciente_existente.get("telefono", "")
+                    st.session_state.p02_correo = paciente_existente.get("correo", "")
+                    st.session_state.p02_contacto_emergencia = paciente_existente.get("contacto_emergencia", "")
+                    st.session_state.p02_num_contacto_emergencia = paciente_existente.get("numero_contacto_emergencia", "")
+                    st.session_state.p02_departamento = paciente_existente.get("departamento", "")
+                    st.session_state.p02_ciudad = paciente_existente.get("ciudad", "")
+                    st.session_state.p02_direccion = paciente_existente.get("direccion_residencia", "")
+                    st.session_state.p02_via_llegada = paciente_existente.get("via_llegada", VIAS_LLEGADA[0])
+                    st.session_state.p02_regimen = paciente_existente.get("regimen_salud", "")
+                    st.session_state.p02_grupo_sanguineo = paciente_existente.get("grupo_sanguineo", "")
+                    st.session_state.p02_eps = paciente_existente.get("eps", "")
+                    episodios_prev = paciente_existente.get("episodios_previos_urgencias")
+                    st.session_state.p02_episodios = int(episodios_prev) if episodios_prev is not None else 0
+                    st.session_state.p02_alergias = paciente_existente.get("alergias", "")
+                    st.session_state.p02_preload_msg = "success"
+                    st.rerun()
+                else:
+                    # Limpiar precarga anterior si existe
+                    st.session_state.p02_preload_msg = "not_found"
+                    st.rerun()
+            
+            # Mostrar mensaje de estado de precarga
+            if st.session_state.p02_preload_msg == "success":
+                nombre_pre = f"{st.session_state.get('p02_nombres','')} {st.session_state.get('p02_apellidos','')}".strip()
+                doc_pre = st.session_state.get('p02_num_doc','')
+                st.success(f"✅ Paciente encontrado: **{nombre_pre or doc_pre}** — Datos precargados (editables)")
+            elif st.session_state.p02_preload_msg == "not_found":
+                st.info("🆕 Paciente nuevo — complete los datos para registrarlo")
+            
+            # Botón para limpiar precarga
+            if st.session_state.p02_preload_msg == "success":
+                if st.button("🔄 Limpiar datos precargados", key="p02_clear_preload"):
+                    # Limpiar todos los campos
+                    for k in ["p02_tipo_doc","p02_num_doc","p02_nombres","p02_apellidos",
+                              "p02_fecha_nac","p02_sexo","p02_telefono","p02_correo",
+                              "p02_contacto_emergencia","p02_num_contacto_emergencia",
+                              "p02_departamento","p02_ciudad","p02_direccion",
+                              "p02_via_llegada","p02_regimen","p02_grupo_sanguineo",
+                              "p02_eps","p02_episodios","p02_alergias"]:
+                        if k in st.session_state:
+                            del st.session_state[k]
+                    st.session_state.p02_preload_msg = None
+                    st.rerun()
+            
             nombres = st.text_input(
                 "Nombres",
                 placeholder="Ej: Juan Carlos",
@@ -246,7 +315,7 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
             )
             episodios = st.number_input(
                 "Episodios Previos en Urgencias ⚠ Variable predictiva",
-                min_value=0, max_value=99, value=0, step=1,
+                min_value=0, max_value=99, step=1,
                 key="p02_episodios",
                 help="Número de visitas a urgencias en los últimos 12 meses.",
             )
@@ -435,7 +504,7 @@ def _render_new_patient_form(patient_svc: PatientService, triage_svc: TriageServ
 # BÚSQUEDA DE PACIENTES (HU-E2-02)
 # ======================================================================
 
-def _render_patient_search(patient_svc: PatientService, triage_svc: TriageService):
+def _render_patient_search(patient_svc, triage_svc):
     """Búsqueda de pacientes por documento o nombre (HU-E2-02, HU-E2-03)."""
 
     st.subheader("🔍 Buscar Paciente")
@@ -507,8 +576,8 @@ def _render_patient_search(patient_svc: PatientService, triage_svc: TriageServic
         _render_patient_card(p, patient_svc, triage_svc)
 
 
-def _render_patient_card(paciente: dict, patient_svc: PatientService,
-                         triage_svc: TriageService):
+def _render_patient_card(paciente: dict, patient_svc,
+                         triage_svc):
     """Tarjeta resumen de paciente en resultados de búsqueda (ampliado Épica 7)."""
     with st.container(border=True):
         cols = st.columns([3, 1, 1])
@@ -576,8 +645,8 @@ def _render_patient_card(paciente: dict, patient_svc: PatientService,
 # HISTORIAL DE TRIAJES (HU-E2-03)
 # ======================================================================
 
-def _render_patient_detail(paciente: dict, patient_svc: PatientService,
-                           triage_svc: TriageService):
+def _render_patient_detail(paciente: dict, patient_svc,
+                            triage_svc):
     """Vista detallada de paciente + historial de triajes (HU-E2-03, ampliado Épica 7)."""
     st.subheader("📂 Historial del Paciente")
 

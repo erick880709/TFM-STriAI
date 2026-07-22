@@ -8,7 +8,7 @@ import pandas as pd
 from pathlib import Path
 import json
 
-from app.services.inference_service import get_inference_service
+from app.services.cached import get_cached_inference_service
 
 # Colores de niveles
 NIVEL_COLORS = {
@@ -235,30 +235,29 @@ def render_model_comparison():
     # ------------------------------------------------------------------
     st.markdown("---")
     with st.expander("🔧 Estado del Servicio de Inferencia"):
-        if "inference_service" in st.session_state:
-            status = st.session_state.inference_service.get_status()
-            # Mostrar info formateada en lugar de JSON crudo
-            cols = st.columns(4)
-            modelo_cargado = status.get("modelo_cargado", False)
-            with cols[0]:
-                if modelo_cargado:
-                    st.success("✅ Modelo activo")
-                else:
-                    st.error("❌ Sin modelo")
-            with cols[1]:
-                st.metric("Versión", status.get("model_version", "N/D"))
-            with cols[2]:
-                st.metric("Features", status.get("n_features", "N/D"))
-            with cols[3]:
-                st.metric("Framework", status.get("framework", "N/D"))
-            if modelo_cargado and status.get("model_path"):
-                st.caption(f"📁 Ruta: `{status['model_path']}`")
-            if "thresholds" in status and status["thresholds"]:
-                st.markdown("**🎯 Umbrales de clasificación:**")
-                th_df = pd.DataFrame(
-                    [{"Nivel": f"Nivel {k}", "Umbral": f"{v:.4f}"} for k, v in status["thresholds"].items()]
-                )
-                st.dataframe(th_df, width='stretch', hide_index=True)
+        status = get_cached_inference_service().get_status()
+        # Mostrar info formateada en lugar de JSON crudo
+        cols = st.columns(4)
+        modelo_cargado = status.get("modelo_cargado", False)
+        with cols[0]:
+            if modelo_cargado:
+                st.success("✅ Modelo activo")
+            else:
+                st.error("❌ Sin modelo")
+        with cols[1]:
+            st.metric("Versión", status.get("model_version", "N/D"))
+        with cols[2]:
+            st.metric("Features", status.get("n_features", "N/D"))
+        with cols[3]:
+            st.metric("Framework", status.get("framework", "N/D"))
+        if modelo_cargado and status.get("model_path"):
+            st.caption(f"📁 Ruta: `{status['model_path']}`")
+        if "thresholds" in status and status["thresholds"]:
+            st.markdown("**🎯 Umbrales de clasificación:**")
+            th_df = pd.DataFrame(
+                [{"Nivel": f"Nivel {k}", "Umbral": f"{v:.4f}"} for k, v in status["thresholds"].items()]
+            )
+            st.dataframe(th_df, width='stretch', hide_index=True)
         else:
             st.info("Servicio de inferencia no inicializado.")
 

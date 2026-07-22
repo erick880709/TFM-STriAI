@@ -18,14 +18,18 @@ class VitalSignsUpdate(BaseModel):
 
 
 class ClinicalEvalUpdate(BaseModel):
-    motivo_consulta: str = Field(..., min_length=3)
+    motivo_consulta: str = Field(..., min_length=3, description="Texto libre del motivo de consulta")
     categoria_motivo: Optional[str] = None
-    glasgow_ocular: int = Field(..., ge=1, le=4)
-    glasgow_verbal: int = Field(..., ge=1, le=5)
-    glasgow_motora: int = Field(..., ge=1, le=6)
-    escala_dolor: int = Field(..., ge=0, le=10)
-    nivel_conciencia: str
+    glasgow_ocular: int = Field(1, ge=1, le=4)
+    glasgow_verbal: int = Field(1, ge=1, le=5)
+    glasgow_motora: int = Field(1, ge=1, le=6)
+    escala_dolor: int = Field(0, ge=0, le=10)
+    nivel_conciencia: str = "Alerta"
     comorbilidades: list[str] = []
+    alergias: Optional[str] = None
+    medicacion_relevante: Optional[str] = None
+    observaciones: Optional[str] = None
+    episodios_previos: Optional[int] = None
 
 
 class StateTransition(BaseModel):

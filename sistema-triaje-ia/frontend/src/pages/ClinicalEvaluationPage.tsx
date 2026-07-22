@@ -17,6 +17,10 @@ export default function ClinicalEvaluationPage() {
     escala_dolor: 0,
     nivel_conciencia: 'Alerta',
     comorbilidades: [] as string[],
+    alergias: '',
+    medicacion_relevante: '',
+    observaciones: '',
+    episodios_previos: 0,
   })
   const [error, setError] = useState('')
 
@@ -111,18 +115,31 @@ export default function ClinicalEvaluationPage() {
         <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             <div>
-              <h2 className="font-semibold text-[#164E63] mb-3">Escala de Dolor (0-10)</h2>
+              <h2 className="font-semibold text-[#164E63] mb-1">🩹 Escala de Dolor (EVA)</h2>
+              <p className="text-xs text-[#64748B] mb-3">Valoración del dolor referido por el paciente</p>
+              <div className={`text-center py-3 rounded-lg mb-2 ${
+                form.escala_dolor >= 7 ? 'bg-red-50 border-2 border-red-300' :
+                form.escala_dolor >= 3 ? 'bg-amber-50 border-2 border-amber-300' :
+                'bg-green-50 border-2 border-green-300'
+              }`}>
+                <span className={`text-4xl font-bold ${
+                  form.escala_dolor >= 7 ? 'text-red-600' :
+                  form.escala_dolor >= 3 ? 'text-amber-600' :
+                  'text-green-600'
+                }`}>
+                  {form.escala_dolor}
+                </span>
+                <span className="text-lg text-[#64748B]">/10</span>
+              </div>
               <input
                 type="range" min={0} max={10} value={form.escala_dolor}
                 onChange={(e) => setForm((p) => ({ ...p, escala_dolor: parseInt(e.target.value) }))}
-                className="w-full"
+                className="w-full accent-blue-600"
               />
               <div className="flex justify-between text-xs text-[#64748B] mt-1">
-                <span>0 Sin dolor</span>
-                <span className={`font-bold text-lg ${form.escala_dolor >= 7 ? 'text-red-600' : form.escala_dolor >= 3 ? 'text-amber-600' : 'text-green-600'}`}>
-                  {form.escala_dolor}/10
-                </span>
-                <span>10 Máximo</span>
+                <span>😊 Sin dolor</span>
+                <span>😣 Moderado</span>
+                <span>😫 Máximo</span>
               </div>
             </div>
             <div>
@@ -154,6 +171,54 @@ export default function ClinicalEvaluationPage() {
                 {c}
               </button>
             ))}
+          </div>
+        </div>
+
+        {/* Alergias + Medicación */}
+        <div className="bg-white border border-[#A5F3FC] rounded-lg p-5">
+          <h2 className="font-semibold text-[#164E63] mb-3">💊 Alergias y Medicación</h2>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label className="block text-xs font-medium text-[#64748B] mb-1">Alergias conocidas</label>
+              <input
+                type="text"
+                value={form.alergias}
+                onChange={(e) => setForm((p) => ({ ...p, alergias: e.target.value }))}
+                placeholder="Ej: Penicilina, AINEs, Látex..."
+                className="w-full px-3 py-2 border border-[#A5F3FC] rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#64748B] mb-1">Medicación relevante</label>
+              <input
+                type="text"
+                value={form.medicacion_relevante}
+                onChange={(e) => setForm((p) => ({ ...p, medicacion_relevante: e.target.value }))}
+                placeholder="Ej: Metformina, Losartán..."
+                className="w-full px-3 py-2 border border-[#A5F3FC] rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mt-3">
+            <div>
+              <label className="block text-xs font-medium text-[#64748B] mb-1">Observaciones</label>
+              <textarea
+                value={form.observaciones}
+                onChange={(e) => setForm((p) => ({ ...p, observaciones: e.target.value }))}
+                rows={2}
+                placeholder="Notas clínicas adicionales..."
+                className="w-full px-3 py-2 border border-[#A5F3FC] rounded-lg text-sm outline-none focus:ring-2 focus:ring-blue-500"
+              />
+            </div>
+            <div>
+              <label className="block text-xs font-medium text-[#64748B] mb-1">Episodios previos en urgencias</label>
+              <input
+                type="number" min={0} max={99}
+                value={form.episodios_previos}
+                onChange={(e) => setForm((p) => ({ ...p, episodios_previos: parseInt(e.target.value) || 0 }))}
+                className="w-24 px-3 py-2 border border-[#A5F3FC] rounded-lg text-sm text-center"
+              />
+            </div>
           </div>
         </div>
 

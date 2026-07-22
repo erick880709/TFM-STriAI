@@ -669,6 +669,85 @@ class TriageService:
             conn.close()
 
     # ==================================================================
+    # CIERRE MASIVO (HU pendiente) — Admin/Médico
+    # ==================================================================
+
+    def get_triages_by_state(self, estados: List[str]) -> List[Dict]:
+        """
+        Obtiene todos los triajes en los estados indicados, con datos
+        del paciente (nombres, apellidos, documento) unidos.
+        """
+        conn = get_connection(self.db_path)
+        try:
+            placeholders = ",".join(["?" for _ in estados])
+            rows = conn.execute(
+                f"""SELECT e.*, p.Nombres, p.Apellidos, p.NumeroDocumento
+                    FROM EventoTriaje e
+                    JOIN Paciente p ON e.IdPaciente = p.IdPaciente
+                    WHERE e.Estado IN ({placeholders})
+                    ORDER BY e.FechaHoraIngreso DESC""",
+                estados,
+            ).fetchall()
+            return [row_to_dict(r) for r in rows]
+        finally:
+            conn.close()
+
+    def bulk_close_triages(
+        self,
+        ids_triaje: List[str],
+        usuario: str,
+    ) -> Dict:
+        """
+        Cierra masivamente triajes usando el nivel sugerido por la IA
+        como nivel profesional (concordancia = 1, sin motivo de discrepancia).
+        Retorna resumen de éxitos y errores.
+        """
+        resultados = []
+        errores = []
+        for id_triaje in ids_triaje:
+            try:
+                # Leer el nivel sugerido por IA del triaje
+                conn = get_connection(self.db_path)
+                try:
+                    row = conn.execute(
+                        "SELECT NivelSugeridoIA, Estado FROM EventoTriaje WHERE IdTriaje = ?",
+                        (id_triaje,),
+                    ).fetchone()
+                    if not row:
+                        errores.append({"id_triaje": id_triaje, "error": "Triaje no encontrado."})
+                        continue
+                    nivel_ia = row["NivelSugeridoIA"]
+                    estado = row["Estado"]
+                finally:
+                    conn.close()
+
+                if estado in ("Cerrado", "Cancelado"):
+                    errores.append({"id_triaje": id_triaje, "error": f"Ya está en estado {estado}."})
+                    continue
+
+                if not nivel_ia:
+                    errores.append({"id_triaje": id_triaje, "error": "No tiene nivel sugerido por IA."})
+                    continue
+
+                # Cerrar con concordancia automática (nivel IA = nivel profesional)
+                resultado = self.close_event(
+                    id_triaje=id_triaje,
+                    nivel_profesional=nivel_ia,
+                    usuario=usuario,
+                    motivo_discrepancia=None,  # sin discrepancia porque usamos el nivel IA
+                )
+                resultados.append(resultado)
+            except Exception as e:
+                errores.append({"id_triaje": id_triaje, "error": str(e)})
+
+        return {
+            "total_solicitado": len(ids_triaje),
+            "cerrados": len(resultados),
+            "errores": len(errores),
+            "detalle_errores": errores,
+        }
+
+    # ==================================================================
     # UTILIDADES INTERNAS
     # ==================================================================
 

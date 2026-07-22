@@ -9,7 +9,7 @@ import json
 from datetime import datetime, timedelta
 import io
 
-from app.services.dashboard_service import DashboardService
+from app.services.cached import get_dashboard_service
 
 # Colores de niveles
 NIVEL_COLORS = {"I": "#DC2626", "II": "#EA580C", "III": "#F59E0B", "IV": "#059669", "V": "#0891B2"}
@@ -23,12 +23,9 @@ def render_dashboard():
     st.caption("Indicadores de desempeño del sistema de triaje")
 
     # ------------------------------------------------------------------
-    # MÉTRICAS DESDE EL SERVICIO (ya no SQL directo en UI)
+    # MÉTRICAS DESDE EL SERVICIO CACHEADO
     # ------------------------------------------------------------------
-    if "dashboard_service" not in st.session_state:
-        st.session_state.dashboard_service = DashboardService(st.session_state.db_path)
-
-    svc = st.session_state.dashboard_service
+    svc = get_dashboard_service(st.session_state.db_path)
     kpis = svc.get_kpis()
     triajes_7d = svc.get_triages_7d()
 
@@ -251,6 +248,107 @@ def render_dashboard():
                 "application/json",
                 width='stretch',
             )
+
+    # ==================================================================
+    # CIERRE MASIVO DE TRIAJES PENDIENTES (Admin / Médico)
+    # ==================================================================
+    if st.session_state.get("user", {}).get("rol") in ("Administrador", "Medico"):
+        st.markdown("---")
+        st.subheader("🔒 Cierre Masivo de Triajes Pendientes")
+        st.caption(
+            "Solo visible para Administrador y Médico. "
+            "Cierra los triajes usando el nivel sugerido por la IA como nivel profesional."
+        )
+
+        from app.services.cached import get_triage_service
+        triage_svc = get_triage_service(st.session_state.db_path)
+
+        estados_pendientes = ["Validado", "Clasificado", "PendienteIA", "EnEvaluacion"]
+        triages_pendientes = triage_svc.get_triages_by_state(estados_pendientes)
+
+        if not triages_pendientes:
+            st.success("✅ No hay triajes pendientes de cierre. ¡Todo al día!")
+        else:
+            # Construir dataframe con columnas clave
+            rows = []
+            for t in triages_pendientes:
+                nombre_paciente = " ".join(filter(None, [
+                    t.get("Nombres", ""),
+                    t.get("Apellidos", ""),
+                ])) or "Sin nombre"
+                rows.append({
+                    "IdTriaje": t["IdTriaje"],
+                    "Paciente": nombre_paciente,
+                    "Documento": t.get("NumeroDocumento", ""),
+                    "Estado": t["Estado"],
+                    "Nivel IA": t.get("NivelSugeridoIA") or "—",
+                    "Fecha Ingreso": (t.get("FechaHoraIngreso", "") or "")[:10],
+                    "Sel": False,
+                })
+
+            df = pd.DataFrame(rows)
+
+            st.markdown(f"**{len(df)} triajes pendientes** en estados: {', '.join(estados_pendientes)}")
+
+            # Tabla editable con checkboxes
+            edited_df = st.data_editor(
+                df,
+                column_config={
+                    "Sel": st.column_config.CheckboxColumn(
+                        "¿Cerrar?",
+                        help="Selecciona los triajes a cerrar masivamente",
+                        default=False,
+                    ),
+                    "IdTriaje": st.column_config.TextColumn("ID Triaje", disabled=True),
+                    "Paciente": st.column_config.TextColumn("Paciente", disabled=True),
+                    "Documento": st.column_config.TextColumn("Documento", disabled=True),
+                    "Estado": st.column_config.TextColumn("Estado", disabled=True),
+                    "Nivel IA": st.column_config.TextColumn("Nivel IA", disabled=True),
+                    "Fecha Ingreso": st.column_config.TextColumn("Fecha Ingreso", disabled=True),
+                },
+                disabled=["IdTriaje", "Paciente", "Documento", "Estado", "Nivel IA", "Fecha Ingreso"],
+                hide_index=True,
+                use_container_width=True,
+            )
+
+            seleccionados = edited_df[edited_df["Sel"] == True]
+            num_seleccionados = len(seleccionados)
+
+            col_btn1, col_btn2 = st.columns([1, 3])
+            with col_btn1:
+                confirmar = st.button(
+                    f"🔒 Cerrar {num_seleccionados} triaje(s)",
+                    disabled=(num_seleccionados == 0),
+                    type="primary",
+                    use_container_width=True,
+                )
+            with col_btn2:
+                if num_seleccionados > 0:
+                    st.caption(
+                        f"Se cerrarán **{num_seleccionados}** triajes usando el nivel "
+                        f"sugerido por la IA como nivel profesional asignado."
+                    )
+
+            if confirmar and num_seleccionados > 0:
+                ids_a_cerrar = seleccionados["IdTriaje"].tolist()
+                with st.spinner(f"Cerrando {len(ids_a_cerrar)} triajes..."):
+                    resultado = triage_svc.bulk_close_triages(
+                        ids_triaje=ids_a_cerrar,
+                        usuario=st.session_state.user["username"],
+                    )
+
+                if resultado["cerrados"] > 0:
+                    st.success(f"✅ **{resultado['cerrados']}** triaje(s) cerrado(s) exitosamente.")
+                    st.balloons()
+                if resultado["errores"] > 0:
+                    st.warning(f"⚠️ **{resultado['errores']}** triaje(s) no se pudieron cerrar:")
+                    for err in resultado["detalle_errores"]:
+                        st.markdown(f"- `{err['id_triaje']}`: {err['error']}")
+
+                # Recargar después de 2s
+                import time
+                time.sleep(2)
+                st.rerun()
 
     # ==================================================================
     # SEMÁFORO DE METAS

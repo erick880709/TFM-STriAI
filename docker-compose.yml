@@ -1,0 +1,66 @@
+# =============================================================================
+# docker-compose.yml — STriAI (Sistema de Triaje Multimodal IA)
+# =============================================================================
+# Uso:
+#   Producción:  docker-compose up -d
+#   Desarrollo:  docker-compose -f docker-compose.yml -f docker-compose.dev.yml up
+#   Detener:     docker-compose down
+# =============================================================================
+
+version: "3.9"
+
+services:
+  striai:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: striai:latest
+    container_name: striai-app
+    restart: unless-stopped
+
+    ports:
+      - "${STREAMLIT_PORT:-8501}:8501"
+
+    # Variables de entorno — sobreescriben los defaults del Dockerfile
+    environment:
+      - DB_PATH=${DB_PATH:-data/triaje.db}
+      - SESSION_TIMEOUT_MINUTES=${SESSION_TIMEOUT_MINUTES:-15}
+      - BCRYPT_ROUNDS=${BCRYPT_ROUNDS:-12}
+      - MODEL_PATH=${MODEL_PATH:-/app/models/}
+      - ACTIVE_MODEL=${ACTIVE_MODEL:-early_fusion_v20260720_224350}
+      - ENV=${ENV:-production}
+      - LOG_LEVEL=${LOG_LEVEL:-INFO}
+      - JWT_SECRET=${JWT_SECRET:-cambiar-por-secreto-seguro-en-produccion}
+      - JWT_ALGORITHM=${JWT_ALGORITHM:-HS256}
+      - JWT_EXPIRATION_MINUTES=${JWT_EXPIRATION_MINUTES:-15}
+      - CORS_ORIGINS=${CORS_ORIGINS:-http://localhost:5173,http://localhost:8501}
+
+    # Volúmenes para persistencia de datos y actualización de modelos
+    volumes:
+      # Base de datos SQLite — persiste fuera del contenedor
+      - striai_data:/app/sistema-triaje-ia/data
+      # Modelos IA — montar desde host para facilitar actualizaciones sin rebuild
+      - ./models:/app/models:ro
+
+    # Healthcheck a nivel de compose
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8501/_stcore/health')"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 90s
+
+    # Recursos asignados
+    deploy:
+      resources:
+        limits:
+          memory: 4G
+          cpus: "2"
+        reservations:
+          memory: 1G
+          cpus: "1"
+
+volumes:
+  striai_data:
+    name: striai_data
+    driver: local

@@ -27,6 +27,24 @@ from src.evaluation.shap_benchmarks import SHAPExplainer, NOMBRES_CLINICOS, CLAS
 logger = logging.getLogger(__name__)
 
 # ---------------------------------------------------------------------------
+# Constantes del modelo NLP usado en entrenamiento (Early Fusion)
+# ---------------------------------------------------------------------------
+NLP_MODEL_KEY = "multilingual"  # mismo que run_pipeline.py
+NLP_EMBEDDING_DIM = 384  # sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2
+
+# Número total de features esperadas por el modelo Early Fusion
+# = features estructuradas + embeddings NLP
+# El modelo actual (v20260720_224350) tiene 3 struct + 384 NLP = 387
+EXPECTED_STRUCT_FEATURES = 3  # edad, sexo_Desconocido, regimen_salud_Desconocido
+
+# Orden real de las features estructuradas tras el pipeline de entrenamiento
+# (limpieza.py: X_num → X_cat → X_bin, luego hstack)
+STRUCT_FEATURE_ORDER = ["edad", "sexo_Desconocido", "regimen_salud_Desconocido"]
+
+# Mapeo de columnas categóricas → índice en el encoder
+CAT_ENCODER_COLS = ["sexo", "regimen_salud"]
+
+# ---------------------------------------------------------------------------
 # Configuración
 # ---------------------------------------------------------------------------
 # Resolver ruta a models/ de forma robusta (prueba múltiples ubicaciones)
@@ -108,6 +126,8 @@ class InferenceService:
         self.model_version = "N/A"
         self.model_name = "N/A"
         self.error_message = None
+        self._nlp_embedder = None  # Carga lazy del NLPEmbedder (BERT)
+        self._nlp_available = None  # True/False/None (aún no verificado)
 
     # ------------------------------------------------------------------
     # TT-E4-01: Carga del modelo
@@ -165,11 +185,20 @@ class InferenceService:
             self.model_name = self.metadata.get("model_name", "Desconocido")
             self.model_version = self.metadata.get("version", "N/A")
 
-            # Inicializar SHAP Explainer
+            # Inicializar SHAP Explainer con TODAS las features (estructuradas + NLP)
             try:
                 import shap
-                self.shap_explainer = SHAPExplainer(self.model, self.feature_names)
-                logger.info("  SHAP TreeExplainer inicializado (lazy)")
+                # Construir la lista completa de feature names (estructuradas + NLP)
+                full_feature_names = list(self.feature_names)  # 3 estructuradas
+                # Agregar nombres genéricos para las features NLP
+                n_nlp_features = NLP_EMBEDDING_DIM  # 384
+                for i in range(n_nlp_features):
+                    full_feature_names.append(f"nlp_dim_{i}")
+                self.shap_explainer = SHAPExplainer(self.model, full_feature_names)
+                logger.info(
+                    f"  SHAP TreeExplainer inicializado (lazy) con "
+                    f"{len(full_feature_names)} features"
+                )
             except ImportError:
                 logger.warning("  SHAP no disponible. La explicabilidad estará limitada.")
                 self.shap_explainer = None
@@ -180,6 +209,11 @@ class InferenceService:
                 f"  ✓ Modelo cargado: {self.model_name} v{self.model_version} "
                 f"({len(self.feature_names)} features)"
             )
+
+            # Precargar NLP embedder en segundo plano para que la primera
+            # predicción sea rápida (evita los ~12s de carga lazy de BERT)
+            self._prewarm_nlp()
+
             return True
 
         except FileNotFoundError as e:
@@ -221,21 +255,16 @@ class InferenceService:
         t0 = time.time()
 
         try:
-            # 1. Construir vector de features estructuradas
-            X_struct = self._build_feature_vector(clinical_data)
+            # 1. Construir features estructuradas (3 dims) aplicando scaler/encoder
+            X_struct = self._build_structured_features(clinical_data)
+            n_struct = X_struct.shape[1]
 
-            # 2. Normalizar y codificar (reutilizando scaler/encoder del entrenamiento)
-            X_processed = self._preprocess(X_struct)
+            # 2. Generar embeddings NLP (384 dims) para el motivo de consulta
+            X_nlp = self._generate_nlp_features(motivo_texto or "")
+            n_nlp = X_nlp.shape[1]
 
-            # 3. Generar embeddings NLP si hay texto
-            X_final = X_processed
-            if motivo_texto and motivo_texto.strip():
-                # Usar fallback TF-IDF o BERT según disponibilidad
-                try:
-                    X_nlp = self._generate_nlp_features(motivo_texto)
-                    X_final = np.hstack([X_processed, X_nlp])
-                except Exception as e:
-                    logger.warning(f"  NLP no disponible, usando solo features estructuradas: {e}")
+            # 3. Concatenar → vector completo (387 dims para Early Fusion)
+            X_final = np.hstack([X_struct, X_nlp])
 
             # 4. Predecir
             if hasattr(self.model, "predict_proba"):
@@ -262,18 +291,28 @@ class InferenceService:
             }
 
             result = {
-                "nivel_sugerido": nivel_sugerido,
+                # Campos que espera el router (PredictResponse schema)
+                "nivel_predicho": nivel_sugerido,
+                "nivel_codigo": y_pred_idx,
                 "probabilidades": probabilidades,
+                "tiempo_inferencia_ms": round(tiempo * 1000, 2),
+                "modelo_version": self.model_version,
+                "shap_disponible": self.shap_explainer is not None,
+                # Campos adicionales para depuración / Streamlit
+                "nivel_sugerido": nivel_sugerido,
                 "confianza": confianza,
                 "tiempo_inferencia_s": tiempo,
                 "version_modelo": self.model_version,
                 "modelo_nombre": self.model_name,
+                "n_features_struct": n_struct,
+                "n_features_nlp": n_nlp,
                 "error": None,
             }
 
             logger.info(
                 f"  Predicción: Nivel {nivel_sugerido} "
-                f"({confianza:.0%}) en {tiempo}s"
+                f"({confianza:.0%}) en {tiempo}s "
+                f"[struct={n_struct}, nlp={n_nlp}]"
             )
 
             return result
@@ -310,18 +349,10 @@ class InferenceService:
             }
 
         try:
-            # Construir vector
-            X_struct = self._build_feature_vector(clinical_data)
-            X_processed = self._preprocess(X_struct)
-
-            if motivo_texto and motivo_texto.strip():
-                try:
-                    X_nlp = self._generate_nlp_features(motivo_texto)
-                    X_final = np.hstack([X_processed, X_nlp])
-                except Exception:
-                    X_final = X_processed
-            else:
-                X_final = X_processed
+            # Construir vector completo (usando misma lógica que predict)
+            X_struct = self._build_structured_features(clinical_data)
+            X_nlp = self._generate_nlp_features(motivo_texto or "")
+            X_final = np.hstack([X_struct, X_nlp])
 
             # Inicializar SHAP si es necesario
             if self.shap_explainer.explainer is None:
@@ -333,118 +364,182 @@ class InferenceService:
             # Traducir a lenguaje clínico y enriquecer
             enriched = self._enrich_explanation(explanation, clinical_data)
 
+            # Agregar campos requeridos por el router (ExplainResponse schema)
+            enriched["nivel_predicho"] = explanation.get("class_predicted", "?")
+            enriched["shap_disponible"] = True
+            enriched["fallback"] = False
+
             return enriched
 
         except Exception as e:
             logger.exception(f"Error en SHAP: {e}")
             return {
                 "error": f"Error generando explicación: {str(e)}",
+                "nivel_predicho": None,
+                "shap_disponible": False,
+                "fallback": True,
                 "top_features_fallback": self._feature_importance_fallback(clinical_data),
             }
 
     # ------------------------------------------------------------------
-    # Construcción del vector de features
+    # Construcción del vector de features estructuradas (3 dims)
     # ------------------------------------------------------------------
-    def _build_feature_vector(self, data: Dict[str, Any]) -> np.ndarray:
+    def _build_structured_features(self, data: Dict[str, Any]) -> np.ndarray:
         """
-        Construye el vector de features estructuradas a partir de datos clínicos.
-        Replica la lógica de src/data/limpieza.py para evitar training-serving skew.
+        Construye el vector de features estructuradas (3 columnas)
+        aplicando el scaler y encoder del entrenamiento sobre los datos crudos.
+
+        Orden de columnas: [edad_scaled, sexo_encoded, regimen_salud_encoded]
+
+        Esto replica exactamente la transformación del pipeline de entrenamiento:
+          limpieza.py: X_num (scaler) → X_cat (encoder) → X_bin → hstack
         """
-        features = {}
+        import warnings
 
-        # Mapear campos clínicos a features del modelo
-        for db_col, feat_col in DB_TO_FEATURE_MAP.items():
-            if db_col in data and data[db_col] is not None:
-                features[feat_col] = data[db_col]
+        # 1. Feature numérica: edad (aplicar scaler)
+        edad_raw = float(data.get("edad", 0) or 0)
+        edad_arr = np.array([[edad_raw]])
+        if self.scaler is not None:
+            with warnings.catch_warnings():
+                warnings.simplefilter("ignore", UserWarning)
+                edad_scaled = self.scaler.transform(edad_arr)[0, 0]
+        else:
+            edad_scaled = edad_raw
 
-        # Calcular features derivadas
-        pas = features.get("presion_sistolica", 0)
-        pad = features.get("presion_diastolica", 0)
-        fc = features.get("frecuencia_cardiaca", 0)
-        fr = features.get("frecuencia_respiratoria", 0)
-        glasgow = features.get("glasgow", 15)
+        # 2. Features categóricas: sexo, regimen_salud (aplicar encoder)
+        sexo_val = str(data.get("sexo", "Desconocido") or "Desconocido")
+        regimen_val = str(data.get("regimen_salud", "Desconocido") or "Desconocido")
 
-        # PAM
-        if pas and pad:
-            features["pam"] = (pas + 2 * pad) / 3
-
-        # Shock Index
-        features["shock_index"] = fc / max(pas, 1)
-
-        # qSOFA
-        features["qsofa_score"] = (
-            (glasgow < 15) + (fr >= 22) + (pas <= 100)
-        )
-
-        # IMC
-        peso = data.get("peso") or data.get("peso_kg")
-        talla = data.get("talla") or data.get("talla_cm")
-        if peso and talla and talla > 0:
-            features["imc"] = peso / ((talla / 100) ** 2)
-
-        # Build vector in correct order
-        vec = []
-        for fname in self.feature_names:
-            val = features.get(fname, 0)
-            # Handle categorical (encoded) features
-            if isinstance(val, str):
-                val = 0  # Categorical features are handled by encoder
-            vec.append(float(val) if val is not None else 0.0)
-
-        return np.array(vec).reshape(1, -1)
-
-    def _preprocess(self, X: np.ndarray) -> np.ndarray:
-        """Aplica scaler y encoder del entrenamiento."""
-        # Extraer columnas numéricas, categóricas, derivadas
-        n_numeric = len([c for c in NUMERIC_COLS if c in self.feature_names])
-        n_derived = len([c for c in DERIVED_FIELDS if c in self.feature_names])
-
-        numeric_fields = NUMERIC_COLS + DERIVED_FIELDS
-        cat_fields = [c for c in CATEGORICAL_COLS if c in self.feature_names]
-
-        # Reconstruir matriz para scaler
-        numeric_indices = [i for i, f in enumerate(self.feature_names)
-                          if f in numeric_fields]
-        categorical_indices = [i for i, f in enumerate(self.feature_names)
-                               if f in cat_fields]
-
-        X_num = X[:, numeric_indices] if numeric_indices else X[:, :1]
-        X_cat = X[:, categorical_indices] if categorical_indices else X[:, :1]
-
-        # Aplicar scaler
-        if self.scaler is not None and numeric_indices:
-            X_num = self.scaler.transform(X_num)
-
-        # Aplicar encoder
-        if self.encoder is not None and categorical_indices:
+        if self.encoder is not None:
+            cat_arr = np.array([[sexo_val, regimen_val]])
             try:
-                X_cat = self.encoder.transform(X_cat)
+                with warnings.catch_warnings():
+                    warnings.simplefilter("ignore", UserWarning)
+                    cat_encoded = self.encoder.transform(cat_arr)[0]
             except Exception:
-                X_cat = np.zeros((X.shape[0], 1))
+                # Fallback: si el encoder falla, usar zeros
+                cat_encoded = np.zeros(2)
+        else:
+            cat_encoded = np.zeros(2)
 
-        # Reconstruir en orden original
-        result_parts = []
-        ni, ci = 0, 0
-        for i, fname in enumerate(self.feature_names):
-            if fname in numeric_fields and ni < X_num.shape[1]:
-                result_parts.append(X_num[:, ni:ni+1])
-                ni += 1
-            elif fname in cat_fields and ci < X_cat.shape[1]:
-                result_parts.append(X_cat[:, ci:ci+1])
-                ci += 1
-            else:
-                result_parts.append(X[:, i:i+1])
+        # 3. Construir vector en el orden correcto:
+        #    [edad, sexo_Desconocido, regimen_salud_Desconocido]
+        result = np.array([
+            edad_scaled,
+            float(cat_encoded[0]) if len(cat_encoded) > 0 else 0.0,
+            float(cat_encoded[1]) if len(cat_encoded) > 1 else 0.0,
+        ]).reshape(1, -1)
 
-        return np.hstack(result_parts) if result_parts else X
+        return result
 
+    # ------------------------------------------------------------------
+    # Generación de embeddings NLP (384 dims, BERT multilingual)
+    # ------------------------------------------------------------------
     def _generate_nlp_features(self, texto: str) -> np.ndarray:
-        """Genera features NLP para un texto clínico (fallback TF-IDF)."""
+        """
+        Genera embeddings NLP de 384 dimensiones usando el mismo modelo
+        BERT multilingual del entrenamiento (sentence-transformers/paraphrase-multilingual-MiniLM-L12-v2).
+
+        Si el modelo NLP no está disponible, usa un fallback TF-IDF de 384 dimensiones
+        para mantener la compatibilidad dimensional con el modelo Early Fusion.
+        """
+        # Intentar cargar el NLP embedder lazy
+        if self._nlp_embedder is None and self._nlp_available is None:
+            self._nlp_available = self._try_load_nlp_embedder()
+
+        # Usar BERT si está disponible
+        if self._nlp_available and self._nlp_embedder is not None:
+            try:
+                embeddings = self._nlp_embedder.generate_embeddings([texto], fit_tfidf=False)
+                # Asegurar que tenga la dimensión correcta
+                if embeddings.shape[1] != NLP_EMBEDDING_DIM:
+                    logger.warning(
+                        f"  NLP dim mismatch: esperado {NLP_EMBEDDING_DIM}, "
+                        f"obtenido {embeddings.shape[1]}. Ajustando..."
+                    )
+                    embeddings = self._pad_or_truncate(embeddings, NLP_EMBEDDING_DIM)
+                return embeddings
+            except Exception as e:
+                logger.warning(f"  Error generando embeddings BERT: {e}. Usando fallback.")
+
+        # Fallback: TF-IDF con 384 dimensiones
+        return self._generate_tfidf_fallback(texto, NLP_EMBEDDING_DIM)
+
+    def _prewarm_nlp(self):
+        """Precarga el modelo NLP en segundo plano para evitar latencia en la primera predicción."""
+        try:
+            import threading
+            def _load():
+                self._try_load_nlp_embedder()
+                if self._nlp_available:
+                    # Generar un embedding dummy para calentar el modelo
+                    try:
+                        self._nlp_embedder.generate_embeddings(["calentamiento"], fit_tfidf=False)
+                    except Exception:
+                        pass
+            t = threading.Thread(target=_load, daemon=True)
+            t.start()
+            logger.info("  NLP: precarga iniciada en segundo plano")
+        except Exception as e:
+            logger.warning(f"  NLP: no se pudo iniciar precarga ({e})")
+
+    def _try_load_nlp_embedder(self) -> bool:
+        """Intenta cargar el NLPEmbedder de forma lazy. Retorna True si tuvo éxito."""
+        try:
+            from src.features.nlp_embeddings import NLPEmbedder
+            self._nlp_embedder = NLPEmbedder(
+                model_name=NLP_MODEL_KEY,
+                use_gpu=False,
+                batch_size=1,
+            )
+            # Forzar carga del modelo
+            self._nlp_embedder._ensure_loaded()
+            if getattr(self._nlp_embedder, "_fallback_mode", False):
+                logger.info("  NLP: usando modo fallback TF-IDF (BERT no disponible)")
+                self._nlp_embedder = None
+                return False
+            logger.info(f"  NLP: BERT multilingual cargado ({NLP_EMBEDDING_DIM} dims)")
+            return True
+        except ImportError as e:
+            logger.warning(f"  NLP: transformers no instalado ({e}). Usando fallback TF-IDF.")
+            return False
+        except Exception as e:
+            logger.warning(f"  NLP: error al cargar BERT ({e}). Usando fallback TF-IDF.")
+            return False
+
+    def _generate_tfidf_fallback(self, texto: str, target_dim: int) -> np.ndarray:
+        """Fallback TF-IDF que produce exactamente target_dim features."""
         from sklearn.feature_extraction.text import TfidfVectorizer
 
-        # TF-IDF rápido con 256 features
-        vectorizer = TfidfVectorizer(max_features=256, ngram_range=(1, 2))
-        embedding = vectorizer.fit_transform([texto]).toarray()
-        return embedding
+        if not hasattr(self, "_tfidf_vectorizer"):
+            self._tfidf_vectorizer = TfidfVectorizer(
+                max_features=target_dim,
+                ngram_range=(1, 2),
+            )
+
+        texto_limpio = str(texto).strip() if texto else "sin motivo"
+        if not texto_limpio:
+            texto_limpio = "sin motivo"
+
+        try:
+            embedding = self._tfidf_vectorizer.fit_transform([texto_limpio]).toarray()
+        except Exception:
+            embedding = np.zeros((1, 1))
+
+        return self._pad_or_truncate(embedding, target_dim)
+
+    def _pad_or_truncate(self, arr: np.ndarray, target_dim: int) -> np.ndarray:
+        """Ajusta un array 2D a la dimensión objetivo."""
+        current = arr.shape[1]
+        if current == target_dim:
+            return arr
+        elif current < target_dim:
+            # Pad con ceros
+            padding = np.zeros((arr.shape[0], target_dim - current))
+            return np.hstack([arr, padding])
+        else:
+            # Truncar
+            return arr[:, :target_dim]
 
     def _apply_thresholds(self, y_proba: np.ndarray) -> int:
         """Aplica umbrales optimizados para priorizar Recall I-II."""
@@ -470,6 +565,9 @@ class InferenceService:
                 item["nombre_clinico"] = NOMBRES_CLINICOS.get(
                     item.get("feature", ""), item.get("feature", "")
                 )
+            # El router espera "top_features", copiamos de "top_contributors"
+            if "top_features" not in enriched:
+                enriched["top_features"] = enriched["top_contributors"]
 
         # Comparación con MTS (Manchester Triage System) simplificada
         enriched["mts_comparison"] = self._mts_comparison(clinical_data)

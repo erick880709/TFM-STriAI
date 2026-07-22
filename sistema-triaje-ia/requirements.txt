@@ -2,6 +2,9 @@
 # TFM - Máster en Inteligencia Artificial - UNIR
 # ================================================
 
+# Framework web
+streamlit>=1.32.0
+
 # Core
 pandas>=2.2.0
 numpy>=1.26.0
@@ -10,9 +13,10 @@ numpy>=1.26.0
 scikit-learn>=1.4.0
 xgboost>=2.0.0
 
-# Deep Learning / NLP (usar solo si hay GPU o para embeddings offline)
+# Deep Learning / NLP
 torch>=2.2.0
 transformers>=4.38.0
+sentence-transformers>=2.7.0
 
 # Explicabilidad
 shap>=0.44.0

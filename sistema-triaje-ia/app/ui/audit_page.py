@@ -8,20 +8,18 @@ import pandas as pd
 from datetime import datetime, timedelta
 import io
 
-from app.services.audit_service import AuditService, ACCIONES_AUDITABLES
+from app.services.cached import get_audit_service
+from app.services.audit_service import ACCIONES_AUDITABLES
 
 
 def render_audit():
     """Renderiza la pantalla P11 — Consulta de Auditoría."""
 
     # ------------------------------------------------------------------
-    # Inicialización
+    # Inicialización con servicio cacheado
     # ------------------------------------------------------------------
     db_path = st.session_state.db_path
-    if "audit_service" not in st.session_state:
-        st.session_state.audit_service = AuditService(db_path)
-
-    audit_svc: AuditService = st.session_state.audit_service
+    audit_svc = get_audit_service(db_path)
 
     # ------------------------------------------------------------------
     # Cabecera

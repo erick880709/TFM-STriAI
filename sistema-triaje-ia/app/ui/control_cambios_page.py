@@ -5,7 +5,7 @@ Solo accesible para Administrador.
 """
 import streamlit as st
 import pandas as pd
-from app.services.patient_service import PatientService
+from app.services.cached import get_patient_service
 
 ENTIDADES = ["Paciente", "EventoTriaje", "SignosVitales", "EvaluacionClinica"]
 
@@ -20,7 +20,7 @@ def render_control_cambios():
     st.caption("Historial de modificaciones sobre entidades clínicas · Solo Administrador")
 
     db_path = st.session_state.db_path
-    patient_svc = PatientService(db_path)
+    patient_svc = get_patient_service(db_path)
 
     # ==================================================================
     # Filtros

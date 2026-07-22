@@ -131,16 +131,29 @@ async def save_clinical_evaluation(
 ):
     """Guarda o actualiza la evaluación clínica de un triaje."""
     svc = _get_triage_service(request)
+    # Calcular Glasgow total (ocular + verbal + motora)
+    glasgow_total = body.glasgow_ocular + body.glasgow_verbal + body.glasgow_motora
+    # Mapear comorbilidades de lista a booleanos individuales
+    comorb = [c.lower() for c in body.comorbilidades]
     evaluacion = svc.save_clinical_evaluation(
         id_triaje=id_triaje,
-        motivo_consulta=body.motivo_consulta,
-        categoria_motivo=body.categoria_motivo,
-        glasgow_ocular=body.glasgow_ocular,
-        glasgow_verbal=body.glasgow_verbal,
-        glasgow_motora=body.glasgow_motora,
+        motivo_categoria=body.categoria_motivo or "Otro",
+        motivo_texto_libre=body.motivo_consulta,
         escala_dolor=body.escala_dolor,
+        glasgow=glasgow_total,
         nivel_conciencia=body.nivel_conciencia,
-        comorbilidades=body.comorbilidades,
+        diabetes="diabetes" in comorb,
+        hipertension="hipertension" in comorb or "hta" in comorb,
+        enfermedad_renal="irc" in comorb or "enfermedad renal" in comorb or "insuficiencia renal" in comorb,
+        embarazo="embarazo" in comorb,
+        cancer="cancer" in comorb or "cáncer" in comorb,
+        cardiopatias="cardiopatia" in comorb or "cardiopatía" in comorb,
+        enfermedad_pulmonar="epoc" in comorb or "enfermedad pulmonar" in comorb,
+        cirugias_recientes="cirugia" in comorb or "cirugía" in comorb,
+        alergias=body.alergias,
+        medicacion_relevante=body.medicacion_relevante,
+        observaciones=body.observaciones,
+        episodios_previos=body.episodios_previos,
     )
     return ApiResponse(data=evaluacion, message="Evaluación clínica guardada")
 
